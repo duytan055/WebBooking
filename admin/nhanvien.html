@@ -1,0 +1,141 @@
+<!doctype html>
+<html lang="vi">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Quản lý nhân viên | Admin Cinema</title>
+    <link rel="stylesheet" href="admin.css" />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css"
+    />
+  </head>
+  <body>
+    <div class="container">
+      <nav class="sidebar">
+        <div class="logo">
+          <h2>ADMIN</h2>
+        </div>
+        <ul>
+          <li class="active">
+            <a href="#"><i class="fas fa-home"></i> Tổng quan</a>
+          </li>
+          <li>
+            <a href="listMovies.html"><i class="fas fa-box"></i> Sản phẩm</a>
+          </li>
+          <li>
+            <a href="#"><i class="fas fa-user"></i> Người dùng</a>
+          </li>
+          <li>
+            <a href="nhanvien.html"
+              ><i class="fa-solid fa-people-group"></i> Nhân viên</a
+            >
+          </li>
+          <li>
+            <a href="#"><i class="fas fa-chart-line"></i> Báo cáo</a>
+          </li>
+          <li>
+            <a href="#"><i class="fas fa-cog"></i> Cài đặt</a>
+          </li>
+        </ul>
+      </nav>
+
+      <main class="main-content">
+        <header class="top-header">
+          <div class="search-bar">
+            <input type="text" placeholder="Tìm kiếm ..." />
+          </div>
+          <div class="user-profile">
+            <span>Xin chào, <strong>Admin</strong></span>
+            <img
+              src="https://via.placeholder.com/35"
+              alt="Avatar"
+              class="avatar"
+            />
+          </div>
+        </header>
+
+        <div class="staff-stats">
+          <div class="card blue">
+            <span class="label">Tổng nhân viên</span>
+            <span class="number">24</span>
+          </div>
+          <div class="card green">
+            <span class="label">Đang trong ca</span>
+            <span class="number">08</span>
+          </div>
+          <div class="card orange">
+            <span class="label">Doanh thu ca sáng</span>
+            <span class="number">5.2 triệu</span>
+          </div>
+        </div>
+
+        <div class="data-section">
+          <div class="table-wrapper">
+            <table>
+              <thead>
+                <tr>
+                  <th>Mã NV</th>
+                  <th>Họ tên</th>
+                  <th>Vị trí</th>
+                  <th>Ca trực</th>
+                  <th>Vé đã bán</th>
+                  <th>Trạng thái</th>
+                  <th>Thao tác</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td><span class="id-badge">NV-005</span></td>
+                  <td>
+                    <div class="user-cell">
+                      <img src="" alt="Avatar" />
+                      <span>Trần Văn Hoàng</span>
+                    </div>
+                  </td>
+                  <td>Bán vé (Quầy)</td>
+                  <td>Ca chiều</td>
+                  <td><strong>145</strong></td>
+                  <td><span class="badge online">Đang làm</span></td>
+                  <td>
+                    <button class="action-icon edit">
+                      <i class="fas fa-pen"></i>
+                    </button>
+                    <button class="action-icon log">
+                      <i class="fas fa-history"></i>
+                    </button>
+                  </td>
+                </tr>
+                <tr>
+                  <td><span class="id-badge">NV-012</span></td>
+                  <td>
+                    <div class="user-cell">
+                      <img src="" alt="Avatar" />
+                      <span>Lê Thị Mai</span>
+                    </div>
+                  </td>
+                  <td>Kiểm soát vé</td>
+                  <td>Ca sáng</td>
+                  <td><strong>89</strong></td>
+                  <td><span class="badge offline">Nghỉ ca</span></td>
+                  <td>
+                    <button class="action-icon edit">
+                      <i class="fas fa-pen"></i>
+                    </button>
+                    <button class="action-icon log">
+                      <i class="fas fa-history"></i>
+                    </button>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </main>
+    </div>
+  </body>
+</html>
