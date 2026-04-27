@@ -6,7 +6,7 @@
 }
 
 body {
-    background-color: #e5e7e9; /* Màu nền xám nhạt như trong ảnh */
+    background-color: #f4f4f4; /* Màu nền xám rất nhạt để phân biệt với nội dung */
     display: flex;
     justify-content: center;
     padding: 50px 20px;
@@ -15,32 +15,32 @@ body {
 .contact-container {
     width: 100%;
     max-width: 1000px;
-    background-color: #e5e7e9;
+    background-color: #ffffff; /* Màu trắng cho khung nội dung */
+    padding: 40px;
+    border-radius: 8px;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.1);
 }
 
 .contact-content {
     display: flex;
     gap: 50px;
-    flex-wrap: wrap; /* Hỗ trợ hiển thị trên điện thoại */
+    flex-wrap: wrap;
 }
 
-/* Tiêu đề chung */
 h2 {
     font-size: 24px;
     color: #333;
     margin-bottom: 25px;
-    text-decoration: underline;
-    text-underline-offset: 8px;
-    text-decoration-color: #999;
+    border-bottom: 2px solid #eee;
+    padding-bottom: 10px;
 }
 
 .orange-dash {
-    color: #f37021; /* Màu cam đặc trưng của Starlight */
-    text-decoration: none;
-    display: inline-block;
+    color: #f37021; /* Màu cam Starlight */
+    font-weight: bold;
+    margin-right: 10px;
 }
 
-/* Phần thông tin bên trái */
 .info-section {
     flex: 1;
     min-width: 300px;
@@ -49,20 +49,10 @@ h2 {
 .info-details p {
     margin-bottom: 15px;
     line-height: 1.6;
-    font-size: 14px;
+    font-size: 15px;
     color: #444;
 }
 
-.info-details strong {
-    color: #222;
-}
-
-.info-details a {
-    color: #0066cc;
-    text-decoration: none;
-}
-
-/* Phần Form bên phải */
 .form-section {
     flex: 1.5;
     min-width: 300px;
@@ -73,10 +63,11 @@ h2 {
     width: 100%;
     padding: 12px 15px;
     margin-bottom: 15px;
-    border: 1px solid #ccc;
+    border: 1px solid #ddd;
     border-radius: 4px;
     font-size: 14px;
     outline: none;
+    transition: border-color 0.3s;
 }
 
 .form-section input:focus, 
@@ -85,16 +76,17 @@ h2 {
 }
 
 .btn-container {
-    text-align: center;
+    text-align: left;
 }
 
 .send-btn {
     background-color: #f37021;
     color: white;
     border: none;
-    padding: 10px 30px;
+    padding: 12px 40px;
     border-radius: 5px;
     font-size: 16px;
+    font-weight: bold;
     cursor: pointer;
     transition: background 0.3s;
 }
@@ -103,7 +95,6 @@ h2 {
     background-color: #d65a10;
 }
 
-/* Responsive cho màn hình nhỏ */
 @media (max-width: 768px) {
     .contact-content {
         flex-direction: column;
