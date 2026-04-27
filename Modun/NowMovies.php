@@ -1,6 +1,6 @@
 <?php
-include '../connecDB.php';
-$sql = "SELECT * FROM phim WHERE trang_thai = 'Đang chiếu'";
+include '../Connect/connecDB.php';
+$sql = "SELECT * FROM phim";
 $result = $conn->query($sql);
 
 ?>
@@ -10,43 +10,198 @@ $result = $conn->query($sql);
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="../Pages/style.css">
+    <link
+        rel="stylesheet"
+        href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css" />
+    <style>
+        .box3 {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin: 20px 0;
+            margin-left: 5%;
+        }
+
+        .box3 h2 {
+            font-size: 28px;
+            letter-spacing: 2px;
+            position: relative;
+        }
+
+        .box3 h2::after {
+            content: "";
+            width: 100px;
+            height: 3px;
+            background: red;
+            display: block;
+            margin: 10px auto 0;
+        }
+
+        .movie-box {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .movie-container {
+            position: relative;
+            width: 80%;
+            margin: 0;
+            overflow: hidden;
+        }
+
+        .box_img {
+            position: relative;
+            width: 250px;
+            height: 360px;
+            background-color: black;
+            overflow: hidden;
+        }
+
+        .movie-slider {
+            display: flex;
+            width: 100%;
+            transition: 0.5s;
+            list-style: none;
+            padding: 0;
+        }
+
+        .movie {
+            position: relative;
+            margin-right: 15px;
+        }
+
+        .movie:hover .box_hover {
+            opacity: 1;
+        }
+
+        .box_img img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: 0.3s;
+        }
+
+        .movie:hover img {
+            transform: scale(1.1);
+        }
+
+        .box_hover {
+            position: absolute;
+            inset: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            background: rgba(0, 0, 0, 0.6);
+            color: white;
+            opacity: 0;
+            transition: 0.5s;
+        }
+
+        .box_hover a {
+            margin: auto;
+        }
+
+        .prev {
+            color: black;
+            background: transparent;
+            font-size: 50px;
+            margin-right: 10px;
+        }
+
+        .next {
+            color: black;
+            background: transparent;
+            font-size: 50px;
+            margin-left: 10px;
+        }
+
+        button {
+            border: none;
+        }
+
+        .desription_button {
+            width: 100%;
+            height: auto;
+            background: rgba(0, 0, 0, 0.7);
+            text-align: center;
+            margin-bottom: 10px;
+        }
+
+        .desription_button h1 {
+            font-size: 16px;
+            overflow: hidden;
+        }
+
+        .desription_button button {
+            width: 100px;
+            height: 30px;
+            background-color: white;
+            color: black;
+            border-radius: 5px;
+            border: none;
+        }
+    </style>
 </head>
 
 <body>
     <div class="box3">
-        <div class="box3_nav"></div>
-        <div style="font-size: 20px"><strong>Phim</strong></div>
-        <div class="box3_menu">
-            <ul class="menu_btn">
-                <li class="nav_menu_items active" style="font-size: 20px">
-                    Đang chiếu
-                </li>
-            </ul>
-        </div>
+        <h2><strong>MOVIES SELECTION</strong></h2>
     </div>
-    <div class="box_movies">
-        <ul class="Movies_list" id="movies_list">
-            <?php while ($row = $result->fetch_assoc()) { ?>
-                <li>
-                    <div class="box_img">
-                        <img src="<?= $row['poster'] ?>">
-                        <div class="box_hover">
-                            <button><a href="#" style="text-decoration: none; color: black;"><strong>Xem thêm</strong></a></button>
-                            <br>
-                            <button><a href="#" style="text-decoration: none; color: black;"><strong>Đặt vé</strong></a></button>
+    <div class="movie-box">
+        <button class="prev">&#10094;</button>
+        <div class="movie-container">
+            <ul class="movie-slider" id="slider">
+                <?php while ($row = $result->fetch_assoc()) { ?>
+                    <li class="movie">
+                        <div class="box_img">
+                            <img src="<?= $row['poster'] ?>">
                         </div>
-                    </div>
-                    <div class="description_box">
-                        <h2><?= $row['ten_phim'] ?></h2>
-                        <p><?= $row['thoi_luong'] ?> phút</p>
-                        <p><?= $row['ngay_khoi_chieu'] ?></p>
-                    </div>
-                </li>
-            <?php } ?>
+                        <div class="box_hover">
+                            <a href=""><i class="fa-solid fa-circle-play" style="font-size: 60px; color: white;"></i></a>
+                            <div class="desription_button">
+                                <h1><?= $row['ten_phim'] ?></h1>
+                                <button> <strong>Xem thêm</strong> </button>
+                                <button> <strong>Đặt vé</strong> </button>
+                            </div>
+                        </div>
+                    </li>
+                <?php } ?>
+            </ul>
             <?php $conn->close(); ?>
-        </ul>
+        </div>
+        <button class="next">&#10095;</button>
     </div>
+
+    <script>
+        let slider = document.getElementById("slider");
+        let scrollAmount = 0;
+
+        function getMaxScroll() {
+            return slider.scrollWidth - slider.clientWidth;
+        }
+
+        document.querySelector(".next").onclick = () => {
+            scrollAmount += 300;
+
+            let maxScroll = getMaxScroll();
+            if (scrollAmount > maxScroll) {
+                scrollAmount = maxScroll;
+            }
+
+            slider.style.transform = `translateX(-${scrollAmount}px)`;
+        };
+
+        document.querySelector(".prev").onclick = () => {
+            scrollAmount -= 300;
+
+            if (scrollAmount < 0) {
+                scrollAmount = 0;
+            }
+
+            slider.style.transform = `translateX(-${scrollAmount}px)`;
+        };
+    </script>
 </body>
 
 </html>

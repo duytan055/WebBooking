@@ -4,7 +4,88 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="../Pages/style.css" />
+    <style>
+        .box_footer {
+            width: 100%;
+            background-color: rgb(30, 29, 29);
+            color: #fff;
+            padding-top: 50px;
+            margin-top: 60px;
+        }
+
+        .footer_container {
+            display: flex;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            padding: 0 80px;
+        }
+
+        .footer-col {
+            width: 230px;
+            margin-bottom: 30px;
+        }
+
+        .text_footer {
+            margin-left: 30px;
+        }
+
+        .footer-col h3 {
+            margin-bottom: 15px;
+            position: relative;
+        }
+
+        .footer-col h3::after {
+            content: "";
+            width: 40px;
+            height: 2px;
+            background: #e50914;
+            position: absolute;
+            left: 0;
+            bottom: -5px;
+        }
+
+        .footer-col p,
+        .footer-col a {
+            color: #bbb;
+            font-size: 14px;
+            text-decoration: none;
+        }
+
+        .footer-col ul {
+            list-style: none;
+            padding: 0;
+        }
+
+        .footer-col ul li {
+            margin-bottom: 10px;
+        }
+
+        .footer-col a:hover {
+            color: #e50914;
+            transition: 0.3s;
+        }
+
+        .social a {
+            display: inline-block;
+            margin-right: 10px;
+            padding: 8px 12px;
+            background: #1a1a1a;
+            border-radius: 5px;
+            transition: 0.3s;
+        }
+
+        .social a:hover {
+            background: #e50914;
+        }
+
+        .footer-bottom {
+            text-align: center;
+            border-top: 1px solid #222;
+            padding: 15px;
+            font-size: 13px;
+            color: #777;
+        }
+    </style>
 </head>
 
 <body>
