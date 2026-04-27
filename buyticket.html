@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<title>Đặt vé rạp phim</title>
+<link rel="stylesheet" href="buyticket.css">
+</head>
+
+<body>
+
+<div class="topBar">
+<button onclick="goBack()">← Quay lại</button>
+<div id="countdown-timer">Thời gian còn lại: <span id="timer">05:00</span></div>
+</div>
+
+<!-- CHỌN GHẾ -->
+
+<div id="seatPage">
+
+<h2>MÀN HÌNH</h2>
+<div class="screen"></div>
+
+<div id="seatMap"></div>
+
+<div class="bottom">
+
+<div class="movie-info">
+<h3>Thỏ Ơi</h3>
+<p>Thời lượng: 120 phút</p>
+</div>
+
+<div>
+<h3>Ghế đã chọn</h3>
+<p id="selectedSeats">...</p>
+</div>
+
+<div>
+<h3>Tổng tiền</h3>
+<p id="seatTotal">0 đ</p>
+</div>
+
+<button onclick="goCombo()">TIẾP THEO</button>
+
+</div>
+</div>
+
+<!-- COMBO -->
+
+<div id="comboPage">
+
+<h2>CHỌN COMBO</h2>
+
+<div class="comboContainer">
+
+<div class="combo">
+<img src="https://upload.wikimedia.org/wikipedia/commons/7/7a/Popcorn_and_soda.jpg">
+<h3>STAR CLASSIC</h3>
+<p>1 Bắp + 1 Nước</p>
+<p>80.000 đ</p>
+<button onclick="addCombo('STAR CLASSIC',80000)">+</button>
+</div>
+
+<div class="combo">
+<img src="https://upload.wikimedia.org/wikipedia/commons/6/66/Popcorn_and_Coke.jpg">
+<h3>STAR PREMIUM</h3>
+<p>2 Nước + 1 Bắp</p>
+<p>105.000 đ</p>
+<button onclick="addCombo('STAR PREMIUM',105000)">+</button>
+</div>
+
+<div class="combo">
+<img src="https://upload.wikimedia.org/wikipedia/commons/5/5a/Popcorn_and_soft_drink.jpg">
+<h3>COUPLE COMBO</h3>
+<p>2 Bắp + 2 Nước</p>
+<p>150.000 đ</p>
+<button onclick="addCombo('COUPLE',150000)">+</button>
+</div>
+
+</div>
+
+<div class="bottom">
+
+<div>
+<h3>Tổng tiền combo</h3>
+<p id="comboTotal">0 đ</p>
+</div>
+
+<button onclick="goPayment()">TIẾP THEO</button>
+
+</div>
+
+</div>
+
+<!-- THANH TOÁN -->
+
+<div id="paymentPage">
+
+<div class="paymentBox">
+
+<h2>THÔNG TIN ĐẶT VÉ</h2>
+
+<p>Rạp: <b>STARLIGHT QUY NHƠN</b></p>
+<p>Phòng: <b>01</b></p>
+<p>Tên phim: <b>Thỏ Ơi</b></p>
+<p>Suất chiếu: <b>23:10</b></p>
+
+<h3>Ghế đã chọn</h3>
+
+<p>Số ghế: <span id="seatCount"></span></p>
+<div id="seatList"></div>
+
+<p>Tổng tiền ghế: <span id="seatMoney"></span></p>
+
+<hr>
+
+<h3>Combo</h3>
+
+<p id="comboInfo">Không có</p>
+<p>Tổng tiền combo: <span id="comboMoney"></span></p>
+
+<hr>
+
+<h3>Ngân hàng hỗ trợ</h3>
+
+<div class="bankLogos">
+
+<img src="https://upload.wikimedia.org/wikipedia/commons/8/88/Vietcombank_logo.png">
+<img src="https://upload.wikimedia.org/wikipedia/commons/5/5e/BIDV_logo.png">
+<img src="https://upload.wikimedia.org/wikipedia/commons/2/27/Techcombank_logo.png">
+
+</div>
+
+<hr>
+
+<h3>PHƯƠNG THỨC THANH TOÁN</h3>
+
+<div class="paymentMethods">
+
+<div class="method">
+<img src="https://upload.wikimedia.org/wikipedia/commons/1/16/VNPAY_logo.png">
+<p>VNPAY</p>
+</div>
+
+<div class="method">
+<img src="https://upload.wikimedia.org/wikipedia/commons/f/fe/MoMo_Logo.png">
+<p>MOMO</p>
+</div>
+
+<div class="method">
+<img src="https://upload.wikimedia.org/wikipedia/commons/9/9b/QR_Code_example.png">
+<p>QR Banking</p>
+</div>
+
+</div>
+
+<div class="discount">
+
+<input type="text" id="discountInput" placeholder="Nhập mã giảm giá">
+<button onclick="applyDiscount()">Áp dụng</button>
+
+</div>
+
+<p>Giảm giá: <span id="discountMoney">0 đ</span></p>
+
+<p class="total">Tổng thanh toán: <span id="finalTotal"></span></p>
+
+<button class="payBtn">THANH TOÁN</button>
+
+</div>
+
+</div>
+
+<script src="buyticket.js"></script>
+
+</body>
+</html>
