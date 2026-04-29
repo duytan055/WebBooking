@@ -77,19 +77,17 @@ $result = $conn->query($sql);
         transform: scale(1.1);
     }
 
-    .box_hover {
+    .box_hover_proE {
         position: absolute;
         inset: 0;
         display: flex;
         flex-direction: column;
         align-items: center;
-        background: rgba(0, 0, 0, 0.6);
-        color: white;
         opacity: 0;
         transition: 0.5s;
     }
 
-    .box_hover a {
+    .box_hover_proE a {
         margin: auto;
     }
 </style>
@@ -104,7 +102,7 @@ $result = $conn->query($sql);
                     <div class="box_img">
                         <img src="../Anh_Khuyen_Mai/<?= $row['anh_khuyen_mai'] ?>">
                     </div>
-                    <div class="box_hover">
+                    <div class="box_hover_proE">
                         <a href=""></a>
                     </div>
                 </li>

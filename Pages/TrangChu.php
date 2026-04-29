@@ -12,18 +12,18 @@
         body {
             height: 100%;
             margin: 0;
-            background-color: rgba(232, 226, 226, 0.94);
+            background-color: rgba(164, 159, 159, 0.49);
             font-family: Arial, sans-serif;
         }
     </style>
 </head>
 
 <body>
-    <?php include '../Modun/Header.php'; ?>
+    <?php include '../Modun/header.php'; ?>
     <?php include '../Modun/SliderMovies.php'; ?>
-    <?php include '../Modun/NowMovies.php'; ?>
-    <?php include '../Modun/Promotions&Events.php'; ?>
-    <?php include '../Modun/Footer.php'; ?>
+    <?php include '../Modun/movies.php'; ?>
+    <?php include '../Modun/PromotionsAndEvents.php'; ?>
+    <?php include '../Modun/footer.php'; ?>
 </body>
 
 </html>

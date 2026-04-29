@@ -4,12 +4,8 @@ $sql = "SELECT * FROM phim";
 $result = $conn->query($sql);
 
 ?>
-<!DOCTYPE html>
-<html lang="en">
 
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link
         rel="stylesheet"
         href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css" />
@@ -56,6 +52,7 @@ $result = $conn->query($sql);
             height: 360px;
             background-color: black;
             overflow: hidden;
+            border-radius: 15px;
         }
 
         .movie-slider {
@@ -94,6 +91,7 @@ $result = $conn->query($sql);
             align-items: center;
             background: rgba(0, 0, 0, 0.6);
             color: white;
+            border-radius: 15px;
             opacity: 0;
             transition: 0.5s;
         }
@@ -120,7 +118,7 @@ $result = $conn->query($sql);
             border: none;
         }
 
-        .desription_button {
+        .description_button {
             width: 100%;
             height: auto;
             background: rgba(0, 0, 0, 0.7);
@@ -128,12 +126,12 @@ $result = $conn->query($sql);
             margin-bottom: 10px;
         }
 
-        .desription_button h1 {
+        .description_button h1 {
             font-size: 16px;
             overflow: hidden;
         }
 
-        .desription_button button {
+        .description_button button {
             width: 100px;
             height: 30px;
             background-color: white;
@@ -141,67 +139,69 @@ $result = $conn->query($sql);
             border-radius: 5px;
             border: none;
         }
+
+        .description_button button:hover {
+            background-color: red;
+            color: white;
+            cursor: pointer;
+        }
     </style>
 </head>
 
-<body>
-    <div class="box3">
-        <h2><strong>MOVIES SELECTION</strong></h2>
-    </div>
-    <div class="movie-box">
-        <button class="prev">&#10094;</button>
-        <div class="movie-container">
-            <ul class="movie-slider" id="slider">
-                <?php while ($row = $result->fetch_assoc()) { ?>
-                    <li class="movie">
-                        <div class="box_img">
-                            <img src="<?= $row['poster'] ?>">
+<div class="box3">
+    <h2><strong>MOVIES SELECTION</strong></h2>
+</div>
+<div class="movie-box">
+    <button class="prev">&#10094;</button>
+    <div class="movie-container">
+        <ul class="movie-slider" id="slider">
+            <?php while ($row = $result->fetch_assoc()) { ?>
+                <li class="movie">
+                    <div class="box_img">
+                        <img src="<?= $row['poster'] ?>">
+                    </div>
+                    <div class="box_hover">
+                        <a href=""><i class="fa-solid fa-circle-play" style="font-size: 60px; color: white;"></i></a>
+                        <div class="description_button">
+                            <h1><?= $row['ten_phim'] ?></h1>
+                            <button> <strong>Xem thêm</strong> </button>
+                            <button> <strong>Đặt vé</strong> </button>
                         </div>
-                        <div class="box_hover">
-                            <a href=""><i class="fa-solid fa-circle-play" style="font-size: 60px; color: white;"></i></a>
-                            <div class="desription_button">
-                                <h1><?= $row['ten_phim'] ?></h1>
-                                <button> <strong>Xem thêm</strong> </button>
-                                <button> <strong>Đặt vé</strong> </button>
-                            </div>
-                        </div>
-                    </li>
-                <?php } ?>
-            </ul>
-            <?php $conn->close(); ?>
-        </div>
-        <button class="next">&#10095;</button>
+                    </div>
+                </li>
+            <?php } ?>
+        </ul>
+        <?php $conn->close(); ?>
     </div>
+    <button class="next">&#10095;</button>
+</div>
 
-    <script>
-        let slider = document.getElementById("slider");
-        let scrollAmount = 0;
+<script>
+    let slider = document.getElementById("slider");
+    let scrollAmount = 0;
 
-        function getMaxScroll() {
-            return slider.scrollWidth - slider.clientWidth;
+    function getMaxScroll() {
+        return slider.scrollWidth - slider.clientWidth;
+    }
+
+    document.querySelector(".next").onclick = () => {
+        scrollAmount += 300;
+
+        let maxScroll = getMaxScroll();
+        if (scrollAmount > maxScroll) {
+            scrollAmount = maxScroll;
         }
 
-        document.querySelector(".next").onclick = () => {
-            scrollAmount += 300;
+        slider.style.transform = `translateX(-${scrollAmount}px)`;
+    };
 
-            let maxScroll = getMaxScroll();
-            if (scrollAmount > maxScroll) {
-                scrollAmount = maxScroll;
-            }
+    document.querySelector(".prev").onclick = () => {
+        scrollAmount -= 300;
 
-            slider.style.transform = `translateX(-${scrollAmount}px)`;
-        };
+        if (scrollAmount < 0) {
+            scrollAmount = 0;
+        }
 
-        document.querySelector(".prev").onclick = () => {
-            scrollAmount -= 300;
-
-            if (scrollAmount < 0) {
-                scrollAmount = 0;
-            }
-
-            slider.style.transform = `translateX(-${scrollAmount}px)`;
-        };
-    </script>
-</body>
-
-</html>
+        slider.style.transform = `translateX(-${scrollAmount}px)`;
+    };
+</script>

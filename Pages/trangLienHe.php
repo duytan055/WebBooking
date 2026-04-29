@@ -1,7 +1,7 @@
 <style>
     body {
         margin: 0;
-        background-color: rgba(232, 226, 226, 0.94);
+        background-color: rgba(232, 226, 226, 0.32);
     }
 
     .contact-container {
@@ -94,7 +94,7 @@
         }
     }
 </style>
-<?php include '../Modun/Header.php'; ?>
+<?php include '../Modun/header.php'; ?>
 <div class="contact-container">
     <div class="contact-content">
 
@@ -123,7 +123,7 @@
 
     </div>
 </div>
-<?php include '../Modun/Footer.php'; ?>
+<?php include '../Modun/footer.php'; ?>
 <script>
     const scriptURL = 'https://script.google.com/macros/s/AKfycbxLY0Q5rHsxIvs61uY0LxcGmIK0a4fE8nTLji1sGDs7lTnLpvaYFZ0_yxLsVy7Rw6Cz/exec';
     const form = document.getElementById("contact-form");
