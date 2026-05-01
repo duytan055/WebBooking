@@ -17,6 +17,7 @@ $result = $conn->query($sql);
     body {
         margin: 0;
         position: relative;
+        font-family: Arial, sans-serif;
     }
 
     body::before {
