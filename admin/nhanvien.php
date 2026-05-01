@@ -1,30 +1,47 @@
 <?php
 include "ketnoi.php";
 
+/* ===== TÌM KIẾM ===== */
 
-$sql_ve = "SELECT COUNT(*) AS tongve FROM vedat";
-$kq_ve = mysqli_query($conn,$sql_ve);
-$row_ve = mysqli_fetch_assoc($kq_ve);
+$timkiem = "";
 
-$sql_doanhthu = "SELECT SUM(tongtien) AS doanhthu FROM vedat";
-$kq_dt = mysqli_query($conn,$sql_doanhthu);
-$row_dt = mysqli_fetch_assoc($kq_dt);
+if(isset($_GET['timkiem']))
+{
+    $timkiem = $_GET['timkiem'];
 
-$sql_khach = "SELECT COUNT(*) AS tongkhach FROM khachhang";
-$kq_khach = mysqli_query($conn,$sql_khach);
-$row_khach = mysqli_fetch_assoc($kq_khach);
+    $sql = "SELECT * FROM nhanvien
+            WHERE hoten LIKE '%$timkiem%'
+            OR manv LIKE '%$timkiem%'
+            ORDER BY id DESC";
+}
+else
+{
+    $sql = "SELECT * FROM nhanvien ORDER BY id DESC";
+}
 
-
-$sql = "SELECT * FROM vedat ORDER BY id DESC";
 $kq = mysqli_query($conn,$sql);
+
+/* ===== THỐNG KÊ ===== */
+
+$sql_tong = "SELECT COUNT(*) AS tongnv FROM nhanvien";
+$kq_tong = mysqli_query($conn,$sql_tong);
+$row_tong = mysqli_fetch_assoc($kq_tong);
+
 ?>
 
 <!DOCTYPE html>
 <html lang="vi">
+
 <head>
+
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Admin Dashboard</title>
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <title>Quản Lý Nhân Viên</title>
 
     <link rel="stylesheet" href="admin.css">
 
@@ -32,6 +49,7 @@ $kq = mysqli_query($conn,$sql);
       rel="stylesheet"
       href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css"
     />
+
 </head>
 
 <body>
@@ -48,8 +66,8 @@ $kq = mysqli_query($conn,$sql);
 
         <ul>
 
-            <li class="active">
-                <a href="#">
+            <li>
+                <a href="admin.php">
                     <i class="fas fa-home"></i>
                     Tổng quan
                 </a>
@@ -69,7 +87,7 @@ $kq = mysqli_query($conn,$sql);
                 </a>
             </li>
 
-            <li>
+            <li class="active">
                 <a href="nhanvien.php">
                     <i class="fas fa-users"></i>
                     Nhân viên
@@ -105,18 +123,20 @@ $kq = mysqli_query($conn,$sql);
             <form method="GET">
 
                 <div class="search-bar">
+
                     <input
                         type="text"
                         name="timkiem"
-                        placeholder="Tìm kiếm mã vé..."
+                        placeholder="Tìm nhân viên..."
+                        value="<?php echo $timkiem; ?>"
                     >
+
                 </div>
 
             </form>
 
             <div class="user-info">
-                Xin chào,
-                <strong>Admin</strong>
+                Quản lý nhân viên
             </div>
 
         </header>
@@ -128,48 +148,16 @@ $kq = mysqli_query($conn,$sql);
             <div class="card blue">
 
                 <div class="info">
-                    <h3>
-                        <?php echo $row_ve['tongve']; ?>
-                    </h3>
-
-                    <p>Vé đã bán</p>
-                </div>
-
-                <i class="fas fa-ticket"></i>
-
-            </div>
-
-            <div class="card green">
-
-                <div class="info">
 
                     <h3>
-                        <?php
-                        echo number_format($row_dt['doanhthu']);
-                        ?>đ
+                        <?php echo $row_tong['tongnv']; ?>
                     </h3>
 
-                    <p>Doanh thu</p>
+                    <p>Tổng nhân viên</p>
 
                 </div>
 
-                <i class="fas fa-dollar-sign"></i>
-
-            </div>
-
-            <div class="card orange">
-
-                <div class="info">
-
-                    <h3>
-                        <?php echo $row_khach['tongkhach']; ?>
-                    </h3>
-
-                    <p>Khách hàng</p>
-
-                </div>
-
-                <i class="fas fa-user-plus"></i>
+                <i class="fas fa-users"></i>
 
             </div>
 
@@ -181,7 +169,11 @@ $kq = mysqli_query($conn,$sql);
 
             <div class="table-title">
 
-                <h3>Lịch sử giao dịch vé</h3>
+                <h3>Danh sách nhân viên</h3>
+
+                <a href="themnhanvien.php" class="btn-them">
+                    + Thêm nhân viên
+                </a>
 
             </div>
 
@@ -193,13 +185,12 @@ $kq = mysqli_query($conn,$sql);
 
                         <tr>
 
-                            <th>Mã Vé</th>
-                            <th>Phim</th>
-                            <th>Suất Chiếu</th>
-                            <th>Ghế</th>
+                            <th>ID</th>
                             <th>Mã NV</th>
-                            <th>Trạng thái</th>
-                            <th>Tổng tiền</th>
+                            <th>Họ tên</th>
+                            <th>SĐT</th>
+                            <th>Email</th>
+                            <th>Chức vụ</th>
                             <th>Chức năng</th>
 
                         </tr>
@@ -216,61 +207,46 @@ $kq = mysqli_query($conn,$sql);
                     <tr>
 
                         <td>
-                            #<?php echo $row['mave']; ?>
+                            <?php echo $row['id']; ?>
                         </td>
 
                         <td>
-                            <?php echo $row['tenphim']; ?>
+                            <?php echo $row['manv']; ?>
                         </td>
 
                         <td>
-                            <?php echo $row['suatchieu']; ?>
+                            <?php echo $row['hoten']; ?>
                         </td>
 
                         <td>
-                            <?php echo $row['ghe']; ?>
+                            <?php echo $row['sdt']; ?>
                         </td>
 
                         <td>
+                            <?php echo $row['email']; ?>
+                        </td>
+
+                        <td>
+
                             <span class="staff-id">
-                                <?php echo $row['manv']; ?>
+                                <?php echo $row['chucvu']; ?>
                             </span>
-                        </td>
 
-                        <td>
-
-                            <?php
-                            if($row['trangthai'] == 'Đã in vé')
-                            {
-                                echo "<span class='status completed'>Đã in vé</span>";
-                            }
-                            else
-                            {
-                                echo "<span class='status pending'>Chờ thanh toán</span>";
-                            }
-                            ?>
-
-                        </td>
-
-                        <td>
-                            <?php
-                            echo number_format($row['tongtien']);
-                            ?>đ
                         </td>
 
                         <td>
 
                             <a
+                                href="suanhanvien.php?id=<?php echo $row['id']; ?>"
                                 class="btn-sua"
-                                href="suave.php?id=<?php echo $row['id']; ?>"
                             >
                                 Sửa
                             </a>
 
                             <a
+                                href="xoanhanvien.php?id=<?php echo $row['id']; ?>"
                                 class="btn-xoa"
-                                href="xoave.php?id=<?php echo $row['id']; ?>"
-                                onclick="return confirm('Bạn có chắc muốn xóa?')"
+                                onclick="return confirm('Bạn có chắc muốn xóa nhân viên?')"
                             >
                                 Xóa
                             </a>
