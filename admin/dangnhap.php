@@ -15,7 +15,7 @@ if (isset($_POST['dangnhap'])) {
     if (mysqli_num_rows($kq) > 0) {
         $_SESSION['admin'] = $tk;
 
-        header("location:index.php");
+        header("location:main.php");
     } else {
         $tb = "Sai tài khoản hoặc mật khẩu";
     }
