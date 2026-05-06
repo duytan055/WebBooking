@@ -1,30 +1,27 @@
 <?php
-include "ketnoi.php";
+include __DIR__ . '/../Connect/connecDB.php';
 
 /* ===== TÌM KIẾM ===== */
 
 $timkiem = "";
 
-if(isset($_GET['timkiem']))
-{
+if (isset($_GET['timkiem'])) {
     $timkiem = $_GET['timkiem'];
 
     $sql = "SELECT * FROM nhanvien
             WHERE hoten LIKE '%$timkiem%'
             OR manv LIKE '%$timkiem%'
             ORDER BY id DESC";
-}
-else
-{
+} else {
     $sql = "SELECT * FROM nhanvien ORDER BY id DESC";
 }
 
-$kq = mysqli_query($conn,$sql);
+$kq = mysqli_query($conn, $sql);
 
 /* ===== THỐNG KÊ ===== */
 
 $sql_tong = "SELECT COUNT(*) AS tongnv FROM nhanvien";
-$kq_tong = mysqli_query($conn,$sql_tong);
+$kq_tong = mysqli_query($conn, $sql_tong);
 $row_tong = mysqli_fetch_assoc($kq_tong);
 
 ?>
@@ -38,238 +35,233 @@ $row_tong = mysqli_fetch_assoc($kq_tong);
 
     <meta
         name="viewport"
-        content="width=device-width, initial-scale=1.0"
-    >
+        content="width=device-width, initial-scale=1.0">
 
     <title>Quản Lý Nhân Viên</title>
 
     <link rel="stylesheet" href="admin.css">
 
     <link
-      rel="stylesheet"
-      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css"
-    />
+        rel="stylesheet"
+        href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css" />
 
 </head>
 
 <body>
 
-<div class="container">
+    <div class="container">
 
-    <!-- SIDEBAR -->
+        <!-- SIDEBAR -->
 
-    <nav class="sidebar">
+        <nav class="sidebar">
 
-        <div class="logo">
-            <h2>ADMIN</h2>
-        </div>
+            <div class="logo">
+                <h2>ADMIN</h2>
+            </div>
 
-        <ul>
+            <ul>
 
-            <li>
-                <a href="admin.php">
-                    <i class="fas fa-home"></i>
-                    Tổng quan
-                </a>
-            </li>
+                <li>
+                    <a href="admin.php">
+                        <i class="fas fa-home"></i>
+                        Tổng quan
+                    </a>
+                </li>
 
-            <li>
-                <a href="phim.php">
-                    <i class="fas fa-film"></i>
-                    Phim
-                </a>
-            </li>
+                <li>
+                    <a href="phim.php">
+                        <i class="fas fa-film"></i>
+                        Phim
+                    </a>
+                </li>
 
-            <li>
-                <a href="khachhang.php">
-                    <i class="fas fa-user"></i>
-                    Khách hàng
-                </a>
-            </li>
+                <li>
+                    <a href="khachhang.php">
+                        <i class="fas fa-user"></i>
+                        Khách hàng
+                    </a>
+                </li>
 
-            <li class="active">
-                <a href="nhanvien.php">
+                <li class="active">
+                    <a href="nhanvien.php">
+                        <i class="fas fa-users"></i>
+                        Nhân viên
+                    </a>
+                </li>
+
+                <li>
+                    <a href="baocao.php">
+                        <i class="fas fa-chart-line"></i>
+                        Báo cáo
+                    </a>
+                </li>
+
+                <li>
+                    <a href="dangxuat.php">
+                        <i class="fas fa-right-from-bracket"></i>
+                        Đăng xuất
+                    </a>
+                </li>
+
+            </ul>
+
+        </nav>
+
+        <!-- MAIN -->
+
+        <main class="main-content">
+
+            <!-- SEARCH -->
+
+            <header class="box_search_bar">
+
+                <form method="GET">
+
+                    <div class="search-bar">
+
+                        <input
+                            type="text"
+                            name="timkiem"
+                            placeholder="Tìm nhân viên..."
+                            value="<?php echo $timkiem; ?>">
+
+                    </div>
+
+                </form>
+
+                <div class="user-info">
+                    Quản lý nhân viên
+                </div>
+
+            </header>
+
+            <!-- CARD -->
+
+            <section class="dashboard-cards">
+
+                <div class="card blue">
+
+                    <div class="info">
+
+                        <h3>
+                            <?php echo $row_tong['tongnv']; ?>
+                        </h3>
+
+                        <p>Tổng nhân viên</p>
+
+                    </div>
+
                     <i class="fas fa-users"></i>
-                    Nhân viên
-                </a>
-            </li>
-
-            <li>
-                <a href="baocao.php">
-                    <i class="fas fa-chart-line"></i>
-                    Báo cáo
-                </a>
-            </li>
-
-            <li>
-                <a href="dangxuat.php">
-                    <i class="fas fa-right-from-bracket"></i>
-                    Đăng xuất
-                </a>
-            </li>
-
-        </ul>
-
-    </nav>
-
-    <!-- MAIN -->
-
-    <main class="main-content">
-
-        <!-- SEARCH -->
-
-        <header class="box_search_bar">
-
-            <form method="GET">
-
-                <div class="search-bar">
-
-                    <input
-                        type="text"
-                        name="timkiem"
-                        placeholder="Tìm nhân viên..."
-                        value="<?php echo $timkiem; ?>"
-                    >
 
                 </div>
 
-            </form>
+            </section>
 
-            <div class="user-info">
-                Quản lý nhân viên
-            </div>
+            <!-- TABLE -->
 
-        </header>
+            <section class="data-section">
 
-        <!-- CARD -->
+                <div class="table-title">
 
-        <section class="dashboard-cards">
+                    <h3>Danh sách nhân viên</h3>
 
-            <div class="card blue">
-
-                <div class="info">
-
-                    <h3>
-                        <?php echo $row_tong['tongnv']; ?>
-                    </h3>
-
-                    <p>Tổng nhân viên</p>
+                    <a href="themnhanvien.php" class="btn-them">
+                        + Thêm nhân viên
+                    </a>
 
                 </div>
 
-                <i class="fas fa-users"></i>
+                <div class="table-wrapper">
 
-            </div>
+                    <table>
 
-        </section>
+                        <thead>
 
-        <!-- TABLE -->
+                            <tr>
 
-        <section class="data-section">
+                                <th>ID</th>
+                                <th>Mã NV</th>
+                                <th>Họ tên</th>
+                                <th>SĐT</th>
+                                <th>Email</th>
+                                <th>Chức vụ</th>
+                                <th>Chức năng</th>
 
-            <div class="table-title">
+                            </tr>
 
-                <h3>Danh sách nhân viên</h3>
+                        </thead>
 
-                <a href="themnhanvien.php" class="btn-them">
-                    + Thêm nhân viên
-                </a>
+                        <tbody>
 
-            </div>
+                            <?php
+                            while ($row = mysqli_fetch_assoc($kq)) {
+                            ?>
 
-            <div class="table-wrapper">
+                                <tr>
 
-                <table>
+                                    <td>
+                                        <?php echo $row['id']; ?>
+                                    </td>
 
-                    <thead>
+                                    <td>
+                                        <?php echo $row['manv']; ?>
+                                    </td>
 
-                        <tr>
+                                    <td>
+                                        <?php echo $row['hoten']; ?>
+                                    </td>
 
-                            <th>ID</th>
-                            <th>Mã NV</th>
-                            <th>Họ tên</th>
-                            <th>SĐT</th>
-                            <th>Email</th>
-                            <th>Chức vụ</th>
-                            <th>Chức năng</th>
+                                    <td>
+                                        <?php echo $row['sdt']; ?>
+                                    </td>
 
-                        </tr>
+                                    <td>
+                                        <?php echo $row['email']; ?>
+                                    </td>
 
-                    </thead>
+                                    <td>
 
-                    <tbody>
+                                        <span class="staff-id">
+                                            <?php echo $row['chucvu']; ?>
+                                        </span>
 
-                    <?php
-                    while($row = mysqli_fetch_assoc($kq))
-                    {
-                    ?>
+                                    </td>
 
-                    <tr>
+                                    <td>
 
-                        <td>
-                            <?php echo $row['id']; ?>
-                        </td>
+                                        <a
+                                            href="suanhanvien.php?id=<?php echo $row['id']; ?>"
+                                            class="btn-sua">
+                                            Sửa
+                                        </a>
 
-                        <td>
-                            <?php echo $row['manv']; ?>
-                        </td>
+                                        <a
+                                            href="xoanhanvien.php?id=<?php echo $row['id']; ?>"
+                                            class="btn-xoa"
+                                            onclick="return confirm('Bạn có chắc muốn xóa nhân viên?')">
+                                            Xóa
+                                        </a>
 
-                        <td>
-                            <?php echo $row['hoten']; ?>
-                        </td>
+                                    </td>
 
-                        <td>
-                            <?php echo $row['sdt']; ?>
-                        </td>
+                                </tr>
 
-                        <td>
-                            <?php echo $row['email']; ?>
-                        </td>
+                            <?php
+                            }
+                            ?>
 
-                        <td>
+                        </tbody>
 
-                            <span class="staff-id">
-                                <?php echo $row['chucvu']; ?>
-                            </span>
+                    </table>
 
-                        </td>
+                </div>
 
-                        <td>
+            </section>
 
-                            <a
-                                href="suanhanvien.php?id=<?php echo $row['id']; ?>"
-                                class="btn-sua"
-                            >
-                                Sửa
-                            </a>
+        </main>
 
-                            <a
-                                href="xoanhanvien.php?id=<?php echo $row['id']; ?>"
-                                class="btn-xoa"
-                                onclick="return confirm('Bạn có chắc muốn xóa nhân viên?')"
-                            >
-                                Xóa
-                            </a>
-
-                        </td>
-
-                    </tr>
-
-                    <?php
-                    }
-                    ?>
-
-                    </tbody>
-
-                </table>
-
-            </div>
-
-        </section>
-
-    </main>
-
-</div>
+    </div>
 
 </body>
+
 </html>

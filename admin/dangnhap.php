@@ -1,9 +1,8 @@
 <?php
 session_start();
-include "ketnoi.php";
+include __DIR__ . '/../Connect/connecDB.php';
 
-if(isset($_POST['dangnhap']))
-{
+if (isset($_POST['dangnhap'])) {
     $tk = $_POST['taikhoan'];
     $mk = $_POST['matkhau'];
 
@@ -11,17 +10,13 @@ if(isset($_POST['dangnhap']))
             WHERE taikhoan='$tk'
             AND matkhau='$mk'";
 
-    $kq = mysqli_query($conn,$sql);
+    $kq = mysqli_query($conn, $sql);
 
-    if(mysqli_num_rows($kq) > 0)
-    {
+    if (mysqli_num_rows($kq) > 0) {
         $_SESSION['admin'] = $tk;
 
         header("location:index.php");
-    }
-    else
-    {
+    } else {
         $tb = "Sai tài khoản hoặc mật khẩu";
     }
 }
-?>
