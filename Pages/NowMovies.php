@@ -1,5 +1,5 @@
 <?php
-include '../Connect/connecDB.php';
+include __DIR__ . '/../Connect/connecDB.php';
 $sql = "SELECT 
     p.*,
     GROUP_CONCAT(DISTINCT dd.ten_dao_dien SEPARATOR ', ') AS dao_dien,
@@ -233,7 +233,7 @@ $result = $conn->query($sql);
     }
 </style>
 <?php include '../Modun/Header.php' ?>
-<div class="NowMovies">
+<div class="NowMovies">s
     <h2>Phim đang chiếu <a href="SoonMovies.php">Phim sắp chiếu</a></h2>
 
     <div class="movie-box">

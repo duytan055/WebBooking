@@ -1,5 +1,5 @@
 <?php
-include '../Connect/connecDB.php';
+include __DIR__ . '/../Connect/connecDB.php';
 $sql = "SELECT 
     p.*,
     GROUP_CONCAT(DISTINCT dd.ten_dao_dien SEPARATOR ', ') AS dao_dien,

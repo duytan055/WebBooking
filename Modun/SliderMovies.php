@@ -1,5 +1,5 @@
 <?php
-include '../Connect/connecDB.php';
+include __DIR__ . '/../Connect/connecDB.php';
 $sql = "SELECT * FROM phim WHERE hinh_anh IS NOT NULL";
 $result = $conn->query($sql);
 
@@ -28,7 +28,7 @@ while ($row = $result->fetch_assoc()) {
     <img id="slide_img" />
 </div>
 <script>
-    let images = <?php echo json_encode($images); ?>;
+    let images = <?php echo json_encode($images); ?>; // dùng để lấy giá trị từ php vào js (in danh sách vào trong js luôn)
 
     let index = 0;
     const img = document.getElementById("slide_img");
@@ -37,8 +37,8 @@ while ($row = $result->fetch_assoc()) {
         img.src = images[0];
 
         setInterval(() => {
-            index = (index + 1) % images.length;
-            img.src = images[index];
-        }, 3000);
+            index = (index + 1) % images.length; //sau mỗi vòng lặp thì chia cho độ dài của biến mảng images
+            img.src = images[index]; //thay đổi ảnh 
+        }, 3000); // sau mỗi 3s
     }
 </script>

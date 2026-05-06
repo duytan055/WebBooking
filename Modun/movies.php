@@ -1,5 +1,5 @@
 <?php
-include '../Connect/connecDB.php';
+include __DIR__ . '/../Connect/connecDB.php';
 $sql = "SELECT * FROM phim";
 $result = $conn->query($sql);
 

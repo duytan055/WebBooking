@@ -128,7 +128,7 @@
                 <a href="../Pages/trangChu.php"><strong>Trang chủ</strong></a>
             </li>
             <li class="menu_items" id="item_phim" style="font-size: 18px">
-                <a href="phim.html"><strong>Phim</strong></a>
+                <a href="#"><strong>Phim</strong></a>
                 <div class="hover_container">
                     <a href="../Pages/NowMovies.php">Phim đang chiếu</a>
                     <a href="../Pages/SoonMovies.php">Phim sắp chiếu</a>
