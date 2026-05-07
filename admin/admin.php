@@ -2,26 +2,25 @@
 include __DIR__ . '/../Connect/connecDB.php';
 
 
-$sql_ve = "SELECT COUNT(*) AS tongve FROM vedat";
-$kq_ve = mysqli_query($conn, $sql_ve);
+$sql_ve = "SELECT COUNT(*) AS tongve FROM chitietve";
+$kq_ve = mysqli_query($conn,$sql_ve);
 $row_ve = mysqli_fetch_assoc($kq_ve);
 
-$sql_doanhthu = "SELECT SUM(tongtien) AS doanhthu FROM vedat";
-$kq_dt = mysqli_query($conn, $sql_doanhthu);
+$sql_doanhthu = "SELECT SUM(tong_tien) AS doanhthu FROM datve";
+$kq_dt = mysqli_query($conn,$sql_doanhthu);
 $row_dt = mysqli_fetch_assoc($kq_dt);
 
-$sql_khach = "SELECT COUNT(*) AS tongkhach FROM khachhang";
-$kq_khach = mysqli_query($conn, $sql_khach);
+$sql_khach = "SELECT COUNT(*) AS tongkhach FROM nguoidung";
+$kq_khach = mysqli_query($conn,$sql_khach);
 $row_khach = mysqli_fetch_assoc($kq_khach);
 
 
-$sql = "SELECT * FROM vedat ORDER BY id DESC";
-$kq = mysqli_query($conn, $sql);
+$sql = "SELECT d.id_datve, p.ten_phim, s.thoi_gian, g.ma_ghe, n.ten, d.trang_thai, d.tong_tien FROM datve d JOIN suatchieu s ON d.id_suat = s.id_suat JOIN phim p ON s.id_phim = p.id_phim JOIN chitietve c ON d.id_datve = c.id_datve JOIN ghe g ON c.id_ghe = g.id_ghe JOIN nhanvien n ON d.id_nhanvien = n.id_nhanvien ORDER BY d.id_datve DESC";
+$kq = mysqli_query($conn,$sql);
 ?>
 
 <!DOCTYPE html>
 <html lang="vi">
-
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -30,264 +29,271 @@ $kq = mysqli_query($conn, $sql);
     <link rel="stylesheet" href="admin.css">
 
     <link
-        rel="stylesheet"
-        href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css" />
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css"
+    />
 </head>
 
 <body>
 
-    <div class="container">
+<div class="container">
 
-        <!-- SIDEBAR -->
+    <!-- SIDEBAR -->
 
-        <nav class="sidebar">
+    <nav class="sidebar">
 
-            <div class="logo">
-                <h2>ADMIN</h2>
+        <div class="logo">
+            <h2>ADMIN</h2>
+        </div>
+
+        <ul>
+
+            <li class="active">
+                <a href="#">
+                    <i class="fas fa-home"></i>
+                    Tổng quan
+                </a>
+            </li>
+
+            <li>
+                <a href="phim.php">
+                    <i class="fas fa-film"></i>
+                    Phim
+                </a>
+            </li>
+
+            <li>
+                <a href="khachhang.php">
+                    <i class="fas fa-user"></i>
+                    Khách hàng
+                </a>
+            </li>
+
+            <li>
+                <a href="nhanvien.php">
+                    <i class="fas fa-users"></i>
+                    Nhân viên
+                </a>
+            </li>
+
+            <li>
+                <a href="baocao.php">
+                    <i class="fas fa-chart-line"></i>
+                    Báo cáo
+                </a>
+            </li>
+
+            <li>
+                <a href="dangxuat.php">
+                    <i class="fas fa-right-from-bracket"></i>
+                    Đăng xuất
+                </a>
+            </li>
+
+        </ul>
+
+    </nav>
+
+    <!-- MAIN -->
+
+    <main class="main-content">
+
+        <!-- SEARCH -->
+
+        <header class="box_search_bar">
+
+            <form method="GET">
+
+                <div class="search-bar">
+                    <input
+                        type="text"
+                        name="timkiem"
+                        placeholder="Tìm kiếm ID đặt vé..."
+                    >
+                </div>
+
+            </form>
+
+            <div class="user-info">
+                Xin chào,
+                <strong>Admin</strong>
             </div>
 
-            <ul>
+        </header>
 
-                <li class="active">
-                    <a href="#">
-                        <i class="fas fa-home"></i>
-                        Tổng quan
-                    </a>
-                </li>
+        <!-- CARD -->
 
-                <li>
-                    <a href="phim.php">
-                        <i class="fas fa-film"></i>
-                        Phim
-                    </a>
-                </li>
+        <section class="dashboard-cards">
 
-                <li>
-                    <a href="khachhang.php">
-                        <i class="fas fa-user"></i>
-                        Khách hàng
-                    </a>
-                </li>
+            <div class="card blue">
 
-                <li>
-                    <a href="nhanvien.php">
-                        <i class="fas fa-users"></i>
-                        Nhân viên
-                    </a>
-                </li>
+                <div class="info">
+                    <h3>
+                        <?php echo $row_ve['tongve']; ?>
+                    </h3>
 
-                <li>
-                    <a href="baocao.php">
-                        <i class="fas fa-chart-line"></i>
-                        Báo cáo
-                    </a>
-                </li>
-
-                <li>
-                    <a href="dangxuat.php">
-                        <i class="fas fa-right-from-bracket"></i>
-                        Đăng xuất
-                    </a>
-                </li>
-
-            </ul>
-
-        </nav>
-
-        <!-- MAIN -->
-
-        <main class="main-content">
-
-            <!-- SEARCH -->
-
-            <header class="box_search_bar">
-
-                <form method="GET">
-
-                    <div class="search-bar">
-                        <input
-                            type="text"
-                            name="timkiem"
-                            placeholder="Tìm kiếm mã vé...">
-                    </div>
-
-                </form>
-
-                <div class="user-info">
-                    Xin chào,
-                    <strong>Admin</strong>
+                    <p>Vé đã bán</p>
                 </div>
 
-            </header>
+                <i class="fas fa-ticket"></i>
 
-            <!-- CARD -->
+            </div>
 
-            <section class="dashboard-cards">
+            <div class="card green">
 
-                <div class="card blue">
+                <div class="info">
 
-                    <div class="info">
-                        <h3>
-                            <?php echo $row_ve['tongve']; ?>
-                        </h3>
+                    <h3>
+                        <?php
+                        echo number_format($row_dt['doanhthu']);
+                        ?>đ
+                    </h3>
 
-                        <p>Vé đã bán</p>
-                    </div>
-
-                    <i class="fas fa-ticket"></i>
+                    <p>Doanh thu</p>
 
                 </div>
 
-                <div class="card green">
+                <i class="fas fa-dollar-sign"></i>
 
-                    <div class="info">
+            </div>
 
-                        <h3>
-                            <?php
-                            echo number_format($row_dt['doanhthu']);
-                            ?>đ
-                        </h3>
+            <div class="card orange">
 
-                        <p>Doanh thu</p>
+                <div class="info">
 
-                    </div>
+                    <h3>
+                        <?php echo $row_khach['tongkhach']; ?>
+                    </h3>
 
-                    <i class="fas fa-dollar-sign"></i>
+                    <p>Khách hàng</p>
 
                 </div>
 
-                <div class="card orange">
+                <i class="fas fa-user-plus"></i>
 
-                    <div class="info">
+            </div>
 
-                        <h3>
-                            <?php echo $row_khach['tongkhach']; ?>
-                        </h3>
+        </section>
 
-                        <p>Khách hàng</p>
+        <!-- TABLE -->
 
-                    </div>
+        <section class="data-section">
 
-                    <i class="fas fa-user-plus"></i>
+            <div class="table-title">
 
-                </div>
+                <h3>Lịch sử giao dịch vé</h3>
 
-            </section>
+            </div>
 
-            <!-- TABLE -->
+            <div class="table-wrapper">
 
-            <section class="data-section">
+                <table>
 
-                <div class="table-title">
+                    <thead>
 
-                    <h3>Lịch sử giao dịch vé</h3>
+                        <tr>
 
-                </div>
+                            <th>ID Đặt Vé</th>
+                            <th>Phim</th>
+                            <th>Suất Chiếu</th>
+                            <th>Ghế</th>
+                            <th>Tên NV</th>
+                            <th>Trạng thái</th>
+                            <th>Tổng tiền</th>
+                            <th>Chức năng</th>
 
-                <div class="table-wrapper">
+                        </tr>
 
-                    <table>
+                    </thead>
 
-                        <thead>
+                    <tbody>
 
-                            <tr>
+                    <?php
+                    while($row = mysqli_fetch_assoc($kq))
+                    {
+                    ?>
 
-                                <th>Mã Vé</th>
-                                <th>Phim</th>
-                                <th>Suất Chiếu</th>
-                                <th>Ghế</th>
-                                <th>Mã NV</th>
-                                <th>Trạng thái</th>
-                                <th>Tổng tiền</th>
-                                <th>Chức năng</th>
+                    <tr>
 
-                            </tr>
+                        <td>
+                            #<?php echo $row['id_datve']; ?>
+                        </td>
 
-                        </thead>
+                        <td>
+                            <?php echo $row['ten_phim']; ?>
+                        </td>
 
-                        <tbody>
+                        <td>
+                            <?php echo $row['thoi_gian']; ?>
+                        </td>
+
+                        <td>
+                            <?php echo $row['ma_ghe']; ?>
+                        </td>
+
+                        <td>
+                            <span class="staff-id">
+                                <?php echo $row['ten']; ?>
+                            </span>
+                        </td>
+
+                        <td>
 
                             <?php
-                            while ($row = mysqli_fetch_assoc($kq)) {
-                            ?>
-
-                                <tr>
-
-                                    <td>
-                                        #<?php echo $row['mave']; ?>
-                                    </td>
-
-                                    <td>
-                                        <?php echo $row['tenphim']; ?>
-                                    </td>
-
-                                    <td>
-                                        <?php echo $row['suatchieu']; ?>
-                                    </td>
-
-                                    <td>
-                                        <?php echo $row['ghe']; ?>
-                                    </td>
-
-                                    <td>
-                                        <span class="staff-id">
-                                            <?php echo $row['manv']; ?>
-                                        </span>
-                                    </td>
-
-                                    <td>
-
-                                        <?php
-                                        if ($row['trangthai'] == 'Đã in vé') {
-                                            echo "<span class='status completed'>Đã in vé</span>";
-                                        } else {
-                                            echo "<span class='status pending'>Chờ thanh toán</span>";
-                                        }
-                                        ?>
-
-                                    </td>
-
-                                    <td>
-                                        <?php
-                                        echo number_format($row['tongtien']);
-                                        ?>đ
-                                    </td>
-
-                                    <td>
-
-                                        <a
-                                            class="btn-sua"
-                                            href="suave.php?id=<?php echo $row['id']; ?>">
-                                            Sửa
-                                        </a>
-
-                                        <a
-                                            class="btn-xoa"
-                                            href="xoave.php?id=<?php echo $row['id']; ?>"
-                                            onclick="return confirm('Bạn có chắc muốn xóa?')">
-                                            Xóa
-                                        </a>
-
-                                    </td>
-
-                                </tr>
-
-                            <?php
+                            if($row['trang_thai'] == 'Đã in vé')
+                            {
+                                echo "<span class='status completed'>Đã in vé</span>";
+                            }
+                            else
+                            {
+                                echo "<span class='status pending'>Chờ thanh toán</span>";
                             }
                             ?>
 
-                        </tbody>
+                        </td>
 
-                    </table>
+                        <td>
+                            <?php
+                            echo number_format($row['tong_tien']);
+                            ?>đ
+                        </td>
 
-                </div>
+                        <td>
 
-            </section>
+                            <a
+                                class="btn-sua"
+                                href="suave.php?id=<?php echo $row['id_datve']; ?>"
+                            >
+                                Sửa
+                            </a>
 
-        </main>
+                            <a
+                                class="btn-xoa"
+                                href="xoave.php?id=<?php echo $row['id_datve']; ?>"
+                                onclick="return confirm('Bạn có chắc muốn xóa?')"
+                            >
+                                Xóa
+                            </a>
 
-    </div>
+                        </td>
+
+                    </tr>
+
+                    <?php
+                    }
+                    ?>
+
+                    </tbody>
+
+                </table>
+
+            </div>
+
+        </section>
+
+    </main>
+
+</div>
 
 </body>
-
 </html>
