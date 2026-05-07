@@ -9,15 +9,6 @@ session_destroy();
 
 /* ===== CHUYỂN TRANG ===== */
 
-header("location:dangnhap.php");
+header("../LoginAndSign-up/login.php");
 
 exit();
-
-?>
-
-<li>
-    <a href="dangxuat.php">
-        <i class="fas fa-right-from-bracket"></i>
-        Đăng xuất
-    </a>
-</li>
