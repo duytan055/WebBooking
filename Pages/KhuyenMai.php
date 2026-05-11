@@ -3,42 +3,42 @@
 $promotions = [
     [
         "title" => "ƯU ĐÃI U22",
-        "image" => "https://starlight.vn/Areas/Admin/Content/Fileuploads/images/Poster2024/u22-fb.jpg",
+        "image" => "image1.jpg",
         "price" => "45.000đ / vé",
         "desc"  => "Đồng giá siêu hấp dẫn dành cho thành viên U22",
         "url"   => "u22.html"
     ],
     [
         "title" => "HAPPY FAMILY KIDS DAY",
-        "image" => "https://starlight.vn/Areas/Admin/Content/Fileuploads/images/Poster2024/u22-fb.jpg",
+        "image" => "image2.jpg",
         "price" => "79k - 119k",
         "desc"  => "Thứ 6 hàng tuần",
         "url"   => "#"
     ],
     [
         "title" => "THỨ 3 PHIM VIỆT",
-        "image" => "https://starlight.vn/Areas/Admin/Content/Fileuploads/images/Poster2024/u22-fb.jpg",
+        "image" => "image3.jpg",
         "price" => "45.000đ",
         "desc"  => "Đồng giá tất cả phim Việt",
         "url"   => "#"
     ],
     [
         "title" => "GIẢM GIÁ 8/3",
-        "image" => "https://starlight.vn/Areas/Admin/Content/Fileuploads/images/Poster2024/u22-fb.jpg",
+        "image" => "image4.jpg",
         "price" => "45.000đ / vé",
         "desc"  => "Ưu đãi đặc biệt ngày Quốc tế Phụ nữ",
         "url"   => "#"
     ],
     [
         "title" => "ƯU ĐÃI 4/3",
-        "image" => "https://starlight.vn/Areas/Admin/Content/Fileuploads/images/Poster2024/u22-fb.jpg",
+        "image" => "image5.jpg",
         "price" => "50.000đ",
         "desc"  => "Áp dụng cho tất cả suất chiếu",
         "url"   => "#"
     ],
     [
         "title" => "ƯU ĐÃI 7/6",
-        "image" => "https://starlight.vn/Areas/Admin/Content/Fileuploads/images/Poster2024/u22-fb.jpg",
+        "image" => "image6.jpg",
         "price" => "55.000đ",
         "desc"  => "Giảm giá đặc biệt cuối tuần",
         "url"   => "#"
