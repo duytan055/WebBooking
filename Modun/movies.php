@@ -131,19 +131,25 @@ $result = $conn->query($sql);
             overflow: hidden;
         }
 
-        .description_button button {
+        .btn_detail {
+            display: inline-block;
             width: 100px;
             height: 30px;
-            background-color: white;
+            line-height: 30px;
+            text-align: center;
+
+            background: white;
             color: black;
+
             border-radius: 5px;
-            border: none;
+            text-decoration: none;
+
+            transition: 0.3s;
         }
 
-        .description_button button:hover {
-            background-color: red;
+        .btn_detail:hover {
+            background: red;
             color: white;
-            cursor: pointer;
         }
     </style>
 </head>
@@ -164,8 +170,12 @@ $result = $conn->query($sql);
                         <a href=""><i class="fa-solid fa-circle-play" style="font-size: 60px; color: white;"></i></a>
                         <div class="description_button">
                             <h1><?= $row['ten_phim'] ?></h1>
-                            <button> <strong>Xem thêm</strong> </button>
-                            <button> <strong>Đặt vé</strong> </button>
+                            <a href="../Modun/SeeMoreMovies.php?id=<?= $row['id_phim'] ?>" class="btn_detail">
+                                <strong>Xem thêm</strong>
+                            </a>
+                            <a href="Datve.php?id=<?= $row['id_phim'] ?>" class="btn_detail">
+                                <strong>Đặt vé</strong>
+                            </a>
                         </div>
                     </div>
                 </li>

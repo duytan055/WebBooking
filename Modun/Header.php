@@ -107,7 +107,7 @@
     }
 </style>
 
-<div class="box1">
+<nav class="box1">
     <div class="box1_icon">
         <a href="https://www.facebook.com/duytan.801/" target="_blank">
             <i class="fa-brands fa-square-facebook" style="color: black"></i>
@@ -154,4 +154,4 @@
             <a href="../LoginAndSign-up/Sign-up.php"> Đăng Ký</a>
         </div>
     </div>
-</div>
+</nav>

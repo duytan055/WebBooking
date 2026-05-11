@@ -1,0 +1,7 @@
+﻿phongchieu,,,
+id_phong,ma_phong,ten_phong,loai_phong
+1,P001,cinema 1,Thường
+2,P002,cinema 2,Thường
+3,P003,cinema 3,Thường
+4,IMAX01,cinema 4 - IMAX,IMAX
+5,IMAX02,cinema 5 - IMAX,IMAX

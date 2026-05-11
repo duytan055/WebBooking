@@ -1,0 +1,160 @@
+﻿CREATE DATABASE demosqlWeb;
+USE demosqlWeb;
+
+-- admin
+CREATE TABLE adminn (
+    id_admin INT AUTO_INCREMENT PRIMARY KEY,
+    ten_dang_nhap VARCHAR(100),
+    mat_khau VARCHAR(100)
+);
+
+-- nhanvien
+CREATE TABLE nhanvien (
+    id_nhanvien INT AUTO_INCREMENT PRIMARY KEY,
+    ten VARCHAR(100),
+    mat_khau VARCHAR(100),
+    sdt VARCHAR(20)
+);
+
+-- nguoidung
+CREATE TABLE nguoidung (
+    id_user INT AUTO_INCREMENT PRIMARY KEY,
+    ten VARCHAR(100),
+    email VARCHAR(100) UNIQUE,
+    cccd VARCHAR(20),
+    sdt VARCHAR(20),
+    ngay_sinh DATETIME,
+    mat_khau VARCHAR(100)
+);
+
+-- dotuoi
+CREATE TABLE dotuoi (
+    id_do_tuoi INT AUTO_INCREMENT PRIMARY KEY,
+    do_tuoi VARCHAR(10),
+    mo_ta VARCHAR(50)
+);
+
+-- daodien
+CREATE TABLE daodien (
+    id_daodien INT AUTO_INCREMENT PRIMARY KEY,
+    ten_dao_dien VARCHAR(150)
+);
+
+-- dienvien
+CREATE TABLE dienvien (
+    id_dienvien INT AUTO_INCREMENT PRIMARY KEY,
+    ten_dien_vien VARCHAR(150)
+);
+
+-- phim
+CREATE TABLE phim (
+    id_phim INT AUTO_INCREMENT PRIMARY KEY,
+    ten_phim VARCHAR(200),
+	the_loai VARCHAR(100),
+    thoi_luong INT,
+    ngay_khoi_chieu DATE,
+    poster VARCHAR(255),
+	hinh_anh VARCHAR(200),
+	trailer_phim VARCHAR(200),
+    mo_ta TEXT,
+    id_do_tuoi INT,
+	trang_thai VARCHAR(50),
+    FOREIGN KEY (id_do_tuoi) REFERENCES dotuoi(id_do_tuoi)
+);
+
+-- phim_dienvien
+CREATE TABLE phim_dienvien (
+    id_phim INT,
+    id_dienvien INT,
+    PRIMARY KEY (id_phim, id_dienvien),
+    FOREIGN KEY (id_phim) REFERENCES phim(id_phim),
+    FOREIGN KEY (id_dienvien) REFERENCES dienvien(id_dienvien)
+);
+
+-- phim_daodien
+CREATE TABLE phim_daodien (
+    id_phim INT,
+    id_daodien INT,
+    PRIMARY KEY (id_phim, id_daodien),
+    FOREIGN KEY (id_phim) REFERENCES phim(id_phim),
+    FOREIGN KEY (id_daodien) REFERENCES daodien(id_daodien)
+);
+
+-- phongchieu
+CREATE TABLE phongchieu (
+    id_phong INT AUTO_INCREMENT PRIMARY KEY,
+    ma_phong VARCHAR(50),
+    ten_phong VARCHAR(50),
+    loai_phong VARCHAR(50)
+);
+
+-- suatchieu
+CREATE TABLE suatchieu (
+    id_suat INT AUTO_INCREMENT PRIMARY KEY,
+    id_phim INT,
+    id_phong INT,
+    thoi_gian DATETIME,
+    FOREIGN KEY (id_phim) REFERENCES phim(id_phim),
+    FOREIGN KEY (id_phong) REFERENCES phongchieu(id_phong)
+);
+
+-- ghe
+CREATE TABLE ghe (
+    id_ghe INT AUTO_INCREMENT PRIMARY KEY,
+    ma_ghe VARCHAR(10),
+    id_phong INT,
+    loai_ghe VARCHAR(20),
+    FOREIGN KEY (id_phong) REFERENCES phongchieu(id_phong)
+);
+
+-- khuyenmai
+CREATE TABLE khuyenmai (
+    id_km INT AUTO_INCREMENT PRIMARY KEY,
+    ma_km VARCHAR(20) UNIQUE,
+    ten_khuyenmai VARCHAR(100),
+	anh_khuyen_mai VARCHAR(200),
+    giam_gia INT,
+    ngay_bat_dau DATETIME,
+    ngay_ket_thuc DATETIME
+);
+
+-- datve
+CREATE TABLE datve (
+    id_datve INT AUTO_INCREMENT PRIMARY KEY,
+    id_nhanvien INT,
+    id_user INT,
+    id_suat INT,
+    id_km INT,
+    thoi_gian_dat DATETIME DEFAULT CURRENT_TIMESTAMP,
+    tong_tien DECIMAL(10,2),
+    phuong_thuc_thanh_toan VARCHAR(100),
+    ma_giao_dich VARCHAR(50),
+    ten_nguoi_dat VARCHAR(100),
+    so_dien_thoai VARCHAR(20),
+    giam_gia INT,
+    trang_thai VARCHAR(100),
+    created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+
+    CHECK (tong_tien >= 0),
+
+    FOREIGN KEY (id_user) REFERENCES nguoidung(id_user),
+    FOREIGN KEY (id_suat) REFERENCES suatchieu(id_suat),
+    FOREIGN KEY (id_km) REFERENCES khuyenmai(id_km),
+    FOREIGN KEY (id_nhanvien) REFERENCES nhanvien(id_nhanvien)
+);
+
+-- chitietve
+CREATE TABLE chitietve (
+    id_ve INT AUTO_INCREMENT PRIMARY KEY,
+    id_datve INT,
+    id_suat INT,
+    id_ghe INT,
+    gia_ve DECIMAL(10,2),
+    trang_thai VARCHAR(100),
+
+    UNIQUE (id_suat, id_ghe),
+
+    FOREIGN KEY (id_datve) REFERENCES datve(id_datve),
+    FOREIGN KEY (id_suat) REFERENCES suatchieu(id_suat),
+    FOREIGN KEY (id_ghe) REFERENCES ghe(id_ghe)
+);
