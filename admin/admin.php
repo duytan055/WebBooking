@@ -2,20 +2,20 @@
 include __DIR__ . '/../Connect/connecDB.php';
 
 
-$sql_ve = "SELECT COUNT(*) AS tongve FROM vedat";
+$sql_ve = "SELECT COUNT(*) AS tongve FROM chitietve";
 $kq_ve = mysqli_query($conn, $sql_ve);
 $row_ve = mysqli_fetch_assoc($kq_ve);
 
-$sql_doanhthu = "SELECT SUM(tongtien) AS doanhthu FROM vedat";
+$sql_doanhthu = "SELECT SUM(tong_tien) AS doanhthu FROM datve";
 $kq_dt = mysqli_query($conn, $sql_doanhthu);
 $row_dt = mysqli_fetch_assoc($kq_dt);
 
-$sql_khach = "SELECT COUNT(*) AS tongkhach FROM khachhang";
+$sql_khach = "SELECT COUNT(*) AS tongkhach FROM nguoidung";
 $kq_khach = mysqli_query($conn, $sql_khach);
 $row_khach = mysqli_fetch_assoc($kq_khach);
 
 
-$sql = "SELECT * FROM vedat ORDER BY id DESC";
+$sql = "SELECT d.id_datve, p.ten_phim, s.thoi_gian, g.ma_ghe, n.ten, d.trang_thai, d.tong_tien FROM datve d JOIN suatchieu s ON d.id_suat = s.id_suat JOIN phim p ON s.id_phim = p.id_phim JOIN chitietve c ON d.id_datve = c.id_datve JOIN ghe g ON c.id_ghe = g.id_ghe JOIN nhanvien n ON d.id_nhanvien = n.id_nhanvien ORDER BY d.id_datve DESC";
 $kq = mysqli_query($conn, $sql);
 ?>
 
@@ -84,7 +84,7 @@ $kq = mysqli_query($conn, $sql);
                 </li>
 
                 <li>
-                    <a href="dangxuat.php">
+                    <a href="../LoginAndSign-up/login.php">
                         <i class="fas fa-right-from-bracket"></i>
                         Đăng xuất
                     </a>
@@ -108,7 +108,7 @@ $kq = mysqli_query($conn, $sql);
                         <input
                             type="text"
                             name="timkiem"
-                            placeholder="Tìm kiếm mã vé...">
+                            placeholder="Tìm kiếm ID đặt vé...">
                     </div>
 
                 </form>
@@ -192,11 +192,11 @@ $kq = mysqli_query($conn, $sql);
 
                             <tr>
 
-                                <th>Mã Vé</th>
+                                <th>ID Đặt Vé</th>
                                 <th>Phim</th>
                                 <th>Suất Chiếu</th>
                                 <th>Ghế</th>
-                                <th>Mã NV</th>
+                                <th>Tên NV</th>
                                 <th>Trạng thái</th>
                                 <th>Tổng tiền</th>
                                 <th>Chức năng</th>
@@ -214,31 +214,31 @@ $kq = mysqli_query($conn, $sql);
                                 <tr>
 
                                     <td>
-                                        #<?php echo $row['mave']; ?>
+                                        #<?php echo $row['id_datve']; ?>
                                     </td>
 
                                     <td>
-                                        <?php echo $row['tenphim']; ?>
+                                        <?php echo $row['ten_phim']; ?>
                                     </td>
 
                                     <td>
-                                        <?php echo $row['suatchieu']; ?>
+                                        <?php echo $row['thoi_gian']; ?>
                                     </td>
 
                                     <td>
-                                        <?php echo $row['ghe']; ?>
+                                        <?php echo $row['ma_ghe']; ?>
                                     </td>
 
                                     <td>
                                         <span class="staff-id">
-                                            <?php echo $row['manv']; ?>
+                                            <?php echo $row['ten']; ?>
                                         </span>
                                     </td>
 
                                     <td>
 
                                         <?php
-                                        if ($row['trangthai'] == 'Đã in vé') {
+                                        if ($row['trang_thai'] == 'Đã in vé') {
                                             echo "<span class='status completed'>Đã in vé</span>";
                                         } else {
                                             echo "<span class='status pending'>Chờ thanh toán</span>";
@@ -249,7 +249,7 @@ $kq = mysqli_query($conn, $sql);
 
                                     <td>
                                         <?php
-                                        echo number_format($row['tongtien']);
+                                        echo number_format($row['tong_tien']);
                                         ?>đ
                                     </td>
 
@@ -257,13 +257,13 @@ $kq = mysqli_query($conn, $sql);
 
                                         <a
                                             class="btn-sua"
-                                            href="suave.php?id=<?php echo $row['id']; ?>">
+                                            href="suave.php?id=<?php echo $row['id_datve']; ?>">
                                             Sửa
                                         </a>
 
                                         <a
                                             class="btn-xoa"
-                                            href="xoave.php?id=<?php echo $row['id']; ?>"
+                                            href="xoave.php?id=<?php echo $row['id_datve']; ?>"
                                             onclick="return confirm('Bạn có chắc muốn xóa?')">
                                             Xóa
                                         </a>
