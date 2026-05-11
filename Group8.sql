@@ -1,4 +1,5 @@
 ﻿CREATE DATABASE demosqlWeb;
+
 USE demosqlWeb;
 
 -- admin
@@ -50,16 +51,16 @@ CREATE TABLE dienvien (
 CREATE TABLE phim (
     id_phim INT AUTO_INCREMENT PRIMARY KEY,
     ten_phim VARCHAR(200),
-	the_loai VARCHAR(100),
+    the_loai VARCHAR(100),
     thoi_luong INT,
     ngay_khoi_chieu DATE,
     poster VARCHAR(255),
-	hinh_anh VARCHAR(200),
-	trailer_phim VARCHAR(200),
+    hinh_anh VARCHAR(200),
+    trailer_phim VARCHAR(200),
     mo_ta TEXT,
     id_do_tuoi INT,
-	trang_thai VARCHAR(50),
-    FOREIGN KEY (id_do_tuoi) REFERENCES dotuoi(id_do_tuoi)
+    trang_thai VARCHAR(50),
+    FOREIGN KEY (id_do_tuoi) REFERENCES dotuoi (id_do_tuoi)
 );
 
 -- phim_dienvien
@@ -67,8 +68,8 @@ CREATE TABLE phim_dienvien (
     id_phim INT,
     id_dienvien INT,
     PRIMARY KEY (id_phim, id_dienvien),
-    FOREIGN KEY (id_phim) REFERENCES phim(id_phim),
-    FOREIGN KEY (id_dienvien) REFERENCES dienvien(id_dienvien)
+    FOREIGN KEY (id_phim) REFERENCES phim (id_phim),
+    FOREIGN KEY (id_dienvien) REFERENCES dienvien (id_dienvien)
 );
 
 -- phim_daodien
@@ -76,8 +77,8 @@ CREATE TABLE phim_daodien (
     id_phim INT,
     id_daodien INT,
     PRIMARY KEY (id_phim, id_daodien),
-    FOREIGN KEY (id_phim) REFERENCES phim(id_phim),
-    FOREIGN KEY (id_daodien) REFERENCES daodien(id_daodien)
+    FOREIGN KEY (id_phim) REFERENCES phim (id_phim),
+    FOREIGN KEY (id_daodien) REFERENCES daodien (id_daodien)
 );
 
 -- phongchieu
@@ -93,9 +94,10 @@ CREATE TABLE suatchieu (
     id_suat INT AUTO_INCREMENT PRIMARY KEY,
     id_phim INT,
     id_phong INT,
-    thoi_gian DATETIME,
-    FOREIGN KEY (id_phim) REFERENCES phim(id_phim),
-    FOREIGN KEY (id_phong) REFERENCES phongchieu(id_phong)
+    date_chieu DATE,
+    thoi_gian TIME,
+    FOREIGN KEY (id_phim) REFERENCES phim (id_phim),
+    FOREIGN KEY (id_phong) REFERENCES phongchieu (id_phong)
 );
 
 -- ghe
@@ -104,7 +106,7 @@ CREATE TABLE ghe (
     ma_ghe VARCHAR(10),
     id_phong INT,
     loai_ghe VARCHAR(20),
-    FOREIGN KEY (id_phong) REFERENCES phongchieu(id_phong)
+    FOREIGN KEY (id_phong) REFERENCES phongchieu (id_phong)
 );
 
 -- khuyenmai
@@ -112,7 +114,7 @@ CREATE TABLE khuyenmai (
     id_km INT AUTO_INCREMENT PRIMARY KEY,
     ma_km VARCHAR(20) UNIQUE,
     ten_khuyenmai VARCHAR(100),
-	anh_khuyen_mai VARCHAR(200),
+    anh_khuyen_mai VARCHAR(200),
     giam_gia INT,
     ngay_bat_dau DATETIME,
     ngay_ket_thuc DATETIME
@@ -126,7 +128,7 @@ CREATE TABLE datve (
     id_suat INT,
     id_km INT,
     thoi_gian_dat DATETIME DEFAULT CURRENT_TIMESTAMP,
-    tong_tien DECIMAL(10,2),
+    tong_tien DECIMAL(10, 2),
     phuong_thuc_thanh_toan VARCHAR(100),
     ma_giao_dich VARCHAR(50),
     ten_nguoi_dat VARCHAR(100),
@@ -134,13 +136,11 @@ CREATE TABLE datve (
     giam_gia INT,
     trang_thai VARCHAR(100),
     created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
-
     CHECK (tong_tien >= 0),
-
-    FOREIGN KEY (id_user) REFERENCES nguoidung(id_user),
-    FOREIGN KEY (id_suat) REFERENCES suatchieu(id_suat),
-    FOREIGN KEY (id_km) REFERENCES khuyenmai(id_km),
-    FOREIGN KEY (id_nhanvien) REFERENCES nhanvien(id_nhanvien)
+    FOREIGN KEY (id_user) REFERENCES nguoidung (id_user),
+    FOREIGN KEY (id_suat) REFERENCES suatchieu (id_suat),
+    FOREIGN KEY (id_km) REFERENCES khuyenmai (id_km),
+    FOREIGN KEY (id_nhanvien) REFERENCES nhanvien (id_nhanvien)
 );
 
 -- chitietve
@@ -149,12 +149,10 @@ CREATE TABLE chitietve (
     id_datve INT,
     id_suat INT,
     id_ghe INT,
-    gia_ve DECIMAL(10,2),
+    gia_ve DECIMAL(10, 2),
     trang_thai VARCHAR(100),
-
     UNIQUE (id_suat, id_ghe),
-
-    FOREIGN KEY (id_datve) REFERENCES datve(id_datve),
-    FOREIGN KEY (id_suat) REFERENCES suatchieu(id_suat),
-    FOREIGN KEY (id_ghe) REFERENCES ghe(id_ghe)
+    FOREIGN KEY (id_datve) REFERENCES datve (id_datve),
+    FOREIGN KEY (id_suat) REFERENCES suatchieu (id_suat),
+    FOREIGN KEY (id_ghe) REFERENCES ghe (id_ghe)
 );
