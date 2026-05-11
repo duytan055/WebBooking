@@ -138,7 +138,7 @@
                 <a href="trangChitietPhim.html"><strong>Góc điện ảnh</strong></a>
             </li>
             <li class="menu_items" style="font-size: 18px">
-                <a href="trangKhuyenmai.html"><strong>Khuyến mãi</strong></a>
+                <a href="../Pages/KhuyenMai.php"><strong>Khuyến mãi</strong></a>
             </li>
             <li class="menu_items" style="font-size: 18px">
                 <a href="../Pages/trangLienHe.php"><strong>Liên hệ</strong></a>

@@ -1,79 +1,125 @@
 <?php
-$promotions = [
-    [
-        "title" => "ƯU ĐÃI U22",
-        "image" => "https://starlight.vn/Areas/Admin/Content/Fileuploads/images/Poster2024/u22-fb.jpg",
-        "price" => "45.000đ / vé",
-        "desc"  => "Đồng giá siêu hấp dẫn dành cho thành viên U22",
-        "url"   => "u22.html"
-    ],
-    [
-        "title" => "HAPPY FAMILY KIDS DAY",
-        "image" => "https://starlight.vn/Areas/Admin/Content/Fileuploads/images/Poster2024/u22-fb.jpg",
-        "price" => "79k - 119k",
-        "desc"  => "Thứ 6 hàng tuần",
-        "url"   => "#"
-    ],
-    [
-        "title" => "THỨ 3 PHIM VIỆT",
-        "image" => "https://starlight.vn/Areas/Admin/Content/Fileuploads/images/Poster2024/u22-fb.jpg",
-        "price" => "45.000đ",
-        "desc"  => "Đồng giá tất cả phim Việt",
-        "url"   => "#"
-    ],
-    [
-        "title" => "GIẢM GIÁ 8/3",
-        "image" => "https://starlight.vn/Areas/Admin/Content/Fileuploads/images/Poster2024/u22-fb.jpg",
-        "price" => "45.000đ / vé",
-        "desc"  => "Ưu đãi đặc biệt ngày Quốc tế Phụ nữ",
-        "url"   => "#"
-    ],
-    [
-        "title" => "ƯU ĐÃI 4/3",
-        "image" => "https://starlight.vn/Areas/Admin/Content/Fileuploads/images/Poster2024/u22-fb.jpg",
-        "price" => "50.000đ",
-        "desc"  => "Áp dụng cho tất cả suất chiếu",
-        "url"   => "#"
-    ],
-    [
-        "title" => "ƯU ĐÃI 7/6",
-        "image" => "https://starlight.vn/Areas/Admin/Content/Fileuploads/images/Poster2024/u22-fb.jpg",
-        "price" => "55.000đ",
-        "desc"  => "Giảm giá đặc biệt cuối tuần",
-        "url"   => "#"
-    ]
-];
+include __DIR__ . '/../Connect/connecDB.php';
+$sql = "SELECT * FROM khuyenmai";
+$result = $conn->query($sql);
 ?>
+<style>
+    body {
+        margin: 0;
+        font-family: Arial, sans-serif;
+        background-color: rgba(232, 226, 226, 0.32);
+    }
 
-<!DOCTYPE html>
-<html lang="vi">
-<head>
-    <meta charset="UTF-8">
-    <title>Khuyến mãi - Cinema</title>
-    <link rel="stylesheet" href="style4.css"> 
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
-</head>
-<body>
+    .header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 15px 80px;
+        background: white;
+        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    }
 
-<header class="header">
-    <div class="social">
-        <i class="fa-brands fa-facebook"></i>
-        <i class="fa-brands fa-linkedin"></i>
-        <i class="fa-brands fa-x-twitter"></i>
-    </div>
+    .social {
+        display: flex;
+        gap: 20px;
+        font-size: 22px;
+    }
 
-    <nav class="menu">
-        <a href="index.php">Trang chủ</a> <a href="#">Phim</a>
-        <a href="#">Góc điện ảnh</a>
-        <a href="khuyenmai.php" class="active">Khuyến mãi</a>
-        <a href="#">Liên hệ</a>
-    </nav>
+    .social i {
+        cursor: pointer;
+        color: #333;
+    }
 
-    <div class="auth">
-        <button class="login">Đăng Nhập</button>
-        <button class="register">Đăng Ký</button>
-    </div>
-</header>
+    .menu a {
+        margin: 0 20px;
+        text-decoration: none;
+        color: black;
+        font-weight: 500;
+        font-size: 18px;
+    }
+
+    .menu a.active {
+        color: #ff6600;
+    }
+
+    .auth button {
+        padding: 8px 16px;
+        margin-left: 10px;
+        border: none;
+        border-radius: 6px;
+        cursor: pointer;
+        transition: 0.3s;
+    }
+
+    .login,
+    .register {
+        background: #333;
+        color: white;
+    }
+
+    .login:hover,
+    .register:hover {
+        background: #555;
+    }
+
+    .title {
+        padding: 40px 100px 20px;
+        font-size: 22px;
+    }
+
+    .promo-container {
+        width: 90%;
+        margin: 20px auto;
+    }
+
+    .promo-list {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+        /* Tự động xuống dòng khi màn hình nhỏ */
+        gap: 25px;
+        list-style: none;
+        padding: 0;
+    }
+
+    .promo-card {
+        background: white;
+        border-radius: 10px;
+        overflow: hidden;
+        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        text-align: center;
+        transition: 0.3s;
+        height: 100%;
+    }
+
+    .promo-card:hover {
+        transform: translateY(-8px);
+    }
+
+    .promo-card img {
+        width: 100%;
+        height: 300px;
+        object-fit: cover;
+    }
+
+    .promo-card h3 {
+        margin: 15px 10px;
+        font-size: 1.2rem;
+    }
+
+    .price {
+        color: #ff6600;
+        font-size: 22px;
+        font-weight: bold;
+        margin-bottom: 10px;
+    }
+
+    .promo-card p:last-child {
+        padding: 0 20px 20px;
+        color: #555;
+        font-size: 14px;
+    }
+</style>
+<?php include '../Modun/header.php'; ?>
 
 <section class="title">
     <h2>Khuyến mãi</h2>
@@ -81,18 +127,17 @@ $promotions = [
 
 <section class="promo-container">
     <ul class="promo-list">
-        <?php foreach ($promotions as $item): ?>
+        <?php while ($row = $result->fetch_assoc()) { ?>
             <li class="promo-card">
-                <a href="<?php echo $item['url']; ?>" style="text-decoration: none; color: inherit; display: block;">
-                    <img src="<?php echo $item['image']; ?>" alt="<?php echo $item['title']; ?>">
-                    <h3><?php echo $item['title']; ?></h3>
-                    <p class="price"><?php echo $item['price']; ?></p>
-                    <p><?php echo $item['desc']; ?></p>
+                <a href="<?php echo $row['url']; ?>" style="text-decoration: none; color: inherit; display: block;">
+                    <img src="../Anh_Khuyen_Mai/<?= $row['anh_khuyen_mai'] ?>">
+                    <h3><?php echo $row['title']; ?></h3>
+                    <p class="price"><?php echo $row['price']; ?></p>
+                    <p><?php echo $row['desc']; ?></p>
                 </a>
             </li>
-        <?php endforeach; ?>
+        <?php } ?>
     </ul>
 </section>
 
-</body>
-</html>
+<?php include '../Modun/footer.php'; ?>
