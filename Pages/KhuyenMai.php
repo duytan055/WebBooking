@@ -129,12 +129,16 @@ $result = $conn->query($sql);
     <ul class="promo-list">
         <?php while ($row = $result->fetch_assoc()) { ?>
             <li class="promo-card">
-                <a href="<?= $row['url']; ?>" style="text-decoration: none; color: inherit; display: block;">
-                <img src="../Anh_Khuyen_Mai/<?= $row['anh_khuyen_mai']; ?>">
-                <h3><?= $row['title']; ?></h3>
-                <p class="price"><?= $row['price']; ?></p>
-                <p><?= $row['desc']; ?></p>
-                </a>
+                <a href="#" style="text-decoration: none; color: inherit; display: block;">
+
+    <img src="../Anh_Khuyen_Mai/<?= $row['anh_khuyen_mai']; ?>">
+    <h3><?= $row['ten_khuyenmai']; ?></h3>
+    <p class="price"><?= $row['giam_gia']; ?></p>
+    <p>
+        <?= $row['ngay_bat_dau']; ?> -
+        <?= $row['ngay_ket_thuc']; ?>
+    </p>
+</a>
             </li>
         <?php } ?>
     </ul>
