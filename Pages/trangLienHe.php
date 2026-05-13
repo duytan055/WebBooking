@@ -101,7 +101,7 @@
         <div class="info-section">
             <h2><span class="orange-dash">—</span> THÔNG TIN</h2>
             <div class="info-details">
-                <p><strong>Hotline:</strong> 19001011</p>
+                <p><strong>Hotline:</strong> 0779437588</p>
                 <p><strong>E-Mail:</strong> tranvoxuanvien3105@gmail.com</p>
             </div>
         </div>
