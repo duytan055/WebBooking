@@ -110,8 +110,16 @@
             <h2><span class="orange-dash">—</span> GỬI LIÊN HỆ</h2>
             <form id="contact-form">
                 <input type="text" name="name" placeholder="Họ tên" required>
-                <input type="email" name="email" placeholder="your-email@gmail.com" required>
-                <input type="tel" name="phone" placeholder="Số điện thoại" required>
+                <input type="email" name="email" 
+                        placeholder="your-email@gmail.com"
+                        pattern=".+@gmail\.com$"
+                        title="Vui lòng sử dụng địa chỉ @gmail.com"
+                        required>
+                <input type="tel" name="phone"
+                        placeholder="Số điện thoại"
+                        pattern="[0-9]{10}"
+                        title="Vui lòng nhập số điện thoại gồm 10 chữ số"
+                        required>
                 <textarea name="message" placeholder="Nội dung cần liên hệ..." rows="8" required></textarea>
 
                 <div class="btn-container">
@@ -132,11 +140,22 @@
 
     form.addEventListener("submit", e => {
         e.preventDefault();
+        const email = form.email.value.trim();
+        const phone = form.phone.value.trim();
+        if (!email.endsWith("@gmail.com")) {
+            statusMsg.style.color = "#dc3545";
+            statusMsg.innerHTML = "❌ Email phải có định dạng @gmail.com";
+            return;
+        }
+        if (phone.length !== 10 || isNaN(phone)) {
+            statusMsg.style.color = "#dc3545";
+            statusMsg.innerHTML = `❌ Số điện thoại phải có đúng 10 chữ số (Bạn đang nhập ${phone.length} số).`;
+            return;
+        }
         submitBtn.innerHTML = "Đang gửi...";
         submitBtn.disabled = true;
         statusMsg.innerHTML = "Đang xử lý, vui lòng đợi...";
         statusMsg.style.color = "#444";
-
         fetch(scriptURL, {
                 method: 'POST',
                 body: new FormData(form)
