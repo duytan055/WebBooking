@@ -10,6 +10,19 @@ $result = $conn->query($sql);
         background-color: rgba(232, 226, 226, 0.32);
     }
 
+    .title {
+        text-align: center;
+    }
+
+    .title::after {
+        content: "";
+        width: 100px;
+        height: 3px;
+        background: red;
+        display: block;
+        margin: 10px auto 0;
+    }
+
     .header {
         display: flex;
         justify-content: space-between;
@@ -97,7 +110,7 @@ $result = $conn->query($sql);
 
     .promo-card img {
         width: 100%;
-        height: 300px;
+        height: 500px;
         object-fit: cover;
     }
 
@@ -132,12 +145,11 @@ $result = $conn->query($sql);
                 <a href="#" style="text-decoration: none; color: inherit; display: block;">
                     <img src="../Anh_Khuyen_Mai/<?= $row['anh_khuyen_mai']; ?>">
                     <h3><?= $row['ten_khuyenmai']; ?></h3>
-                    <p class="price"><?= $row['giam_gia']; ?></p>
                     <p>
-                    <?= $row['ngay_bat_dau']; ?> -
-                    <?= $row['ngay_ket_thuc']; ?>
-    </p>
-</a>
+                        <?= $row['ngay_bat_dau']; ?> -
+                        <?= $row['ngay_ket_thuc']; ?>
+                    </p>
+                </a>
             </li>
         <?php } ?>
     </ul>
