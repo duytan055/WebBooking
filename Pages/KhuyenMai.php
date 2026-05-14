@@ -133,7 +133,7 @@ $result = $conn->query($sql);
         font-size: 14px;
     }
 </style>
-<?php include '../Modun/header.php'; ?>
+<?php include '../Module/header.php'; ?>
 
 <section class="title">
     <h2>Khuyến mãi</h2>
@@ -156,4 +156,4 @@ $result = $conn->query($sql);
     </ul>
 </section>
 
-<?php include '../Modun/footer.php'; ?>
+<?php include '../Module/footer.php'; ?>

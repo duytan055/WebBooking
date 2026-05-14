@@ -98,7 +98,7 @@ session_start();
         }
     }
 </style>
-<?php include '../Modun/header.php'; ?>
+<?php include '../Module/header.php'; ?>
 <div class="contact-container">
     <div class="contact-content">
 
@@ -135,7 +135,7 @@ session_start();
 
     </div>
 </div>
-<?php include '../Modun/footer.php'; ?>
+<?php include '../Module/footer.php'; ?>
 <script>
     const scriptURL = 'https://script.google.com/macros/s/AKfycbxLY0Q5rHsxIvs61uY0LxcGmIK0a4fE8nTLji1sGDs7lTnLpvaYFZ0_yxLsVy7Rw6Cz/exec';
     const form = document.getElementById("contact-form");

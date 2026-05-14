@@ -238,7 +238,7 @@ $result = $conn->query($sql);
         margin-top: 5px;
     }
 </style>
-<?php include '../Modun/header.php' ?>
+<?php include '../Module/header.php' ?>
 <div class="NowMovies">
     <h2>Phim sắp chiếu <a href="NowMovies.php">Phim đang chiếu</a></h2>
 
@@ -277,4 +277,4 @@ $result = $conn->query($sql);
         </ul>
     </div>
 </div>
-<?php include '../Modun/footer.php' ?>
+<?php include '../Module/footer.php' ?>

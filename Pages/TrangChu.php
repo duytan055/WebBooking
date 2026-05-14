@@ -20,11 +20,11 @@
 
 <body>
     <?php session_start(); ?>
-    <?php include '../Modun/header.php'; ?>
-    <?php include '../Modun/SliderMovies.php'; ?>
-    <?php include '../Modun/movies.php'; ?>
-    <?php include '../Modun/PromotionsAndEvents.php'; ?>
-    <?php include '../Modun/footer.php'; ?>
+    <?php include '../Module/header.php'; ?>
+    <?php include '../Module/SliderMovies.php'; ?>
+    <?php include '../Module/movies.php'; ?>
+    <?php include '../Module/PromotionsAndEvents.php'; ?>
+    <?php include '../Module/footer.php'; ?>
 </body>
 
 </html>
