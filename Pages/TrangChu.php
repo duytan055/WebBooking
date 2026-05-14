@@ -19,6 +19,7 @@
 </head>
 
 <body>
+    <?php session_start(); ?>
     <?php include '../Modun/header.php'; ?>
     <?php include '../Modun/SliderMovies.php'; ?>
     <?php include '../Modun/movies.php'; ?>

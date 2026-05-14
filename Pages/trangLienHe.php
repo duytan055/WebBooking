@@ -1,7 +1,11 @@
+<?php
+session_start();
+?>
 <style>
     body {
         margin: 0;
         background-color: rgba(232, 226, 226, 0.32);
+        font-family: Arial, sans-serif;
     }
 
     .contact-container {
@@ -110,16 +114,16 @@
             <h2><span class="orange-dash">—</span> GỬI LIÊN HỆ</h2>
             <form id="contact-form">
                 <input type="text" name="name" placeholder="Họ tên" required>
-                <input type="email" name="email" 
-                        placeholder="your-email@gmail.com"
-                        pattern=".+@gmail\.com$"
-                        title="Vui lòng sử dụng địa chỉ @gmail.com"
-                        required>
+                <input type="email" name="email"
+                    placeholder="your-email@gmail.com"
+                    pattern=".+@gmail\.com$"
+                    title="Vui lòng sử dụng địa chỉ @gmail.com"
+                    required>
                 <input type="tel" name="phone"
-                        placeholder="Số điện thoại"
-                        pattern="[0-9]{10}"
-                        title="Vui lòng nhập số điện thoại gồm 10 chữ số"
-                        required>
+                    placeholder="Số điện thoại"
+                    pattern="[0-9]{10}"
+                    title="Vui lòng nhập số điện thoại gồm 10 chữ số"
+                    required>
                 <textarea name="message" placeholder="Nội dung cần liên hệ..." rows="8" required></textarea>
 
                 <div class="btn-container">
@@ -162,7 +166,7 @@
             })
             .then(response => {
                 statusMsg.style.color = "#28a745";
-                statusMsg.innerHTML = "✔ Đã gửi liên hệ thành công! Dữ liệu đã vào Google Sheets.";
+                statusMsg.innerHTML = "✔ Đã gửi liên hệ thành công!";
                 form.reset();
             })
             .catch(error => {

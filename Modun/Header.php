@@ -105,6 +105,65 @@
         opacity: 1;
         transform: scaleY(1);
     }
+
+    .user_menu {
+        position: relative;
+        cursor: pointer;
+    }
+
+    .user_name {
+        font-size: 16px;
+
+    }
+
+    .user_dropdown {
+        position: absolute;
+
+        top: 120%;
+        right: 0;
+
+        width: 150px;
+
+        background: rgb(30, 29, 29);
+
+        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+
+        display: flex;
+        flex-direction: column;
+
+        opacity: 0;
+        visibility: hidden;
+
+        transform: translateY(10px);
+
+        transition: 0.3s;
+    }
+
+    .user_dropdown a {
+        padding: 12px;
+        text-decoration: none;
+        color: white;
+
+        border-bottom: 1px solid #555;
+    }
+
+    .user_dropdown a:last-child {
+        border-bottom: none;
+    }
+
+    .user_dropdown a:hover {
+
+        color: red;
+    }
+
+    .user_menu:hover .user_dropdown {
+
+        opacity: 1;
+
+        visibility: visible;
+
+        transform: translateY(0);
+    }
 </style>
 
 <nav class="box1">
@@ -147,11 +206,41 @@
     </div>
 
     <div class="box1_button">
-        <div class="nav_button" style="font-size: 15px; color: white">
-            <a href="../LoginAndSign-up/login.php">Đăng Nhập</a>
-        </div>
-        <div class="nav_button" style="font-size: 15px; color: white">
-            <a href="../LoginAndSign-up/Sign-up.php"> Đăng Ký</a>
-        </div>
+        <?php
+        if (isset($_SESSION['username'])) {
+        ?>
+            <div class="user_menu">
+
+                <p class="user_name">
+                    Xin chào,
+                    <strong>
+                        <?php echo $_SESSION['username']; ?>
+                    </strong>
+                </p>
+
+                <div class="user_dropdown">
+
+                    <a href="../Pages/ThongTinTaiKhoan.php">
+                        <i class="fa-solid fa-user"></i> Hồ sơ
+                    </a>
+
+                    <a href="../LoginAndSign-up/logout.php">
+                        <i class="fa-solid fa-right-from-bracket"></i> Đăng xuất
+                    </a>
+
+                </div>
+
+            </div>
+
+        <?php
+        } else {
+        ?>
+            <div class="nav_button" style="font-size: 15px; color: white">
+                <a href="../LoginAndSign-up/login.php">Đăng Nhập</a>
+            </div>
+            <div class="nav_button" style="font-size: 15px; color: white">
+                <a href="../LoginAndSign-up/Sign-up.php"> Đăng Ký</a>
+            </div><?php
+                } ?>
     </div>
 </nav>

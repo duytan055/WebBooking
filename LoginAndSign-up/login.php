@@ -1,4 +1,5 @@
 <?php
+session_start();
 include __DIR__ . "/../Connect/connecDB.php";
 
 if (isset($_POST["login"])) {
@@ -13,9 +14,12 @@ if (isset($_POST["login"])) {
   $result = $conn->query($sql);
 
   if ($result->num_rows > 0) {
-    echo "<script>
-                alert('Đăng nhập thành công');
-              </script>";
+    $row = $result->fetch_assoc();
+    $_SESSION['user_id'] = $row['id_user'];
+    $_SESSION['username'] = $row['ten'];
+    $_SESSION['email'] = $row['email'];
+    header("Location: ../Pages/trangChu.php");
+    exit();
   } else {
     echo "<script>
                 alert('Sai tài khoản hoặc mật khẩu');

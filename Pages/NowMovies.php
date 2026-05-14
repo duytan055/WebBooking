@@ -1,4 +1,5 @@
 <?php
+session_start();
 include __DIR__ . '/../Connect/connecDB.php';
 $sql = "SELECT 
     p.*,
