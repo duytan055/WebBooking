@@ -22,6 +22,7 @@ $result = $conn->query($sql);
             font-size: 28px;
             letter-spacing: 2px;
             position: relative;
+            color: white;
         }
 
         .box3 h2::after {
@@ -101,14 +102,14 @@ $result = $conn->query($sql);
         }
 
         .prev {
-            color: black;
+            color: white;
             background: transparent;
             font-size: 50px;
             margin-right: 10px;
         }
 
         .next {
-            color: black;
+            color: white;
             background: transparent;
             font-size: 50px;
             margin-left: 10px;
@@ -161,7 +162,12 @@ $result = $conn->query($sql);
     <button class="prev">&#10094;</button>
     <div class="movie-container">
         <ul class="movie-slider" id="slider">
-            <?php while ($row = $result->fetch_assoc()) { ?>
+            <?php while ($row = $result->fetch_assoc()) {
+                // Kiểm tra trạng thái phim
+                $currentDate = date('Y-m-d');
+                $releaseDate = $row['ngay_khoi_chieu'];
+                $isUpcoming = (strtotime($releaseDate) > strtotime($currentDate));
+            ?>
                 <li class="movie">
                     <div class="box_img">
                         <img src="<?= $row['poster'] ?>">
@@ -170,12 +176,14 @@ $result = $conn->query($sql);
                         <a href=""><i class="fa-solid fa-circle-play" style="font-size: 60px; color: white;"></i></a>
                         <div class="description_button">
                             <h1><?= $row['ten_phim'] ?></h1>
-                            <a href="../Modun/SeeMoreMovies.php?id=<?= $row['id_phim'] ?>" class="btn_detail">
+                            <a href="../Module/SeeMoreMovies.php?id=<?= $row['id_phim'] ?>" class="btn_detail">
                                 <strong>Xem thêm</strong>
                             </a>
-                            <a href="Datve.php?id=<?= $row['id_phim'] ?>" class="btn_detail">
-                                <strong>Đặt vé</strong>
-                            </a>
+                            <?php if (!$isUpcoming): ?>
+                                <a href="../Pages/buyticket.php?id=<?= $row['id_phim'] ?>" class="btn_detail">
+                                    <strong>Đặt vé</strong>
+                                </a>
+                            <?php endif; ?>
                         </div>
                     </div>
                 </li>

@@ -38,61 +38,7 @@ $kq = mysqli_query($conn, $sql);
 
     <div class="container">
 
-        <!-- SIDEBAR -->
-
-        <nav class="sidebar">
-
-            <div class="logo">
-                <h2>ADMIN</h2>
-            </div>
-
-            <ul>
-
-                <li class="active">
-                    <a href="#">
-                        <i class="fas fa-home"></i>
-                        Tổng quan
-                    </a>
-                </li>
-
-                <li>
-                    <a href="phim.php">
-                        <i class="fas fa-film"></i>
-                        Phim
-                    </a>
-                </li>
-
-                <li>
-                    <a href="khachhang.php">
-                        <i class="fas fa-user"></i>
-                        Khách hàng
-                    </a>
-                </li>
-
-                <li>
-                    <a href="nhanvien.php">
-                        <i class="fas fa-users"></i>
-                        Nhân viên
-                    </a>
-                </li>
-
-                <li>
-                    <a href="baocao.php">
-                        <i class="fas fa-chart-line"></i>
-                        Báo cáo
-                    </a>
-                </li>
-
-                <li>
-                    <a href="../LoginAndSign-up/login.php">
-                        <i class="fas fa-right-from-bracket"></i>
-                        Đăng xuất
-                    </a>
-                </li>
-
-            </ul>
-
-        </nav>
+        <?php include 'sidebar.php'; ?>
 
         <!-- MAIN -->
 

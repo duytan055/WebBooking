@@ -1,3 +1,7 @@
+<?php
+$scriptPath = $_SERVER['SCRIPT_NAME'] ?? '';
+$prefix = strpos($scriptPath, '/Pages/') !== false ? '..' : '.';
+?>
 <link
     rel="stylesheet"
     href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css" />
@@ -6,7 +10,9 @@
         display: inline-flex;
         justify-content: space-between;
         align-items: center;
-        background-color: white;
+        background: rgba(255, 255, 255, 0.02);
+        backdrop-filter: blur(5px);
+        border-radius: 10px;
         width: 100%;
         height: auto;
         min-height: 70px;
@@ -54,10 +60,11 @@
         position: relative;
         display: inline-block;
         margin-right: 30px;
+        color: white;
     }
 
     .box1_menu a {
-        color: black;
+        color: white;
         text-decoration: none;
     }
 
@@ -113,7 +120,7 @@
 
     .user_name {
         font-size: 16px;
-
+        color: white;
     }
 
     .user_dropdown {
@@ -169,38 +176,38 @@
 <nav class="box1">
     <div class="box1_icon">
         <a href="https://www.facebook.com/duytan.801/" target="_blank">
-            <i class="fa-brands fa-square-facebook" style="color: black"></i>
+            <i class="fa-brands fa-square-facebook" style="color: white"></i>
         </a>
         <a
             href="https://www.linkedin.com/in/jim-nguyen-814255390/"
             target="_blank">
-            <i class="fa-brands fa-linkedin" style="color: black"></i>
+            <i class="fa-brands fa-linkedin" style="color: white"></i>
         </a>
 
         <a href="https://x.com/NguynTn70344539" target="_blank">
-            <i class="fa-brands fa-x-twitter" style="color: black"></i>
+            <i class="fa-brands fa-x-twitter" style="color: white"></i>
         </a>
     </div>
     <div class="box1_menu">
         <ul class="menu_list">
             <li class="menu_items" style="font-size: 18px">
-                <a href="../Pages/trangChu.php"><strong>Trang chủ</strong></a>
+                <a href="<?= $prefix ?>/Pages/trangChu.php"><strong>Trang chủ</strong></a>
             </li>
             <li class="menu_items" id="item_phim" style="font-size: 18px">
                 <a href="#"><strong>Phim</strong></a>
                 <div class="hover_container">
-                    <a href="../Pages/NowMovies.php">Phim đang chiếu</a>
-                    <a href="../Pages/SoonMovies.php">Phim sắp chiếu</a>
+                    <a href="<?= $prefix ?>/Pages/NowMovies.php">Phim đang chiếu</a>
+                    <a href="<?= $prefix ?>/Pages/SoonMovies.php">Phim sắp chiếu</a>
                 </div>
             </li>
             <li class="menu_items" style="font-size: 18px">
-                <a href="trangChitietPhim.html"><strong>Góc điện ảnh</strong></a>
+                <a href="<?= $prefix ?>/Pages/trangChitietPhim.html"><strong>Góc điện ảnh</strong></a>
             </li>
             <li class="menu_items" style="font-size: 18px">
-                <a href="../Pages/KhuyenMai.php"><strong>Khuyến mãi</strong></a>
+                <a href="<?= $prefix ?>/Pages/KhuyenMai.php"><strong>Khuyến mãi</strong></a>
             </li>
             <li class="menu_items" style="font-size: 18px">
-                <a href="../Pages/trangLienHe.php"><strong>Liên hệ</strong></a>
+                <a href="<?= $prefix ?>/Pages/trangLienHe.php"><strong>Liên hệ</strong></a>
             </li>
         </ul>
     </div>
@@ -220,11 +227,11 @@
 
                 <div class="user_dropdown">
 
-                    <a href="../Pages/ThongTinTaiKhoan.php">
+                    <a href="../Pages/profileUser.php">
                         <i class="fa-solid fa-user"></i> Hồ sơ
                     </a>
 
-                    <a href="../LoginAndSign-up/logout.php">
+                    <a href="<?= $prefix ?>/LoginAndSign-up/logout.php">
                         <i class="fa-solid fa-right-from-bracket"></i> Đăng xuất
                     </a>
 
@@ -236,10 +243,10 @@
         } else {
         ?>
             <div class="nav_button" style="font-size: 15px; color: white">
-                <a href="../LoginAndSign-up/login.php">Đăng Nhập</a>
+                <a href="<?= $prefix ?>/LoginAndSign-up/login.php">Đăng Nhập</a>
             </div>
             <div class="nav_button" style="font-size: 15px; color: white">
-                <a href="../LoginAndSign-up/Sign-up.php"> Đăng Ký</a>
+                <a href="<?= $prefix ?>/LoginAndSign-up/Sign-up.php"> Đăng Ký</a>
             </div><?php
                 } ?>
     </div>

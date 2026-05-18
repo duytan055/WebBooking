@@ -4,26 +4,46 @@ include __DIR__ . "/../Connect/connecDB.php";
 
 if (isset($_POST["login"])) {
 
-  $username = $_POST['username'];
-  $password = $_POST['password'];
+  $username = trim($_POST['username'] ?? '');
+  $password = trim($_POST['password'] ?? '');
 
-  $sql = "SELECT * FROM nguoidung 
-            WHERE ten = '$username' 
-            AND mat_khau = '$password'";
-
-  $result = $conn->query($sql);
-
-  if ($result->num_rows > 0) {
-    $row = $result->fetch_assoc();
-    $_SESSION['user_id'] = $row['id_user'];
-    $_SESSION['username'] = $row['ten'];
-    $_SESSION['email'] = $row['email'];
-    header("Location: ../Pages/trangChu.php");
-    exit();
+  if ($username === '' || $password === '') {
+    echo "<script>alert('Vui lòng nhập tài khoản và mật khẩu');</script>";
   } else {
-    echo "<script>
-                alert('Sai tài khoản hoặc mật khẩu');
-              </script>";
+    $stmt = $conn->prepare('SELECT * FROM adminn WHERE ten_dang_nhap = ? AND mat_khau = ?');
+    if ($stmt) {
+      $stmt->bind_param('ss', $username, $password);
+      $stmt->execute();
+      $adminResult = $stmt->get_result();
+      if ($adminResult && $adminResult->num_rows > 0) {
+        $admin = $adminResult->fetch_assoc();
+        $_SESSION['user_id'] = $admin['id_admin'];
+        $_SESSION['username'] = $username;
+        $_SESSION['role'] = 'admin';
+        header('Location: ../admin/admin.php');
+        exit();
+      }
+      $stmt->close();
+    }
+
+    $stmtUser = $conn->prepare('SELECT * FROM nguoidung WHERE ten = ? AND mat_khau = ?');
+    if ($stmtUser) {
+      $stmtUser->bind_param('ss', $username, $password);
+      $stmtUser->execute();
+      $userResult = $stmtUser->get_result();
+      if ($userResult && $userResult->num_rows > 0) {
+        $row = $userResult->fetch_assoc();
+        $_SESSION['user_id'] = $row['id_user'];
+        $_SESSION['username'] = $row['ten'];
+        $_SESSION['email'] = $row['email'];
+        $_SESSION['role'] = 'user';
+        header('Location: ../Pages/trangChu.php');
+        exit();
+      }
+      $stmtUser->close();
+    }
+
+    echo "<script>alert('Sai tài khoản hoặc mật khẩu');</script>";
   }
 }
 ?>

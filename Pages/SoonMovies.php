@@ -18,263 +18,304 @@ $result = $conn->query($sql);
     body {
         margin: 0;
         position: relative;
-        font-family: Arial, sans-serif;
+        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        color: #f8fafc;
     }
 
     body::before {
         content: "";
         position: fixed;
         inset: 0;
-
         background: url('../LoginAndSign-up/image1.webp') center/cover no-repeat;
-
-        filter: brightness(0.6);
-
+        background-attachment: fixed;
+        filter: brightness(0.45) contrast(1.05);
         z-index: -1;
     }
 
-    .NowMovies h2 {
+    body::after {
+        content: "";
+        position: fixed;
+        inset: 0;
+        background: linear-gradient(180deg, rgba(15, 23, 42, 0.35), rgba(15, 23, 42, 0.85));
+        z-index: -1;
+    }
+
+    .page-shell {
+        width: min(1180px, 94%);
+        margin: 0 auto 60px;
+        padding: 40px 0;
+    }
+
+    .page-shell h2 {
+        margin: 0 0 16px;
+        font-size: clamp(2.4rem, 4vw, 3.6rem);
+        letter-spacing: 0.04em;
+        color: #ffffff;
+    }
+
+    .page-shell .subtitle {
+        margin: 0;
+        max-width: 760px;
+        color: #cbd5e1;
+        font-size: 1rem;
+        line-height: 1.75;
+    }
+
+    .NowMovies {
+        display: grid;
+        gap: 28px;
+    }
+
+    .NowMovies header {
         display: flex;
         justify-content: space-between;
-        align-items: center;
-
-        width: 80%;
-
-        font-size: 50px;
-        font-weight: bold;
-        color: white;
-
-        margin-left: 10%;
-        margin-top: 50px;
-        position: relative;
+        align-items: flex-end;
+        gap: 20px;
+        flex-wrap: wrap;
+        padding: 24px 24px 20px;
+        border-radius: 24px;
+        background: rgba(15, 23, 42, 0.72);
+        border: 1px solid rgba(148, 163, 184, 0.16);
+        box-shadow: 0 24px 60px rgba(15, 23, 42, 0.18);
     }
 
-    .NowMovies h2 a {
-        font-size: 20px;
-        font-weight: normal;
-        color: #ccc;
+    .NowMovies header a {
+        color: #93c5fd;
         text-decoration: none;
-        margin-top: 30px;
+        font-size: 1rem;
+        border: 1px solid rgba(147, 197, 253, 0.4);
+        border-radius: 999px;
+        padding: 12px 18px;
+        transition: background 0.25s ease, color 0.25s ease;
     }
 
-    .NowMovies h2 a:hover {
-        color: red;
-    }
-
-    .NowMovies h2::after {
-        content: "";
-        position: absolute;
-        left: 0;
-        bottom: -6px;
-
-        width: 100%;
-        height: 3px;
-        background: white;
+    .NowMovies header a:hover {
+        background: rgba(56, 189, 248, 0.16);
+        color: #38bdf8;
     }
 
     .movie-box {
-        width: 80%;
-        height: auto;
-        margin-left: 10%;
-        background-color: rgba(0, 0, 0, 0.1);
+        width: 100%;
+        background: transparent;
     }
 
     .movie-list {
         display: grid;
-        grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-        column-gap: 5px;
-        row-gap: 5px;
-        transition: 0.5s;
+        grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+        gap: 24px;
         list-style: none;
-        padding: 20px;
-        overflow: visible;
+        padding: 0;
+        margin: 0;
     }
 
     .movie-item {
-        justify-self: center;
         position: relative;
-        overflow: visible;
-        transition: 0.3s;
-        margin-top: 20px;
+        overflow: hidden;
+        border-radius: 24px;
+        transition: transform 0.35s ease, box-shadow 0.35s ease;
+        box-shadow: 0 18px 42px rgba(15, 23, 42, 0.18);
+        background: rgba(15, 23, 42, 0.75);
+        border: 1px solid rgba(148, 163, 184, 0.12);
     }
 
     .movie-item:hover {
-        z-index: 10;
-    }
-
-    .movie-item:hover .box_hover {
-        opacity: 1;
+        transform: translateY(-8px);
+        box-shadow: 0 28px 72px rgba(15, 23, 42, 0.28);
     }
 
     .box_img {
         width: 100%;
-        height: 360px;
+        height: 420px;
         overflow: hidden;
-        border-radius: 10px;
     }
 
     .box_img img {
         width: 100%;
         height: 100%;
         object-fit: cover;
-        transition: 0.3s;
+        transition: transform 0.5s ease;
+    }
+
+    .movie-item:hover .box_img img {
+        transform: scale(1.06);
     }
 
     .box_hover {
-
         position: absolute;
-
-        top: -10%;
-        left: -20%;
-        width: 140%;
-        height: 110%;
-
-        background: rgb(30, 29, 29);
-        color: white;
-
+        inset: 0;
         display: flex;
         flex-direction: column;
-        justify-content: flex-start;
-        align-items: center;
-
+        justify-content: flex-end;
+        padding: 24px;
+        background: linear-gradient(180deg, rgba(15, 23, 42, 0) 0%, rgba(15, 23, 42, 0.88) 65%);
         opacity: 0;
-        transform: scaleY(0);
-        transform-origin: center;
-
-        transition: 0.5s ease;
-
-        z-index: 10;
-    }
-
-    .box_hover>* {
-        opacity: 0;
-        transition: 0.2s;
-    }
-
-    .movie-item:hover .box_hover>* {
-        opacity: 1;
-        transition-delay: 0.2s;
+        transform: translateY(40px);
+        transition: opacity 0.35s ease, transform 0.35s ease;
+        color: #f8fafc;
     }
 
     .movie-item:hover .box_hover {
         opacity: 1;
-        transform: scaleY(1);
+        transform: translateY(0);
     }
 
-    .top {
+    .box_hover .top {
         display: flex;
         flex-direction: column;
-        gap: 6px;
-        padding: 10px 10px 0 10px;
+        gap: 10px;
     }
 
-    .title {
-        font-size: 18px;
-        font-weight: bold;
-        color: white;
-        line-height: 1.3;
-
-        display: -webkit-box;
-        -webkit-line-clamp: 2;
-        -webkit-box-orient: vertical;
-        overflow: hidden;
+    .movie-item .title {
+        font-size: 1.2rem;
+        margin: 0;
+        color: #f8fafc;
     }
 
-    .time {
-        font-size: 16px;
-        color: #ce1414;
-    }
-
-    .desc {
-        font-size: 15px;
-        line-height: 1.5;
-        color: white;
-
-        display: -webkit-box;
-        -webkit-line-clamp: 3;
-        -webkit-box-orient: vertical;
-
-        overflow: hidden;
-    }
-
-    .title,
-    .time,
-    .desc {
+    .movie-item .time {
+        font-size: 0.95rem;
+        color: #38bdf8;
         margin: 0;
     }
 
+    .movie-item .date {
+        margin: 0;
+        color: #cbd5e1;
+        font-size: 0.92rem;
+    }
+
+    .desc {
+        font-size: 0.95rem;
+        line-height: 1.6;
+        color: #e2e8f0;
+        margin: 0;
+        max-height: 90px;
+        overflow: hidden;
+    }
+
     .box_button {
-        margin: 10px 0;
+        display: flex;
+        flex-wrap: wrap;
+        gap: 12px;
+        margin: 16px 0 12px;
     }
 
     .box_button button {
-        width: 100px;
-        height: 30px;
-        background-color: white;
-        color: black;
-        border-radius: 5px;
+        min-width: 120px;
+        padding: 12px 18px;
         border: none;
-        list-style: none;
+        border-radius: 999px;
+        font-weight: 700;
+        cursor: pointer;
+        transition: transform 0.25s ease, background 0.25s ease;
+    }
+
+    .box_button button:first-child {
+        background-color: rgba(56, 189, 248, 0.95);
+        color: #0f172a;
+    }
+
+    .box_button button:last-child {
+        background-color: rgba(255, 255, 255, 0.12);
+        color: #f8fafc;
     }
 
     .box_button button:hover {
-        background-color: red;
-        color: white;
-        cursor: pointer;
+        transform: translateY(-2px);
     }
 
     .bottom {
-        border-top: 2px solid #555;
-        padding-top: 10px;
-        margin-top: 10px;
-        padding: 5px 10px 10px 10px;
+        padding-top: 16px;
+        border-top: 1px solid rgba(255, 255, 255, 0.08);
+        display: grid;
+        gap: 8px;
+        color: #cbd5e1;
+        font-size: 0.92rem;
     }
 
-    h4 {
-        color: white;
-        max-width: 200px;
+    .bottom strong {
+        color: #f8fafc;
+    }
+
+    .movie-name {
+        padding: 18px 24px 20px;
+        margin: 0;
+        font-size: 1.1rem;
+        color: #f8fafc;
+        background: rgba(15, 23, 42, 0.8);
         text-align: center;
-        margin-left: 10%;
-        margin-top: 5px;
+    }
+
+    @media (max-width: 860px) {
+        .box_img {
+            height: 320px;
+        }
+
+        .movie-item .title {
+            font-size: 1.1rem;
+        }
+
+        .box_button {
+            gap: 10px;
+        }
+    }
+
+    @media (max-width: 620px) {
+        .page-shell {
+            padding: 24px 0;
+        }
+
+        .movie-list {
+            gap: 18px;
+        }
+
+        .box_img {
+            height: 280px;
+        }
+
+        .page-shell h2 {
+            font-size: 2rem;
+        }
     }
 </style>
 <?php include '../Module/header.php' ?>
-<div class="NowMovies">
-    <h2>Phim sắp chiếu <a href="NowMovies.php">Phim đang chiếu</a></h2>
+<div class="page-shell">
+    <div class="NowMovies">
+        <header>
+            <div>
+                <h2>Phim sắp khởi chiếu</h2>
+                <p class="subtitle">Khám phá danh sách phim mới sắp ra rạp kèm thông tin nhanh và trailer hấp dẫn.</p>
+            </div>
+            <a href="NowMovies.php">Phim đang chiếu</a>
+        </header>
 
-    <div class="movie-box">
-        <ul class="movie-list">
-            <?php while ($row = $result->fetch_assoc()) { ?>
-                <li class="movie-item">
-                    <div class="box_img">
-                        <img src="<?= $row['poster'] ?>" alt="<?= $row['ten_phim'] ?>">
-                    </div>
-
-                    <div class="box_hover">
-                        <div class="top">
-                            <h3 class="title"><?= $row['ten_phim'] ?></h3>
-
-                            <p class="time">⏱ <?= $row['thoi_luong'] ?> phút</p>
-
-                            <p class="desc"><?= $row['mo_ta'] ?></p>
+        <div class="movie-box">
+            <ul class="movie-list">
+                <?php while ($row = $result->fetch_assoc()) { ?>
+                    <li class="movie-item">
+                        <div class="box_img">
+                            <img src="<?= htmlspecialchars($row['poster']) ?>" alt="<?= htmlspecialchars($row['ten_phim']) ?>">
                         </div>
-                        <div class="box_button">
-                            <button><strong>▶ Trailer</strong></button>
-                        </div>
-                        <div class="bottom">
-                            <p><strong>Đạo diễn :</strong>
-                                <span style="color: #ccc;"><?= $row['dao_dien'] ?></span>
-                            </p>
-                            <p><strong>Diễn viên :</strong>
-                                <span style="color: #ccc;"><?= $row['dien_vien'] ?></span>
-                            </p>
-                        </div>
-                    </div>
-                    <h4><?= $row['ten_phim'] ?></h4>
-                </li>
 
-            <?php } ?>
-        </ul>
+                        <div class="box_hover">
+                            <div class="top">
+                                <h3 class="title"><?= htmlspecialchars($row['ten_phim']) ?></h3>
+                                <p class="time">⏱ <?= htmlspecialchars($row['thoi_luong']) ?> phút</p>
+                                <p class="date">Ngày khởi chiếu: <?= htmlspecialchars($row['ngay_khoi_chieu']) ?></p>
+                                <p class="desc"><?= htmlspecialchars($row['mo_ta']) ?></p>
+                            </div>
+                            <div class="box_button">
+                                <button type="button"><strong>▶ Trailer</strong></button>
+                            </div>
+                            <div class="bottom">
+                                <p><strong>Đạo diễn:</strong> <?= htmlspecialchars($row['dao_dien']) ?></p>
+                                <p><strong>Diễn viên:</strong> <?= htmlspecialchars($row['dien_vien']) ?></p>
+                            </div>
+                        </div>
+                        <p class="movie-name"><?= htmlspecialchars($row['ten_phim']) ?></p>
+                    </li>
+                <?php } ?>
+            </ul>
+        </div>
     </div>
 </div>
 <?php include '../Module/footer.php' ?>

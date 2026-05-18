@@ -4,72 +4,89 @@ session_start();
 <style>
     body {
         margin: 0;
-        background-color: rgba(232, 226, 226, 0.32);
-        font-family: Arial, sans-serif;
+        min-height: 100vh;
+        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        background: radial-gradient(circle at top, rgba(56, 189, 248, 0.14), transparent 22%),
+            linear-gradient(180deg, #0f172a 0%, #0f172a 100%);
+        color: #f8fafc;
+    }
+
+    .page-shell {
+        width: min(1180px, 94%);
+        margin: 0 auto 60px;
+        padding: 110px 0 40px;
     }
 
     .contact-container {
-        max-width: 1200px;
-        margin: 50px auto;
-        padding: 30px;
-        background-color: #fff;
-        border-radius: 8px;
-        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+        display: grid;
+        gap: 32px;
+        background: rgba(15, 23, 42, 0.72);
+        border: 1px solid rgba(255, 255, 255, 0.12);
+        border-radius: 28px;
+        box-shadow: 0 24px 70px rgba(0, 0, 0, 0.25);
+        backdrop-filter: blur(18px);
+        padding: 32px;
     }
 
     .contact-content {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 32px;
+    }
+
+    .section-title {
         display: flex;
-        gap: 50px;
-        flex-wrap: wrap;
+        align-items: center;
+        gap: 14px;
+        margin-bottom: 24px;
+        font-size: 1.95rem;
+        letter-spacing: 0.04em;
+        color: #ffffff;
     }
 
-    h2 {
-        font-size: 24px;
-        color: #333;
-        margin-bottom: 25px;
-        border-bottom: 2px solid #eee;
-        padding-bottom: 10px;
+    .section-title span {
+        color: #38bdf8;
     }
 
-    .orange-dash {
-        color: #f37021;
-        /* Màu cam Starlight */
-        font-weight: bold;
-        margin-right: 10px;
-    }
-
-    .info-section {
-        flex: 1;
-        min-width: 300px;
+    .info-section,
+    .form-section {
+        min-width: 0;
     }
 
     .info-details p {
-        margin-bottom: 15px;
-        line-height: 1.6;
-        font-size: 15px;
-        color: #444;
+        margin-bottom: 18px;
+        line-height: 1.8;
+        font-size: 1rem;
+        color: #cbd5e1;
     }
 
-    .form-section {
-        flex: 1.5;
-        min-width: 300px;
+    .info-details p strong {
+        color: #f8fafc;
     }
 
     .form-section input,
     .form-section textarea {
         width: 100%;
-        padding: 12px 15px;
-        margin-bottom: 15px;
-        border: 1px solid #ddd;
-        border-radius: 4px;
-        font-size: 14px;
+        padding: 16px 18px;
+        margin-bottom: 16px;
+        border: 1px solid rgba(148, 163, 184, 0.24);
+        border-radius: 16px;
+        background: rgba(15, 23, 42, 0.55);
+        color: #f8fafc;
+        font-size: 0.98rem;
         outline: none;
-        transition: border-color 0.3s;
+        transition: border-color 0.3s ease, box-shadow 0.3s ease;
+    }
+
+    .form-section input::placeholder,
+    .form-section textarea::placeholder {
+        color: #94a3b8;
     }
 
     .form-section input:focus,
     .form-section textarea:focus {
-        border-color: #f37021;
+        border-color: #38bdf8;
+        box-shadow: 0 0 0 4px rgba(56, 189, 248, 0.12);
     }
 
     .btn-container {
@@ -77,64 +94,81 @@ session_start();
     }
 
     .send-btn {
-        background-color: #f37021;
-        color: white;
+        background: linear-gradient(135deg, #38bdf8, #0ea5e9);
+        color: #0f172a;
         border: none;
-        padding: 12px 40px;
-        border-radius: 5px;
-        font-size: 16px;
-        font-weight: bold;
+        padding: 14px 42px;
+        border-radius: 999px;
+        font-size: 1rem;
+        font-weight: 700;
         cursor: pointer;
-        transition: background 0.3s;
+        transition: transform 0.25s ease, box-shadow 0.25s ease;
     }
 
     .send-btn:hover {
-        background-color: #d65a10;
+        transform: translateY(-2px);
+        box-shadow: 0 18px 34px rgba(56, 189, 248, 0.25);
     }
 
-    @media (max-width: 768px) {
+    @media (max-width: 900px) {
         .contact-content {
-            flex-direction: column;
+            grid-template-columns: 1fr;
+        }
+    }
+
+    @media (max-width: 640px) {
+        .page-shell {
+            padding: 90px 0 30px;
+        }
+
+        .contact-container {
+            padding: 24px;
+        }
+
+        .section-title {
+            font-size: 1.6rem;
         }
     }
 </style>
 <?php include '../Module/header.php'; ?>
-<div class="contact-container">
-    <div class="contact-content">
+<main class="page-shell">
+    <div class="contact-container">
+        <div class="contact-content">
 
-        <div class="info-section">
-            <h2><span class="orange-dash">—</span> THÔNG TIN</h2>
-            <div class="info-details">
-                <p><strong>Hotline:</strong> 0779437588</p>
-                <p><strong>E-Mail:</strong> tranvoxuanvien3105@gmail.com</p>
-            </div>
-        </div>
-
-        <div class="form-section">
-            <h2><span class="orange-dash">—</span> GỬI LIÊN HỆ</h2>
-            <form id="contact-form">
-                <input type="text" name="name" placeholder="Họ tên" required>
-                <input type="email" name="email"
-                    placeholder="your-email@gmail.com"
-                    pattern=".+@gmail\.com$"
-                    title="Vui lòng sử dụng địa chỉ @gmail.com"
-                    required>
-                <input type="tel" name="phone"
-                    placeholder="Số điện thoại"
-                    pattern="[0-9]{10}"
-                    title="Vui lòng nhập số điện thoại gồm 10 chữ số"
-                    required>
-                <textarea name="message" placeholder="Nội dung cần liên hệ..." rows="8" required></textarea>
-
-                <div class="btn-container">
-                    <button type="submit" id="submit-btn" class="send-btn">Send</button>
+            <div class="info-section">
+                <div class="section-title"><span>—</span> THÔNG TIN</div>
+                <div class="info-details">
+                    <p><strong>Hotline:</strong> 0779437588</p>
+                    <p><strong>E-Mail:</strong> tranvoxuanvien3105@gmail.com</p>
                 </div>
-                <p id="status-msg" style="margin-top: 15px; text-align: center; font-weight: bold;"></p>
-            </form>
-        </div>
+            </div>
 
+            <div class="form-section">
+                <div class="section-title"><span>—</span> GỬI LIÊN HỆ</div>
+                <form id="contact-form">
+                    <input type="text" name="name" placeholder="Họ tên" required>
+                    <input type="email" name="email"
+                        placeholder="your-email@gmail.com"
+                        pattern=".+@gmail\.com$"
+                        title="Vui lòng sử dụng địa chỉ @gmail.com"
+                        required>
+                    <input type="tel" name="phone"
+                        placeholder="Số điện thoại"
+                        pattern="[0-9]{10}"
+                        title="Vui lòng nhập số điện thoại gồm 10 chữ số"
+                        required>
+                    <textarea name="message" placeholder="Nội dung cần liên hệ..." rows="8" required></textarea>
+
+                    <div class="btn-container">
+                        <button type="submit" id="submit-btn" class="send-btn">Send</button>
+                    </div>
+                    <p id="status-msg" style="margin-top: 15px; text-align: center; font-weight: bold;"></p>
+                </form>
+            </div>
+
+        </div>
     </div>
-</div>
+</main>
 <?php include '../Module/footer.php'; ?>
 <script>
     const scriptURL = 'https://script.google.com/macros/s/AKfycbxLY0Q5rHsxIvs61uY0LxcGmIK0a4fE8nTLji1sGDs7lTnLpvaYFZ0_yxLsVy7Rw6Cz/exec';

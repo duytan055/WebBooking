@@ -16,6 +16,7 @@ $result = $conn->query($sql);
         font-size: 28px;
         letter-spacing: 2px;
         position: relative;
+        color: white;
     }
 
     .box3 h2::after {

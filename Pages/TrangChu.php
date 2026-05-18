@@ -12,8 +12,9 @@
         body {
             height: 100%;
             margin: 0;
-            background-color: rgba(164, 159, 159, 0.49);
-            font-family: Arial, sans-serif;
+            background: radial-gradient(circle at top, rgba(56, 189, 248, 0.12), transparent 28%),
+                linear-gradient(180deg, #0f172a 0%, #111827 100%);
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
         }
     </style>
 </head>

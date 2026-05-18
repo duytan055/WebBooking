@@ -4,25 +4,25 @@ include __DIR__ . '/../Connect/connecDB.php';
 /* ===== DOANH THU ===== */
 
 $sql_doanhthu = "SELECT SUM(tong_tien) AS doanhthu FROM datve";
-$kq_doanhthu = mysqli_query($conn,$sql_doanhthu);
+$kq_doanhthu = mysqli_query($conn, $sql_doanhthu);
 $row_doanhthu = mysqli_fetch_assoc($kq_doanhthu);
 
 /* ===== TỔNG VÉ ===== */
 
 $sql_ve = "SELECT COUNT(*) AS tongve FROM chitietve";
-$kq_ve = mysqli_query($conn,$sql_ve);
+$kq_ve = mysqli_query($conn, $sql_ve);
 $row_ve = mysqli_fetch_assoc($kq_ve);
 
 /* ===== TỔNG PHIM ===== */
 
 $sql_phim = "SELECT COUNT(*) AS tongphim FROM phim";
-$kq_phim = mysqli_query($conn,$sql_phim);
+$kq_phim = mysqli_query($conn, $sql_phim);
 $row_phim = mysqli_fetch_assoc($kq_phim);
 
 /* ===== KHÁCH HÀNG ===== */
 
 $sql_khach = "SELECT COUNT(*) AS tongkhach FROM nguoidung";
-$kq_khach = mysqli_query($conn,$sql_khach);
+$kq_khach = mysqli_query($conn, $sql_khach);
 $row_khach = mysqli_fetch_assoc($kq_khach);
 
 /* ===== TOP PHIM ===== */
@@ -37,7 +37,7 @@ $sql_top = "SELECT p.ten_phim,
             GROUP BY p.ten_phim
             ORDER BY tongtien DESC";
 
-$kq_top = mysqli_query($conn,$sql_top);
+$kq_top = mysqli_query($conn, $sql_top);
 
 ?>
 
@@ -50,234 +50,178 @@ $kq_top = mysqli_query($conn,$sql_top);
 
     <meta
         name="viewport"
-        content="width=device-width, initial-scale=1.0"
-    >
+        content="width=device-width, initial-scale=1.0">
 
     <title>Báo Cáo</title>
 
     <link rel="stylesheet" href="admin.css">
 
     <link
-      rel="stylesheet"
-      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css"
-    />
+        rel="stylesheet"
+        href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css" />
 
 </head>
 
 <body>
 
-<div class="container">
+    <div class="container">
 
-    <!-- SIDEBAR -->
+        <?php include 'sidebar.php'; ?>
 
-    <nav class="sidebar">
+        <!-- MAIN -->
 
-        <div class="logo">
-            <h2>ADMIN</h2>
-        </div>
+        <main class="main-content">
 
-        <ul>
+            <header class="box_search_bar">
 
-            <li>
-                <a href="admin.php">
-                    <i class="fas fa-home"></i>
-                    Tổng quan
-                </a>
-            </li>
+                <h2>Báo Cáo Hệ Thống</h2>
 
-            <li>
-                <a href="phim.php">
-                    <i class="fas fa-film"></i>
-                    Phim
-                </a>
-            </li>
+                <div class="user-info">
+                    ADMIN
+                </div>
 
-            <li>
-                <a href="khachhang.php">
+            </header>
+
+            <!-- CARD -->
+
+            <section class="dashboard-cards">
+
+                <div class="card blue">
+
+                    <div class="info">
+
+                        <h3>
+                            <?php
+                            echo number_format($row_doanhthu['doanhthu']);
+                            ?>đ
+                        </h3>
+
+                        <p>Tổng doanh thu</p>
+
+                    </div>
+
+                    <i class="fas fa-dollar-sign"></i>
+
+                </div>
+
+                <div class="card green">
+
+                    <div class="info">
+
+                        <h3>
+                            <?php echo $row_ve['tongve']; ?>
+                        </h3>
+
+                        <p>Tổng vé bán</p>
+
+                    </div>
+
+                    <i class="fas fa-ticket"></i>
+
+                </div>
+
+                <div class="card orange">
+
+                    <div class="info">
+
+                        <h3>
+                            <?php echo $row_khach['tongkhach']; ?>
+                        </h3>
+
+                        <p>Khách hàng</p>
+
+                    </div>
+
                     <i class="fas fa-user"></i>
-                    Khách hàng
-                </a>
-            </li>
-
-            <li>
-                <a href="nhanvien.php">
-                    <i class="fas fa-users"></i>
-                    Nhân viên
-                </a>
-            </li>
-
-            <li class="active">
-                <a href="baocao.php">
-                    <i class="fas fa-chart-line"></i>
-                    Báo cáo
-                </a>
-            </li>
-
-            <li>
-                <a href="dangxuat.php">
-                    <i class="fas fa-right-from-bracket"></i>
-                    Đăng xuất
-                </a>
-            </li>
-
-        </ul>
-
-    </nav>
-
-    <!-- MAIN -->
-
-    <main class="main-content">
-
-        <header class="box_search_bar">
-
-            <h2>Báo Cáo Hệ Thống</h2>
-
-            <div class="user-info">
-                ADMIN
-            </div>
-
-        </header>
-
-        <!-- CARD -->
-
-        <section class="dashboard-cards">
-
-            <div class="card blue">
-
-                <div class="info">
-
-                    <h3>
-                        <?php
-                        echo number_format($row_doanhthu['doanhthu']);
-                        ?>đ
-                    </h3>
-
-                    <p>Tổng doanh thu</p>
 
                 </div>
 
-                <i class="fas fa-dollar-sign"></i>
+                <div class="card red">
 
-            </div>
+                    <div class="info">
 
-            <div class="card green">
+                        <h3>
+                            <?php echo $row_phim['tongphim']; ?>
+                        </h3>
 
-                <div class="info">
+                        <p>Phim</p>
 
-                    <h3>
-                        <?php echo $row_ve['tongve']; ?>
-                    </h3>
+                    </div>
 
-                    <p>Tổng vé bán</p>
-
-                </div>
-
-                <i class="fas fa-ticket"></i>
-
-            </div>
-
-            <div class="card orange">
-
-                <div class="info">
-
-                    <h3>
-                        <?php echo $row_khach['tongkhach']; ?>
-                    </h3>
-
-                    <p>Khách hàng</p>
+                    <i class="fas fa-film"></i>
 
                 </div>
 
-                <i class="fas fa-user"></i>
+            </section>
 
-            </div>
+            <!-- BẢNG BÁO CÁO -->
 
-            <div class="card red">
+            <section class="data-section">
 
-                <div class="info">
+                <div class="table-title">
 
-                    <h3>
-                        <?php echo $row_phim['tongphim']; ?>
-                    </h3>
-
-                    <p>Phim</p>
+                    <h3>Top Phim Doanh Thu</h3>
 
                 </div>
 
-                <i class="fas fa-film"></i>
+                <div class="table-wrapper">
 
-            </div>
+                    <table>
 
-        </section>
+                        <thead>
 
-        <!-- BẢNG BÁO CÁO -->
+                            <tr>
 
-        <section class="data-section">
+                                <th>Tên phim</th>
+                                <th>Số vé bán</th>
+                                <th>Doanh thu</th>
 
-            <div class="table-title">
+                            </tr>
 
-                <h3>Top Phim Doanh Thu</h3>
+                        </thead>
 
-            </div>
-
-            <div class="table-wrapper">
-
-                <table>
-
-                    <thead>
-
-                        <tr>
-
-                            <th>Tên phim</th>
-                            <th>Số vé bán</th>
-                            <th>Doanh thu</th>
-
-                        </tr>
-
-                    </thead>
-
-                    <tbody>
-
-                    <?php
-                    while($row = mysqli_fetch_assoc($kq_top))
-                    {
-                    ?>
-
-                    <tr>
-
-                        <td>
-                            <?php echo $row['ten_phim']; ?>
-                        </td>
-
-                        <td>
-                            <?php echo $row['soluong']; ?>
-                        </td>
-
-                        <td>
+                        <tbody>
 
                             <?php
-                            echo number_format($row['tongtien']);
-                            ?>đ
+                            while ($row = mysqli_fetch_assoc($kq_top)) {
+                            ?>
 
-                        </td>
+                                <tr>
 
-                    </tr>
+                                    <td>
+                                        <?php echo $row['ten_phim']; ?>
+                                    </td>
 
-                    <?php
-                    }
-                    ?>
+                                    <td>
+                                        <?php echo $row['soluong']; ?>
+                                    </td>
 
-                    </tbody>
+                                    <td>
 
-                </table>
+                                        <?php
+                                        echo number_format($row['tongtien']);
+                                        ?>đ
 
-            </div>
+                                    </td>
 
-        </section>
+                                </tr>
 
-    </main>
+                            <?php
+                            }
+                            ?>
 
-</div>
+                        </tbody>
+
+                    </table>
+
+                </div>
+
+            </section>
+
+        </main>
+
+    </div>
 
 </body>
+
 </html>
