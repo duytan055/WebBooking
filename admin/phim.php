@@ -30,7 +30,7 @@ $row_dc = mysqli_fetch_assoc($kq_dc);
 
 $sql_sapchieu = "SELECT COUNT(*) AS sapchieu
                  FROM phim
-                 WHERE trang_thai='Sắp chiếu'";
+                 WHERE trang_thai='Sắp khởi chiếu'";
 
 $kq_sc = mysqli_query($conn, $sql_sapchieu);
 $row_sc = mysqli_fetch_assoc($kq_sc);
@@ -194,7 +194,7 @@ $row_sc = mysqli_fetch_assoc($kq_sc);
                                     <td>
 
                                         <img
-                                            src="img/<?php echo $row['poster']; ?>"
+                                            src="<?php echo $row['poster']; ?>"
                                             width="70"
                                             height="100"
                                             style="border-radius:10px">
