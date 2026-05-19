@@ -35,10 +35,18 @@ Tài liệu này tổng hợp các chức năng chính của dự án WebBooking
 - `feature_security_error_handling.md`: Bảo mật và xử lý lỗi.
 - `feature_deployment.md`: Triển khai và cài đặt.
 
-## Mục tiêu
+## Tiến độ cập nhật (19/05/2026)
 
-Tài liệu được tổ chức để cho phép:
+- Phần lớn giao diện trang công khai đã hiện diện: trang chủ, phim đang chiếu, phim sắp chiếu, khuyến mãi, liên hệ và phần profile người dùng.
+- Đăng nhập và đăng ký đã có backend cơ bản cho user và admin, nhưng mật khẩu chưa được mã hóa và cần cải thiện bảo mật.
+- Trang đặt vé `Pages/buyticket.php` tồn tại và có UI luồng chọn ghế / combo / thanh toán, nhưng cần xác nhận hoàn thiện backend xử lý đặt vé và lưu dữ liệu vé.
+- Khu vực admin đã có dashboard, bảng thống kê và màn hình quản lý phim/khách hàng/nhân viên/ báo cáo.
+- CRUD admin là một phần đã có, nhưng vẫn cần hoàn thiện thêm giao diện và chức năng thêm/sửa/xóa trên một số màn hình.
 
-- Xem nhanh chức năng hiện có.
-- Xác định các công việc chưa hoàn thành.
-- Cập nhật tiến độ cho từng chức năng.
+## Mục tiêu tài liệu
+
+Tài liệu này được tổ chức để:
+
+- Hiển thị tình trạng hiện tại của các phần chính.
+- Ghi lại những việc đã hoàn thành và các điểm cần cải tiến.
+- Hướng dẫn bước tiếp theo để hoàn thiện dự án.
