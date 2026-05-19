@@ -176,7 +176,7 @@ $result = $conn->query($sql);
                         <a href=""><i class="fa-solid fa-circle-play" style="font-size: 60px; color: white;"></i></a>
                         <div class="description_button">
                             <h1><?= $row['ten_phim'] ?></h1>
-                            <a href="../Module/SeeMoreMovies.php?id=<?= $row['id_phim'] ?>" class="btn_detail">
+                            <a href="../Pages/SeeMoreMovies.php?id=<?= $row['id_phim'] ?>" class="btn_detail">
                                 <strong>Xem thêm</strong>
                             </a>
                             <?php if (!$isUpcoming): ?>
