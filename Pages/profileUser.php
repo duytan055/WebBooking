@@ -564,7 +564,7 @@ function escape($value)
             <div class="profile-card-content">
                 <div class="profile-top">
                     <div class="profile-photo">
-                        <img src="https://i.pravatar.cc/320?u=<?= urlencode($user['email'] ?? 'guest') ?>" alt="Ảnh đại diện">
+                        <img src="<?= !empty($user['avatar']) ? $user['avatar'] : 'https://cdn-icons-png.flaticon.com/512/149/149071.png' ?>" alt="Ảnh đại diện">
                     </div>
                     <div>
                         <div class="profile-title">
