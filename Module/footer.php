@@ -100,8 +100,8 @@
                 <h3>Hỗ trợ</h3>
                 <ul>
                     <li><a href="#">Liên hệ</a></li>
-                    <li><a href="#">Chính sách</a></li>
-                    <li><a href="#">Điều khoản</a></li>
+                    <li><a href="chinhsach.php">Chính sách</a></li>
+                    <li><a href="chinhsach.php">Điều khoản</a></li>
                 </ul>
             </div>
             <div class="footer-col">
