@@ -2,7 +2,7 @@
 include __DIR__ . '/../Connect/connecDB.php';
 
 $sql = "SELECT * FROM tintuc
-        WHERE trang_thai = 'Xuất bản'
+        WHERE trang_thai = 'Đã xuất bản'
         ORDER BY ngay_dang DESC";
 
 $result = $conn->query($sql);

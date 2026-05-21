@@ -167,37 +167,3 @@ CREATE TABLE tintuc (
     ngay_dang DATETIME DEFAULT CURRENT_TIMESTAMP,
     trang_thai VARCHAR(50)
 );
-
-INSERT INTO
-    tintuc (
-        tieu_de,
-        mo_ta,
-        noi_dung,
-        hinh_anh,
-        ngay_dang,
-        trang_thai
-    )
-VALUES (
-        'Review bom tấn mùa hè',
-        'Bộ phim mới nhất đã làm mưa làm gió các phòng vé Việt Nam với cốt truyện kịch tính và diễn xuất ấn tượng.',
-        'Nội dung chi tiết bài viết về bộ phim bom tấn mùa hè, phân tích diễn xuất và cảnh quay.',
-        'LoginAndSign-up/image1.webp',
-        '2026-05-20 10:00:00',
-        'Xuất bản'
-    ),
-    (
-        'Khuyến mãi vé xem phim cuối tuần',
-        'Giảm giá đặc biệt cho khán giả khi mua vé trực tuyến vào cuối tuần này.',
-        'Nội dung chi tiết về chương trình khuyến mãi vé xem phim, thời gian áp dụng và điều kiện.',
-        'LoginAndSign-up/image1.webp',
-        '2026-05-19 14:30:00',
-        'Xuất bản'
-    ),
-    (
-        'Phim sắp chiếu đáng chú ý',
-        'Những tựa phim hấp dẫn sẽ ra rạp trong tháng tới, từ hành động đến tình cảm.',
-        'Nội dung chi tiết dự đoán và đánh giá sơ bộ về các phim sắp chiếu.',
-        'LoginAndSign-up/image1.webp',
-        '2026-05-18 09:15:00',
-        'Xuất bản'
-    );
