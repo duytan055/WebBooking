@@ -100,8 +100,17 @@
                 <h3>Hỗ trợ</h3>
                 <ul>
                     <li><a href="#">Liên hệ</a></li>
-                    <li><a href="chinhsach.php">Chính sách</a></li>
-                    <li><a href="chinhsach.php">Điều khoản</a></li>
+                    <li><a href="#">Câu hỏi thường gặp</a></li>
+                    <li><a href="#">Hướng dẫn đặt vé</a></li>
+                </ul>
+            </div>
+            <div class="footer-col">
+                <h3>Chính sách</h3>
+                <ul>
+                    <li><a href="#">Chính sách bảo mật</a></li>
+                    <li><a href="#">Chính sách thanh toán</a></li>
+                    <li><a href="#">Chính sách hoàn vé</a></li>
+                    <li><a href="#">Điều khoản sử dụng</a></li>
                 </ul>
             </div>
             <div class="footer-col">
