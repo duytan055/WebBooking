@@ -182,16 +182,30 @@ body{
     to{opacity:1; transform:translateY(0);}
 }
 
-.policy-title{
-    font-size:30px;
-    margin-bottom:15px;
+.policy-container {
+    background: #ffffff; /* Đổi thành màu trắng nguyên bản */
+    border: 1px solid #e2e8f0; /* Đổi viền sang màu xám nhạt cho hợp với nền trắng */
+    border-radius: 20px;
+    padding: 40px; /* Tăng padding một chút cho thoáng */
+    box-shadow: 0 10px 25px rgba(0,0,0,0.1); /* Đổ bóng nhẹ hơn */
+    animation: fade .25s ease;
 }
 
-.policy-content{
-    color:#cbd5e1;
-    line-height:1.8;
-    font-size:16px;
-    white-space:pre-line;
+.policy-title {
+    font-size: 30px;
+    margin-bottom: 20px;
+    color: #1e293b; 
+    font-weight: bold;
+    border-bottom: 2px solid #e50914; 
+    padding-bottom: 10px;
+    display: inline-block;
+}
+
+.policy-content {
+    color: #334155; 
+    line-height: 1.8;
+    font-size: 16px;
+    white-space: pre-line;
 }
 
 #top{
