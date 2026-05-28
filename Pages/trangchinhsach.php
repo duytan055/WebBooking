@@ -5,46 +5,46 @@ $policies = [
 
     'dieu-khoan-chung' => [
         'title' => 'ĐIỀU KHOẢN CHUNG',
-        'content' => 'Khi truy cập và sử dụng website StarLight Cinema, khách hàng đồng ý tuân thủ các điều khoản, quy định và chính sách vận hành hiện hành của hệ thống.
+        'content' => 'Khi truy cập và sử dụng website StarLight Cinema, khách hàng đồng ý tuân thủ các điều khoản và quy định của hệ thống.
 
-Mọi nội dung hiển thị trên website, bao gồm hình ảnh, văn bản, bố cục giao diện và dữ liệu liên quan, đều thuộc quyền sở hữu và quản lý của StarLight Cinema.
+Mọi thông tin hiển thị trên website bao gồm hình ảnh, nội dung, giao diện và dữ liệu đều thuộc quyền quản lý của StarLight Cinema.
 
-Khách hàng có trách nhiệm cung cấp thông tin chính xác, đầy đủ và cập nhật khi đăng ký tài khoản, đặt vé hoặc liên hệ hỗ trợ.
+Khách hàng có trách nhiệm cung cấp thông tin chính xác khi đăng ký tài khoản hoặc đặt vé.
 
-StarLight Cinema có quyền thay đổi, bổ sung hoặc điều chỉnh nội dung, quy trình và dịch vụ bất kỳ lúc nào nhằm nâng cao trải nghiệm người dùng, mà không cần thông báo trước.'
+StarLight Cinema có quyền thay đổi, cập nhật nội dung hoặc điều chỉnh dịch vụ bất kỳ lúc nào nhằm nâng cao trải nghiệm người dùng mà không cần báo trước.'
     ],
 
     'thanh-toan' => [
         'title' => 'CHÍNH SÁCH THANH TOÁN',
-        'content' => 'StarLight Cinema hỗ trợ nhiều hình thức thanh toán hiện đại như thẻ ATM, Visa, MasterCard và các ví điện tử phổ biến.
+        'content' => 'StarLight Cinema hỗ trợ nhiều hình thức thanh toán như thẻ ATM nội địa, Visa, MasterCard và ví điện tử.
 
-Sau khi thanh toán thành công, hệ thống sẽ xác nhận đơn hàng ngay lập tức và gửi mã vé điện tử đến email hoặc tài khoản cá nhân của khách hàng.
+Sau khi thanh toán thành công, hệ thống sẽ xác nhận đơn hàng ngay lập tức và gửi mã vé điện tử đến email hoặc tài khoản khách hàng.
 
-Khách hàng vui lòng kiểm tra kỹ thông tin phim, suất chiếu, số ghế và tổng tiền trước khi xác nhận thanh toán.
+Khách hàng vui lòng kiểm tra kỹ thông tin phim, suất chiếu, số ghế trước khi xác nhận thanh toán.
 
-Tất cả giao dịch đều được bảo vệ bằng các biện pháp an toàn và quy trình thanh toán bảo mật của hệ thống.'
+Mọi giao dịch đều được bảo mật qua hệ thống thanh toán an toàn.'
     ],
 
     'giao-nhan' => [
         'title' => 'CHÍNH SÁCH HOÀN VÉ',
-        'content' => 'Mỗi vé đã thanh toán sẽ được gửi đến email hoặc tài khoản cá nhân trên website của khách hàng.
+        'content' => 'Sau khi đặt vé thành công, khách hàng sẽ nhận mã vé điện tử qua email hoặc tại tài khoản cá nhân trên website.
 
-Vé có thể được hỗ trợ đổi hoặc hoàn theo quy định hiện hành của rạp và theo chính sách áp dụng tại thời điểm đặt vé.
+Vé đã thanh toán có thể được hỗ trợ đổi hoặc hoàn theo quy định hiện hành của rạp.
 
-Khách hàng cần thực hiện yêu cầu đổi hoặc hoàn vé trước giờ chiếu theo thời gian quy định.
+Yêu cầu đổi hoặc hoàn vé cần thực hiện trước giờ chiếu theo thời gian quy định.
 
-Trong trường hợp không nhận được mã vé hoặc gặp sự cố kỹ thuật, vui lòng liên hệ bộ phận hỗ trợ để được xử lý nhanh chóng và đúng quy trình.'
+Nếu gặp lỗi không nhận được mã vé hoặc phát sinh sự cố, khách hàng vui lòng liên hệ bộ phận hỗ trợ để được xử lý nhanh chóng.'
     ],
 
     'bao-mat' => [
         'title' => 'CHÍNH SÁCH BẢO MẬT',
-        'content' => 'StarLight Cinema cam kết bảo vệ thông tin cá nhân của khách hàng với mức độ bảo mật cao nhất.
+        'content' => 'StarLight Cinema cam kết bảo mật tuyệt đối thông tin cá nhân của khách hàng.
 
-Thông tin như họ tên, email, số điện thoại, lịch sử đặt vé và các dữ liệu liên quan chỉ được sử dụng cho mục đích đặt vé, hỗ trợ khách hàng và gửi thông báo cần thiết.
+Thông tin như họ tên, email, số điện thoại chỉ được sử dụng cho mục đích đặt vé, hỗ trợ khách hàng và gửi thông báo cần thiết.
 
-Chúng tôi không chia sẻ, trao đổi hoặc cung cấp dữ liệu khách hàng cho bên thứ ba nếu chưa có sự đồng ý rõ ràng của khách hàng, trừ khi pháp luật yêu cầu.
+Chúng tôi không chia sẻ, trao đổi hoặc cung cấp dữ liệu khách hàng cho bên thứ ba khi chưa có sự đồng ý.
 
-Khách hàng có quyền kiểm tra, chỉnh sửa hoặc yêu cầu xóa thông tin cá nhân khỏi hệ thống bất cứ lúc nào.'
+Khách hàng có quyền kiểm tra, chỉnh sửa hoặc yêu cầu xoá thông tin cá nhân khỏi hệ thống bất cứ lúc nào.'
     ]
 
 ];
