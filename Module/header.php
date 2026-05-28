@@ -205,10 +205,7 @@ $prefix = strpos($scriptPath, '/Pages/') !== false ? '..' : '.';
             </li>
             <li class="menu_items" style="font-size: 18px">
                 <a href="../Pages/KhuyenMai.php"><strong>Khuyến mãi</strong></a>
-            </li>
-            <li class="menu_items" style="font-size: 18px">
-                <a href="../Pages/trangChinhSach.php"><strong>Chính Sách</strong></a>
-            </li>
+            </li>>
             <li class="menu_items" style="font-size: 18px">
                 <a href="../Pages/trangLienHe.php"><strong>Liên hệ</strong></a>
             </li>
