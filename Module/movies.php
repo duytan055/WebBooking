@@ -201,7 +201,7 @@ $result = $conn->query($sql);
         }
     </style>
 </head>
-
+<?php include __DIR__ . '/../Module/TrailerModal.php'; ?>
 <div class="box3">
     <h2><strong>PHIM ĐỀ CỬ</strong></h2>
 </div>
@@ -220,7 +220,11 @@ $result = $conn->query($sql);
                         <img src="<?= $row['poster'] ?>">
                     </div>
                     <div class="box_hover">
-                        <a href="../Pages/SeeMoreMovies.php?id=<?= $row['id_phim'] ?>" class="play-icon"><i class="fa-solid fa-circle-play"></i></a>
+                        <a href="#"
+                            class="play-icon openTrailer"
+                            data-trailer="<?= $row['trailer_phim'] ?>">
+                            <i class="fa-solid fa-circle-play"></i>
+                        </a>
                         <div class="description_button">
                             <h1><?= $row['ten_phim'] ?></h1>
                             <a href="../Pages/SeeMoreMovies.php?id=<?= $row['id_phim'] ?>" class="btn_detail">

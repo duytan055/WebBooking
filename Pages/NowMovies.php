@@ -280,6 +280,7 @@ $result = $conn->query($sql);
     }
 </style>
 <?php include '../Module/header.php' ?>
+<?php include '../Module/TrailerModal.php' ?>
 <div class="page-shell">
     <div class="NowMovies">
         <header>
@@ -306,7 +307,7 @@ $result = $conn->query($sql);
                                 <p class="desc"><?= htmlspecialchars($row['mo_ta']) ?></p>
                             </div>
                             <div class="box_button">
-                                <button type="button"><strong>▶ Trailer</strong></button>
+                                <button type="button" class="openTrailer" data-trailer="<?= htmlspecialchars($row['trailer_phim']) ?>"><strong>▶ Trailer</strong></button>
                                 <a href="../Pages/buyticket.php?id=<?= $row['id_phim'] ?>"><button type="button"><strong>🎟 Đặt vé</strong></button></a>
                             </div>
                             <div class="bottom">

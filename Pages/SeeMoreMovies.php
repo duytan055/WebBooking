@@ -354,6 +354,7 @@ if (!$isUpcoming) {
 </style>
 
 <?php include __DIR__ . '/../Module/header.php'; ?>
+<?php include __DIR__ . '/../Module/TrailerModal.php'; ?>
 
 <body>
     <div class="box_seemore">
@@ -374,7 +375,7 @@ if (!$isUpcoming) {
                     <span><strong>Độ tuổi:</strong> <?= $row['do_tuoi'] ?></span>
                 </div>
                 <div class="btn_box">
-                    <button type="button"><strong>▶ Trailer</strong></button>
+                    <button type="button" class="openTrailer" data-trailer="<?= htmlspecialchars($row['trailer_phim']) ?>"><strong>▶ Trailer</strong></button>
                     <?php if (!$isUpcoming): ?>
                         <a href="../Pages/buyticket.php?id=<?= $row['id_phim'] ?>"><button type="button"><strong>🎟 Đặt vé</strong></button></a>
                     <?php else: ?>
