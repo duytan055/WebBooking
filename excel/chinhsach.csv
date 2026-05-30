@@ -1,0 +1,6 @@
+﻿chinhsach,,,,,
+id_chinhsach,tieu_de,loai,noi_dung,ngay_tao,ngay_cap_nhat
+1,Chính sách bảo mật,baomat,"Website thu thập thông tin cá nhân của khách hàng bao gồm họ tên, email, số điện thoại và thông tin tài khoản nhằm phục vụ việc đặt vé, xác nhận giao dịch và hỗ trợ khách hàng. Thông tin được bảo mật và không chia sẻ cho bên thứ ba khi chưa có sự đồng ý của khách hàng.",2026-05-30 00:00:00,2026-05-30 00:00:00
+2,Điều khoản sử dụng,dieukhoan,Người dùng có trách nhiệm cung cấp thông tin chính xác khi đăng ký tài khoản và bảo mật thông tin đăng nhập của mình.,2026-05-30 00:00:00,2026-05-30 00:00:00
+3,Chính sách thanh toán,thanhtoan,Hệ thống hỗ trợ thanh toán trực tuyến và xác nhận giao dịch khi nhận được thông báo thành công từ cổng thanh toán.,2026-05-30 00:00:00,2026-05-30 00:00:00
+4,Chính sách hoàn vé,hoanve,"Vé đã thanh toán không được hoàn hoặc đổi, trừ trường hợp lỗi hệ thống hoặc suất chiếu bị hủy.",2026-05-30 00:00:00,2026-05-30 00:00:00

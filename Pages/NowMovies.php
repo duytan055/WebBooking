@@ -198,6 +198,7 @@ $result = $conn->query($sql);
         flex-wrap: wrap;
         gap: 12px;
         margin: 16px 0 12px;
+        justify-content: center;
     }
 
     .box_button button {

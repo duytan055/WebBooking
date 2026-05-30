@@ -90,10 +90,10 @@
             <div class="footer-col">
                 <h3>Thông tin</h3>
                 <ul>
-                    <li><a href="#">Giới thiệu</a></li>
-                    <li><a href="#">Phim</a></li>
-                    <li><a href="#">Góc điện ảnh</a></li>
-                    <li><a href="#">Khuyến mãi</a></li>
+                    <li><a href="../Pages/trangChu.php">Trang chủ</a></li>
+                    <li><a href="../Pages/trangPhim.php">Phim</a></li>
+                    <li><a href="../Pages/TopPhim.php">Top Phim</a></li>
+                    <li><a href="../Pages/trangKhuyenMai.php">Khuyến mãi</a></li>
                 </ul>
             </div>
             <div class="footer-col">

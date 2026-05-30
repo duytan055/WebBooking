@@ -1,146 +1,139 @@
-<?php
-session_start();
+<!doctype html>
+<html lang="vi">
 
-$policies = [
-
-    'dieu-khoan-chung' => [
-        'title' => 'ĐIỀU KHOẢN CHUNG',
-        'content' => 'Khi truy cập và sử dụng website StarLight Cinema, khách hàng đồng ý tuân thủ các điều khoản và quy định của hệ thống.
-
-Mọi thông tin hiển thị trên website bao gồm hình ảnh, nội dung, giao diện và dữ liệu đều thuộc quyền quản lý của StarLight Cinema.
-
-Khách hàng có trách nhiệm cung cấp thông tin chính xác khi đăng ký tài khoản hoặc đặt vé.
-
-StarLight Cinema có quyền thay đổi, cập nhật nội dung hoặc điều chỉnh dịch vụ bất kỳ lúc nào nhằm nâng cao trải nghiệm người dùng mà không cần báo trước.'
-    ],
-
-    'thanh-toan' => [
-        'title' => 'CHÍNH SÁCH THANH TOÁN',
-        'content' => 'StarLight Cinema hỗ trợ nhiều hình thức thanh toán như thẻ ATM nội địa, Visa, MasterCard và ví điện tử.
-
-Sau khi thanh toán thành công, hệ thống sẽ xác nhận đơn hàng ngay lập tức và gửi mã vé điện tử đến email hoặc tài khoản khách hàng.
-
-Khách hàng vui lòng kiểm tra kỹ thông tin phim, suất chiếu, số ghế trước khi xác nhận thanh toán.
-
-Mọi giao dịch đều được bảo mật qua hệ thống thanh toán an toàn.'
-    ],
-
-    'giao-nhan' => [
-        'title' => 'CHÍNH SÁCH HOÀN VÉ',
-        'content' => 'Sau khi đặt vé thành công, khách hàng sẽ nhận mã vé điện tử qua email hoặc tại tài khoản cá nhân trên website.
-
-Vé đã thanh toán có thể được hỗ trợ đổi hoặc hoàn theo quy định hiện hành của rạp.
-
-Yêu cầu đổi hoặc hoàn vé cần thực hiện trước giờ chiếu theo thời gian quy định.
-
-Nếu gặp lỗi không nhận được mã vé hoặc phát sinh sự cố, khách hàng vui lòng liên hệ bộ phận hỗ trợ để được xử lý nhanh chóng.'
-    ],
-
-    'bao-mat' => [
-        'title' => 'CHÍNH SÁCH BẢO MẬT',
-        'content' => 'StarLight Cinema cam kết bảo mật tuyệt đối thông tin cá nhân của khách hàng.
-
-Thông tin như họ tên, email, số điện thoại chỉ được sử dụng cho mục đích đặt vé, hỗ trợ khách hàng và gửi thông báo cần thiết.
-
-Chúng tôi không chia sẻ, trao đổi hoặc cung cấp dữ liệu khách hàng cho bên thứ ba khi chưa có sự đồng ý.
-
-Khách hàng có quyền kiểm tra, chỉnh sửa hoặc yêu cầu xoá thông tin cá nhân khỏi hệ thống bất cứ lúc nào.'
-    ]
-
-];
-
-$slug = $_GET['page'] ?? 'thanh-toan';
-$slug = strtolower(trim($slug));
-
-if (!array_key_exists($slug, $policies)) {
-    $slug = 'thanh-toan';
-}
-
-$policy = $policies[$slug];
-?>
-
-<?php include '../Module/header.php'; ?>
-
-<style>
-    html {
-        scroll-behavior: smooth;
-    }
-
-    body {
-        margin: 0;
-        min-height: 100vh;
-        font-family: 'Segoe UI', sans-serif;
-        background: linear-gradient(180deg, #0f172a, #0f172a);
-        color: #fff;
-    }
-
-    .page-shell {
-        width: min(1100px, 92%);
-        margin: auto;
-        padding: 40px 0;
-    }
-
-    .policy-container {
-        background: rgba(15, 23, 42, .75);
-        border: 1px solid rgba(255, 255, 255, .12);
-        border-radius: 20px;
-        padding: 30px;
-        box-shadow: 0 20px 50px rgba(0, 0, 0, .3);
-        animation: fade .25s ease;
-    }
-
-    @keyframes fade {
-        from {
-            opacity: 0;
-            transform: translateY(10px);
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css" />
+    <title>Chính sách - BookingMovies</title>
+    <style>
+        body {
+            height: 100%;
+            margin: 0;
+            background: radial-gradient(circle at top, rgba(56, 189, 248, 0.12), transparent 28%),
+                linear-gradient(180deg, #0f172a 0%, #111827 100%);
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
         }
 
-        to {
-            opacity: 1;
-            transform: translateY(0);
+        .policy-container {
+            max-width: 1200px;
+            margin: 40px auto;
+            padding: 40px;
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(10px);
+            border-radius: 15px;
+            color: white;
+            min-height: 500px;
         }
-    }
 
-    .policy-title {
-        font-size: 30px;
-        margin-bottom: 15px;
-    }
+        .policy-title {
+            font-size: 32px;
+            font-weight: bold;
+            margin-bottom: 20px;
+            color: #e50914;
+            border-bottom: 2px solid #e50914;
+            padding-bottom: 15px;
+        }
 
-    .policy-content {
-        color: #cbd5e1;
-        line-height: 1.8;
-        font-size: 16px;
-        white-space: pre-line;
-    }
+        .policy-content {
+            font-size: 16px;
+            line-height: 1.8;
+            color: #ddd;
+            text-align: justify;
+        }
 
-    #top {
-        position: absolute;
-        top: 0;
-    }
-</style>
+        .policy-date {
+            font-size: 14px;
+            color: #999;
+            margin-top: 30px;
+            font-style: italic;
+        }
 
-<div id="top"></div>
+        .policy-nav {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 30px;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
 
-<main class="page-shell">
+        .policy-nav a {
+            padding: 10px 20px;
+            background: rgba(229, 9, 20, 0.2);
+            color: white;
+            text-decoration: none;
+            border-radius: 5px;
+            transition: 0.3s;
+            border: 1px solid #e50914;
+        }
+
+        .policy-nav a:hover,
+        .policy-nav a.active {
+            background: #e50914;
+        }
+
+        .error-message {
+            text-align: center;
+            padding: 50px;
+            font-size: 18px;
+            color: #999;
+        }
+    </style>
+</head>
+
+<body>
+    <?php
+    session_start();
+    include '../Connect/connecDB.php';
+    include '../Module/header.php';
+
+    // Get page parameter
+    $page = isset($_GET['page']) ? $_GET['page'] : 'bao-mat';
+
+    // Map URL parameters to database types
+    $pageMap = [
+        'bao-mat' => 'baomat',
+        'thanh-toan' => 'thanhtoan',
+        'giao-nhan' => 'hoanve',
+        'dieu-khoan-chung' => 'dieukhoan'
+    ];
+
+    $loai = isset($pageMap[$page]) ? $pageMap[$page] : 'baomat';
+
+    // Fetch policy from database
+    $sql = "SELECT * FROM chinhsach WHERE loai = ? LIMIT 1";
+    $stmt = $conn->prepare($sql);
+    $stmt->bind_param("s", $loai);
+    $stmt->execute();
+    $result = $stmt->get_result();
+    $policy = $result->fetch_assoc();
+    ?>
 
     <div class="policy-container">
-
-        <h1 class="policy-title">
-            <?= $policy['title'] ?>
-        </h1>
-
-        <div class="policy-content">
-            <?= nl2br($policy['content']) ?>
+        <div class="policy-nav">
+            <a href="?page=bao-mat" class="<?php echo $page == 'bao-mat' ? 'active' : ''; ?>">Chính sách bảo mật</a>
+            <a href="?page=thanh-toan" class="<?php echo $page == 'thanh-toan' ? 'active' : ''; ?>">Chính sách thanh toán</a>
+            <a href="?page=giao-nhan" class="<?php echo $page == 'giao-nhan' ? 'active' : ''; ?>">Chính sách hoàn vé</a>
+            <a href="?page=dieu-khoan-chung" class="<?php echo $page == 'dieu-khoan-chung' ? 'active' : ''; ?>">Điều khoản sử dụng</a>
         </div>
 
+        <?php if ($policy): ?>
+            <h1 class="policy-title"><?php echo htmlspecialchars($policy['tieu_de']); ?></h1>
+            <div class="policy-content">
+                <?php echo nl2br(htmlspecialchars($policy['noi_dung'])); ?>
+            </div>
+            <div class="policy-date">
+                Cập nhật lần cuối: <?php echo date('d/m/Y H:i', strtotime($policy['ngay_cap_nhat'])); ?>
+            </div>
+        <?php else: ?>
+            <div class="error-message">
+                <i class="fa-solid fa-exclamation-circle" style="font-size: 48px; margin-bottom: 20px;"></i>
+                <p>Không tìm thấy nội dung chính sách.</p>
+            </div>
+        <?php endif; ?>
     </div>
 
-</main>
+    <?php include '../Module/footer.php'; ?>
+</body>
 
-<?php include '../Module/footer.php'; ?>
-
-<script>
-    window.onload = function() {
-        window.scrollTo(0, 0);
-    };
-</script>
+</html>

@@ -187,7 +187,7 @@ $result = $conn->query($sql);
                         </div>
                         <p class="promo-card__description">Đừng bỏ lỡ cơ hội nhận ưu đãi hấp dẫn cho phim chiếu rạp yêu thích.</p>
                         <div class="promo-card__action">
-                            <a href="#" class="primary">Xem chi tiết</a>
+                            <a href="ChiTietKhuyenMai.php?id=<?= $row['id_km'] ?>" class="primary">Xem chi tiết</a>
                             <a href="#" class="secondary">Đặt vé ngay</a>
                         </div>
                     </div>

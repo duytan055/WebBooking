@@ -114,6 +114,7 @@ CREATE TABLE khuyenmai (
     id_km INT AUTO_INCREMENT PRIMARY KEY,
     ma_km VARCHAR(20) UNIQUE,
     ten_khuyenmai VARCHAR(100),
+    noi_dung_km TEXT,
     anh_khuyen_mai VARCHAR(200),
     giam_gia INT,
     ngay_bat_dau DATETIME,
@@ -157,13 +158,12 @@ CREATE TABLE chitietve (
     FOREIGN KEY (id_ghe) REFERENCES ghe (id_ghe)
 );
 
--- tintuc
-CREATE TABLE tintuc (
-    id_tintuc INT AUTO_INCREMENT PRIMARY KEY,
+-- chinhsach
+CREATE TABLE chinhsach (
+    id_chinhsach INT AUTO_INCREMENT PRIMARY KEY,
     tieu_de VARCHAR(255),
-    mo_ta TEXT,
+    loai VARCHAR(50),
     noi_dung LONGTEXT,
-    hinh_anh VARCHAR(255),
-    ngay_dang DATETIME DEFAULT CURRENT_TIMESTAMP,
-    trang_thai VARCHAR(50)
+    ngay_tao DATETIME DEFAULT CURRENT_TIMESTAMP,
+    ngay_cap_nhat DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
 );
