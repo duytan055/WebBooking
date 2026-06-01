@@ -1,6 +1,9 @@
 <?php
 session_start();
 include __DIR__ . '/../Connect/connecDB.php';
+
+$today = date('Y-m-d');
+
 $sql = "SELECT 
     p.*,
     GROUP_CONCAT(DISTINCT dd.ten_dao_dien SEPARATOR ', ') AS dao_dien,
@@ -10,7 +13,8 @@ LEFT JOIN phim_daodien pdd ON p.id_phim = pdd.id_phim
 LEFT JOIN daodien dd ON pdd.id_daodien = dd.id_daodien
 LEFT JOIN phim_dienvien pdv ON p.id_phim = pdv.id_phim
 LEFT JOIN dienvien dv ON pdv.id_dienvien = dv.id_dienvien
-WHERE p.trang_thai = 'Đang chiếu'
+WHERE p.ngay_khoi_chieu <= '$today'
+AND (p.ngay_ket_thuc IS NULL OR p.ngay_ket_thuc >= '$today')
 GROUP BY p.id_phim";
 
 $result = $conn->query($sql);

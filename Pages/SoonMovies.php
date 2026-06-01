@@ -10,7 +10,7 @@ LEFT JOIN phim_daodien pdd ON p.id_phim = pdd.id_phim
 LEFT JOIN daodien dd ON pdd.id_daodien = dd.id_daodien
 LEFT JOIN phim_dienvien pdv ON p.id_phim = pdv.id_phim
 LEFT JOIN dienvien dv ON pdv.id_dienvien = dv.id_dienvien
-WHERE p.trang_thai = 'Sắp khởi chiếu'
+WHERE p.trang_thai = 'sap_chieu'
 GROUP BY p.id_phim";
 $result = $conn->query($sql);
 ?>

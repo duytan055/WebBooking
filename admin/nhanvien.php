@@ -1,5 +1,14 @@
 <?php
+session_start();
 include __DIR__ . '/../Connect/connecDB.php';
+
+// Get notification messages from session
+$success_message = $_SESSION['success_message'] ?? '';
+$error_message = $_SESSION['error_message'] ?? '';
+
+// Clear messages after reading
+unset($_SESSION['success_message']);
+unset($_SESSION['error_message']);
 
 /* ===== TÌM KIẾM ===== */
 
@@ -44,9 +53,78 @@ $row_tong = mysqli_fetch_assoc($kq_tong);
         rel="stylesheet"
         href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css" />
 
+    <style>
+        .notification {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            padding: 15px 20px;
+            border-radius: 8px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            z-index: 10000;
+            animation: slideIn 0.3s ease-out;
+            max-width: 400px;
+        }
+
+        .notification.error {
+            background: #f44336;
+            color: white;
+        }
+
+        .notification.success {
+            background: #4CAF50;
+            color: white;
+        }
+
+        .notification i {
+            font-size: 20px;
+        }
+
+        @keyframes slideIn {
+            from {
+                transform: translateX(400px);
+                opacity: 0;
+            }
+
+            to {
+                transform: translateX(0);
+                opacity: 1;
+            }
+        }
+
+        @keyframes slideOut {
+            from {
+                transform: translateX(0);
+                opacity: 1;
+            }
+
+            to {
+                transform: translateX(400px);
+                opacity: 0;
+            }
+        }
+    </style>
+
 </head>
 
 <body>
+
+    <?php if ($error_message): ?>
+        <div class="notification error" id="notification">
+            <i class="fas fa-exclamation-circle"></i>
+            <span><?php echo $error_message; ?></span>
+        </div>
+    <?php endif; ?>
+
+    <?php if ($success_message): ?>
+        <div class="notification success" id="notification">
+            <i class="fas fa-check-circle"></i>
+            <span><?php echo $success_message; ?></span>
+        </div>
+    <?php endif; ?>
 
     <div class="container">
 
@@ -192,6 +270,18 @@ $row_tong = mysqli_fetch_assoc($kq_tong);
         </main>
 
     </div>
+
+    <script>
+        const notification = document.getElementById('notification');
+        if (notification) {
+            setTimeout(() => {
+                notification.style.animation = 'slideOut 0.3s ease-out';
+                setTimeout(() => {
+                    notification.remove();
+                }, 300);
+            }, 4000);
+        }
+    </script>
 
 </body>
 

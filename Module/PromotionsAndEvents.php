@@ -9,7 +9,6 @@ $result = $conn->query($sql);
         justify-content: center;
         align-items: center;
         margin: 20px 0;
-        margin-left: 5%;
     }
 
     .box3 h2 {
@@ -47,6 +46,7 @@ $result = $conn->query($sql);
         height: 360px;
         background-color: black;
         overflow: hidden;
+        border-radius: 12px;
     }
 
     .proE-slider {
@@ -61,6 +61,8 @@ $result = $conn->query($sql);
     .proE-picture {
         position: relative;
         margin-right: 15px;
+        border-radius: 12px;
+        overflow: hidden;
     }
 
     .proE-picture:hover .box_hover {
@@ -109,7 +111,6 @@ $result = $conn->query($sql);
                 </li>
             <?php } ?>
         </ul>
-        <?php $conn->close(); ?>
     </div>
 </div>
 <script>

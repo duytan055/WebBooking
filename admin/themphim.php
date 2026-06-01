@@ -5,12 +5,16 @@ include __DIR__ . '/../Connect/connecDB.php';
 $sql_dotuoi = "SELECT * FROM dotuoi";
 $kq_dotuoi = mysqli_query($conn, $sql_dotuoi);
 
+$success_message = '';
+$error_message = '';
+
 // Xử lý thêm phim
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $ten_phim = mysqli_real_escape_string($conn, $_POST['ten_phim']);
     $the_loai = mysqli_real_escape_string($conn, $_POST['the_loai']);
     $thoi_luong = mysqli_real_escape_string($conn, $_POST['thoi_luong']);
     $ngay_khoi_chieu = mysqli_real_escape_string($conn, $_POST['ngay_khoi_chieu']);
+    $ngay_ket_thuc = mysqli_real_escape_string($conn, $_POST['ngay_ket_thuc']);
     $mo_ta = mysqli_real_escape_string($conn, $_POST['mo_ta']);
     $id_do_tuoi = mysqli_real_escape_string($conn, $_POST['id_do_tuoi']);
     $trang_thai = mysqli_real_escape_string($conn, $_POST['trang_thai']);
@@ -46,13 +50,32 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         }
     }
 
-    $sql = "INSERT INTO phim (ten_phim, the_loai, thoi_luong, ngay_khoi_chieu, poster, hinh_anh, trailer_phim, mo_ta, id_do_tuoi, trang_thai) 
-            VALUES ('$ten_phim', '$the_loai', '$thoi_luong', '$ngay_khoi_chieu', '$poster', '$hinh_anh', '$trailer_phim', '$mo_ta', '$id_do_tuoi', '$trang_thai')";
+    $sql = "INSERT INTO phim (ten_phim, the_loai, thoi_luong, ngay_khoi_chieu, ngay_ket_thuc, poster, hinh_anh, trailer_phim, mo_ta, id_do_tuoi, trang_thai) 
+            VALUES ('$ten_phim', '$the_loai', '$thoi_luong', '$ngay_khoi_chieu', '$ngay_ket_thuc', '$poster', '$hinh_anh', '$trailer_phim', '$mo_ta', '$id_do_tuoi', '$trang_thai')";
 
     if (mysqli_query($conn, $sql)) {
-        echo "<script>alert('Thêm phim thành công!'); window.location.href='phim.php';</script>";
+        $id_phim_moi = mysqli_insert_id($conn);
+
+        // Thêm suất chiếu nếu có
+        if (isset($_POST['them_suat_chieu']) && $_POST['them_suat_chieu'] == '1') {
+            $ngay_chieu = mysqli_real_escape_string($conn, $_POST['ngay_chieu']);
+            $so_suat = (int)$_POST['so_suat'];
+
+            for ($i = 1; $i <= $so_suat; $i++) {
+                if (isset($_POST["phong_$i"]) && isset($_POST["gio_$i"])) {
+                    $phong = mysqli_real_escape_string($conn, $_POST["phong_$i"]);
+                    $gio = mysqli_real_escape_string($conn, $_POST["gio_$i"]);
+
+                    $sql_suat = "INSERT INTO suatchieu (id_phim, id_phong, date_chieu, thoi_gian) 
+                                VALUES ('$id_phim_moi', '$phong', '$ngay_chieu', '$gio')";
+                    mysqli_query($conn, $sql_suat);
+                }
+            }
+        }
+
+        $success_message = 'Thêm phim thành công!';
     } else {
-        echo "<script>alert('Lỗi: " . mysqli_error($conn) . "');</script>";
+        $error_message = 'Lỗi: ' . mysqli_error($conn);
     }
 }
 ?>
@@ -67,6 +90,59 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     <link rel="stylesheet" href="admin.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css" />
     <style>
+        .notification {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            padding: 15px 20px;
+            border-radius: 8px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            z-index: 10000;
+            animation: slideIn 0.3s ease-out;
+            max-width: 400px;
+        }
+
+        .notification.error {
+            background: #f44336;
+            color: white;
+        }
+
+        .notification.success {
+            background: #4CAF50;
+            color: white;
+        }
+
+        .notification i {
+            font-size: 20px;
+        }
+
+        @keyframes slideIn {
+            from {
+                transform: translateX(400px);
+                opacity: 0;
+            }
+
+            to {
+                transform: translateX(0);
+                opacity: 1;
+            }
+        }
+
+        @keyframes slideOut {
+            from {
+                transform: translateX(0);
+                opacity: 1;
+            }
+
+            to {
+                transform: translateX(400px);
+                opacity: 0;
+            }
+        }
+
         .form-container {
             background: white;
             padding: 30px;
@@ -142,6 +218,20 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 </head>
 
 <body>
+    <?php if ($error_message): ?>
+        <div class="notification error" id="notification">
+            <i class="fas fa-exclamation-circle"></i>
+            <span><?php echo $error_message; ?></span>
+        </div>
+    <?php endif; ?>
+
+    <?php if ($success_message): ?>
+        <div class="notification success" id="notification">
+            <i class="fas fa-check-circle"></i>
+            <span><?php echo $success_message; ?></span>
+        </div>
+    <?php endif; ?>
+
     <div class="container">
         <?php include 'sidebar.php'; ?>
 
@@ -175,6 +265,11 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                     <div class="form-group">
                         <label>Ngày khởi chiếu <span style="color: red;">*</span></label>
                         <input type="date" name="ngay_khoi_chieu" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Ngày kết thúc</label>
+                        <input type="date" name="ngay_ket_thuc">
                     </div>
 
                     <div class="form-group">
@@ -217,6 +312,41 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                         <textarea name="mo_ta" placeholder="Nhập mô tả phim..."></textarea>
                     </div>
 
+                    <hr style="margin: 30px 0; border: none; border-top: 2px solid #eee;">
+
+                    <h3 style="margin-bottom: 20px; color: #333;">
+                        <i class="fas fa-clock"></i> Thêm Suất Chiếu
+                    </h3>
+
+                    <div class="form-group">
+                        <label>
+                            <input type="checkbox" id="toggle_suat_chieu" style="width: auto; margin-right: 10px;">
+                            Thêm suất chiếu cho phim này
+                        </label>
+                    </div>
+
+                    <div id="suat_chieu_container" style="display: none; background: #f9f9f9; padding: 20px; border-radius: 8px; margin-top: 15px;">
+                        <input type="hidden" name="them_suat_chieu" id="them_suat_chieu" value="0">
+
+                        <div class="form-group">
+                            <label>Ngày chiếu <span style="color: red;">*</span></label>
+                            <input type="date" name="ngay_chieu" id="ngay_chieu" min="<?php echo date('Y-m-d'); ?>">
+                        </div>
+
+                        <div class="form-group">
+                            <label>Số suất chiếu <span style="color: red;">*</span></label>
+                            <select name="so_suat" id="so_suat">
+                                <option value="1">1 suất</option>
+                                <option value="2">2 suất</option>
+                                <option value="3">3 suất</option>
+                                <option value="4" selected>4 suất</option>
+                                <option value="5">5 suất</option>
+                            </select>
+                        </div>
+
+                        <div id="suat_chieu_list"></div>
+                    </div>
+
                     <div class="form-actions">
                         <a href="phim.php" class="btn-cancel">Hủy</a>
                         <button type="submit" class="btn-submit">
@@ -227,6 +357,81 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             </div>
         </main>
     </div>
+
+    <script>
+        const notification = document.getElementById('notification');
+        if (notification) {
+            <?php if ($success_message): ?>
+                setTimeout(() => {
+                    window.location.href = 'phim.php';
+                }, 2000);
+            <?php else: ?>
+                setTimeout(() => {
+                    notification.style.animation = 'slideOut 0.3s ease-out';
+                    setTimeout(() => {
+                        notification.remove();
+                    }, 300);
+                }, 4000);
+            <?php endif; ?>
+        }
+
+        // Quản lý suất chiếu
+        const toggleSuatChieu = document.getElementById('toggle_suat_chieu');
+        const suatChieuContainer = document.getElementById('suat_chieu_container');
+        const themSuatChieu = document.getElementById('them_suat_chieu');
+        const soSuatSelect = document.getElementById('so_suat');
+        const suatChieuList = document.getElementById('suat_chieu_list');
+
+        const khungGio = ['09:00', '13:00', '17:00', '21:00', '22:00'];
+
+        toggleSuatChieu.addEventListener('change', function() {
+            if (this.checked) {
+                suatChieuContainer.style.display = 'block';
+                themSuatChieu.value = '1';
+                generateSuatChieu();
+            } else {
+                suatChieuContainer.style.display = 'none';
+                themSuatChieu.value = '0';
+            }
+        });
+
+        soSuatSelect.addEventListener('change', generateSuatChieu);
+
+        function generateSuatChieu() {
+            const soSuat = parseInt(soSuatSelect.value);
+            let html = '';
+
+            for (let i = 1; i <= soSuat; i++) {
+                html += `
+                    <div style="background: white; padding: 15px; border-radius: 5px; margin-bottom: 15px; border: 1px solid #ddd;">
+                        <h4 style="margin: 0 0 15px 0; color: #555;">Suất ${i}</h4>
+                        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px;">
+                            <div>
+                                <label style="display: block; margin-bottom: 5px; font-weight: 600;">Phòng chiếu</label>
+                                <select name="phong_${i}" required style="width: 100%; padding: 8px; border: 1px solid #ddd; border-radius: 5px;">
+                                    <option value="">-- Chọn phòng --</option>
+                                    <option value="1">Phòng 1</option>
+                                    <option value="2">Phòng 2</option>
+                                    <option value="3">Phòng 3</option>
+                                    <option value="4">Phòng 4</option>
+                                    <option value="5">Phòng 5</option>
+                                </select>
+                            </div>
+                            <div>
+                                <label style="display: block; margin-bottom: 5px; font-weight: 600;">Giờ chiếu</label>
+                                <select name="gio_${i}" required style="width: 100%; padding: 8px; border: 1px solid #ddd; border-radius: 5px;">
+                                    <option value="">-- Chọn giờ --</option>
+                                    ${khungGio.map(gio => `<option value="${gio}" ${i <= 4 && gio === khungGio[i-1] ? 'selected' : ''}>${gio}</option>`).join('')}
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            }
+
+            suatChieuList.innerHTML = html;
+        }
+    </script>
 </body>
 
 </html>

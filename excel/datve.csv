@@ -1,2 +1,11 @@
 ﻿datve,,,,,,,,,,,,,
 id_nhanvien,id_datve,id_user,id_suat,id_km,thoi_gian_dat,tong_tien,phuong_thuc_thanh_toan,ma_giao_dich,ten_nguoi_dat,so_dien_thoai,giam_gia,trang_thai,created_at
+NULL,1,1,2,NULL,2026-06-01 09:00:00,200000.00,MoMo,MM001,Nguyen Van A,0912345678,0,Da thanh toan,2026-06-01 09:00:00
+NULL,2,2,2,NULL,2026-06-01 09:05:00,220000.00,VNPay,VNP001,Tran Thi B,0987654321,0,Da thanh toan,2026-06-01 09:05:00
+NULL,3,3,3,NULL,2026-06-01 10:00:00,250000.00,Banking,BNK001,Le Thanh C,0901122334,0,Da thanh toan,2026-06-01 10:00:00
+NULL,4,4,3,NULL,2026-06-01 10:10:00,180000.00,MoMo,MM002,Pham Thu D,0911223344,0,Da thanh toan,2026-06-01 10:10:00
+NULL,5,5,7,NULL,2026-06-01 11:00:00,190000.00,VNPay,VNP002,Hoang Gia E,0922334455,0,Da thanh toan,2026-06-01 11:00:00
+NULL,6,6,7,NULL,2026-06-01 11:10:00,210000.00,Banking,BNK002,Ngoc Lan F,0933445566,0,Da thanh toan,2026-06-01 11:10:00
+NULL,7,7,2,NULL,2026-06-01 09:15:00,240000.00,MoMo,MM003,Trinh Minh G,0944556677,0,Da thanh toan,2026-06-01 09:15:00
+NULL,8,8,3,NULL,2026-06-01 10:20:00,230000.00,VNPay,VNP003,Nguyen Thu H,0955667788,0,Da thanh toan,2026-06-01 10:20:00
+NULL,9,9,7,NULL,2026-06-01 11:20:00,280000.00,Banking,BNK003,Pham Quang I,0966778899,0,Da thanh toan,2026-06-01 11:20:00

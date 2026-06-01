@@ -54,12 +54,18 @@ CREATE TABLE phim (
     the_loai VARCHAR(100),
     thoi_luong INT,
     ngay_khoi_chieu DATE,
+    ngay_ket_thuc DATE,
     poster VARCHAR(255),
-    hinh_anh VARCHAR(200),
-    trailer_phim VARCHAR(200),
+    hinh_anh VARCHAR(255),
+    trailer_phim VARCHAR(255),
     mo_ta TEXT,
+    trang_thai ENUM(
+        'sap_chieu',
+        'dang_chieu',
+        'tam_ngung',
+        'ngung_chieu'
+    ) DEFAULT 'sap_chieu',
     id_do_tuoi INT,
-    trang_thai VARCHAR(50),
     FOREIGN KEY (id_do_tuoi) REFERENCES dotuoi (id_do_tuoi)
 );
 

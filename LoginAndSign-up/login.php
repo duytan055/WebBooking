@@ -2,13 +2,15 @@
 session_start();
 include __DIR__ . "/../Connect/connecDB.php";
 
+$error_message = '';
+
 if (isset($_POST["login"])) {
 
   $username = trim($_POST['username'] ?? '');
   $password = trim($_POST['password'] ?? '');
 
   if ($username === '' || $password === '') {
-    echo "<script>alert('Vui lòng nhập tài khoản và mật khẩu');</script>";
+    $error_message = 'Vui lòng nhập tài khoản và mật khẩu';
   } else {
     $stmt = $conn->prepare('SELECT * FROM adminn WHERE ten_dang_nhap = ? AND mat_khau = ?');
     if ($stmt) {
@@ -43,7 +45,7 @@ if (isset($_POST["login"])) {
       $stmtUser->close();
     }
 
-    echo "<script>alert('Sai tài khoản hoặc mật khẩu');</script>";
+    $error_message = 'Sai tài khoản hoặc mật khẩu';
   }
 }
 ?>
@@ -58,9 +60,70 @@ if (isset($_POST["login"])) {
     rel="stylesheet"
     href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css" />
   <link rel="stylesheet" href="style.css" />
+  <style>
+    .notification {
+      position: fixed;
+      top: 20px;
+      right: 20px;
+      padding: 15px 20px;
+      border-radius: 8px;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      z-index: 10000;
+      animation: slideIn 0.3s ease-out;
+      max-width: 400px;
+    }
+
+    .notification.error {
+      background: #f44336;
+      color: white;
+    }
+
+    .notification.success {
+      background: #4CAF50;
+      color: white;
+    }
+
+    .notification i {
+      font-size: 20px;
+    }
+
+    @keyframes slideIn {
+      from {
+        transform: translateX(400px);
+        opacity: 0;
+      }
+
+      to {
+        transform: translateX(0);
+        opacity: 1;
+      }
+    }
+
+    @keyframes slideOut {
+      from {
+        transform: translateX(0);
+        opacity: 1;
+      }
+
+      to {
+        transform: translateX(400px);
+        opacity: 0;
+      }
+    }
+  </style>
 </head>
 
 <body>
+  <?php if ($error_message): ?>
+    <div class="notification error" id="notification">
+      <i class="fas fa-exclamation-circle"></i>
+      <span><?php echo $error_message; ?></span>
+    </div>
+  <?php endif; ?>
+
   <div class="kkk">
     <div class="form-login">
       <h1 class="login">Login</h1>
@@ -94,6 +157,19 @@ if (isset($_POST["login"])) {
       </form>
     </div>
   </div>
+
+  <script>
+    // Auto hide notification after 4 seconds
+    const notification = document.getElementById('notification');
+    if (notification) {
+      setTimeout(() => {
+        notification.style.animation = 'slideOut 0.3s ease-out';
+        setTimeout(() => {
+          notification.remove();
+        }, 300);
+      }, 4000);
+    }
+  </script>
 </body>
 
 </html>

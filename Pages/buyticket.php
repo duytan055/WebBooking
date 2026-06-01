@@ -13,24 +13,52 @@ include __DIR__ . '/../Connect/connecDB.php';
 $movieName = '';
 $duration = '';
 $showtimes = [];
+$showtimeGroups = [];
 $selectedShowtime = isset($_GET['showtime']) ? (int)$_GET['showtime'] : 0;
 
 if (isset($_GET['id'])) {
     $id = (int)$_GET['id'];
-    $sqlMovie = "SELECT ten_phim, thoi_luong FROM phim WHERE id_phim = $id";
-    $res = $conn->query($sqlMovie);
-    if ($res && $res->num_rows) {
-        $m = $res->fetch_assoc();
-        $movieName = $m['ten_phim'];
-        $duration = $m['thoi_luong'];
+    $sqlMovie = "SELECT ten_phim, thoi_luong FROM phim WHERE id_phim = ?";
+    $stmtMovie = $conn->prepare($sqlMovie);
+    if ($stmtMovie) {
+        $stmtMovie->bind_param('i', $id);
+        $stmtMovie->execute();
+        $res = $stmtMovie->get_result();
+        if ($res && $res->num_rows) {
+            $m = $res->fetch_assoc();
+            $movieName = $m['ten_phim'];
+            $duration = $m['thoi_luong'];
+        }
+        $stmtMovie->close();
     }
 
-    $sqlShow = "SELECT id_suat, id_phong, date_chieu, thoi_gian FROM suatchieu WHERE id_phim = $id ORDER BY date_chieu, thoi_gian";
-    $res2 = $conn->query($sqlShow);
-    if ($res2) {
-        while ($r = $res2->fetch_assoc()) {
-            $showtimes[] = $r;
+    // Chỉ lấy suất chiếu của ngày hôm nay
+    $today = date('Y-m-d');
+
+    $showtimeQuery = "SELECT id_suat, id_phong, date_chieu, thoi_gian FROM suatchieu WHERE id_phim = ? AND date_chieu = ? ORDER BY thoi_gian";
+    $stmtShow = $conn->prepare($showtimeQuery);
+    if ($stmtShow) {
+        $stmtShow->bind_param('is', $id, $today);
+        $stmtShow->execute();
+        $res2 = $stmtShow->get_result();
+        if ($res2) {
+            while ($r = $res2->fetch_assoc()) {
+                $showtimes[] = $r;
+            }
         }
+        $stmtShow->close();
+    }
+
+    foreach ($showtimes as $s) {
+        $date = $s['date_chieu'];
+        if (!isset($showtimeGroups[$date])) {
+            $showtimeGroups[$date] = [];
+        }
+        $showtimeGroups[$date][] = $s;
+    }
+
+    if ($selectedShowtime === 0 && count($showtimes) > 0) {
+        $selectedShowtime = $showtimes[0]['id_suat'];
     }
 }
 ?>
@@ -734,7 +762,7 @@ if (isset($_GET['id'])) {
 
     <main class="ticket-shell">
         <section class="topBar">
-            <button type="button" onclick="goBack()">← Quay lại</button>
+            <button type="button" onclick="history.back()">← Quay lại</button>
             <div class="topBar__title">
                 <span>Giữ ghế trong</span>
                 <strong id="timer">05:00</strong>
@@ -769,15 +797,17 @@ if (isset($_GET['id'])) {
                     <h3>Suất chiếu</h3>
                     <p>
                         <select id="showtimeSelect">
-                            <?php if (count($showtimes) > 0) {
-                                foreach ($showtimes as $s) {
-                                    $optText = $s['date_chieu'] . ' ' . $s['thoi_gian'] . ' - Phòng ' . $s['id_phong'];
+                            <?php if (count($showtimes) > 0): ?>
+                                <?php foreach ($showtimes as $s): ?>
+                                    <?php
+                                    $optText = $s['thoi_gian'] . ' - Phòng ' . $s['id_phong'];
                                     $selected = ($selectedShowtime > 0 && $s['id_suat'] == $selectedShowtime) ? ' selected' : '';
-                                    echo '<option value="' . $s['id_suat'] . '" data-phong="' . $s['id_phong'] . '"' . $selected . '>' . htmlspecialchars($optText) . '</option>';
-                                }
-                            } else {
-                                echo '<option value="">Không có lịch</option>';
-                            } ?>
+                                    ?>
+                                    <option value="<?= htmlspecialchars($s['id_suat']) ?>" data-phong="<?= htmlspecialchars($s['id_phong']) ?>" <?= $selected ?>><?= htmlspecialchars($optText) ?></option>
+                                <?php endforeach; ?>
+                            <?php else: ?>
+                                <option value="">Không có suất chiếu hôm nay</option>
+                            <?php endif; ?>
                         </select>
                     </p>
                 </div>

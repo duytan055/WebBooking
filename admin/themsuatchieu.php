@@ -1,22 +1,42 @@
 <?php
 include __DIR__ . '/../Connect/connecDB.php';
 
+// Lấy danh sách phim
+$sql_phim = "SELECT id_phim, ten_phim FROM phim ORDER BY ten_phim";
+$kq_phim = mysqli_query($conn, $sql_phim);
+
+// Lấy danh sách phòng chiếu
+$sql_phong = "SELECT id_phong, ten_phong FROM phongchieu ORDER BY id_phong";
+$kq_phong = mysqli_query($conn, $sql_phong);
+
 $success_message = '';
 $error_message = '';
 
-// Xử lý thêm nhân viên
+// Xử lý thêm suất chiếu
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
-    $ten = mysqli_real_escape_string($conn, $_POST['ten']);
-    $sdt = mysqli_real_escape_string($conn, $_POST['sdt']);
-    $mat_khau = mysqli_real_escape_string($conn, $_POST['mat_khau']);
-    $mat_khau_hash = password_hash($mat_khau, PASSWORD_DEFAULT);
+    $id_phim = mysqli_real_escape_string($conn, $_POST['id_phim']);
+    $id_phong = mysqli_real_escape_string($conn, $_POST['id_phong']);
+    $date_chieu = mysqli_real_escape_string($conn, $_POST['date_chieu']);
+    $thoi_gian = mysqli_real_escape_string($conn, $_POST['thoi_gian']);
 
-    $sql = "INSERT INTO nhanvien (ten, sdt, mat_khau) VALUES ('$ten', '$sdt', '$mat_khau_hash')";
+    // Kiểm tra trùng lặp (cùng phòng, cùng ngày, cùng giờ)
+    $check_sql = "SELECT * FROM suatchieu 
+                  WHERE id_phong = '$id_phong' 
+                  AND date_chieu = '$date_chieu' 
+                  AND thoi_gian = '$thoi_gian'";
+    $check_result = mysqli_query($conn, $check_sql);
 
-    if (mysqli_query($conn, $sql)) {
-        $success_message = 'Thêm nhân viên thành công!';
+    if (mysqli_num_rows($check_result) > 0) {
+        $error_message = 'Suất chiếu này đã tồn tại! Phòng ' . $id_phong . ' đã có lịch chiếu vào ' . $thoi_gian . ' ngày ' . $date_chieu;
     } else {
-        $error_message = 'Lỗi: ' . mysqli_error($conn);
+        $sql = "INSERT INTO suatchieu (id_phim, id_phong, date_chieu, thoi_gian) 
+                VALUES ('$id_phim', '$id_phong', '$date_chieu', '$thoi_gian')";
+
+        if (mysqli_query($conn, $sql)) {
+            $success_message = 'Thêm suất chiếu thành công!';
+        } else {
+            $error_message = 'Lỗi: ' . mysqli_error($conn);
+        }
     }
 }
 ?>
@@ -27,7 +47,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Thêm Nhân Viên</title>
+    <title>Thêm Suất Chiếu</title>
     <link rel="stylesheet" href="admin.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css" />
     <style>
@@ -104,7 +124,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             color: #333;
         }
 
-        .form-group input {
+        .form-group input,
+        .form-group select {
             width: 100%;
             padding: 10px;
             border: 1px solid #ddd;
@@ -139,12 +160,27 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             padding: 12px 30px;
             border: none;
             border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
             text-decoration: none;
             display: inline-block;
         }
 
         .btn-cancel:hover {
             background: #da190b;
+        }
+
+        .info-box {
+            background: #e3f2fd;
+            border-left: 4px solid #2196F3;
+            padding: 15px;
+            margin-bottom: 20px;
+            border-radius: 5px;
+        }
+
+        .info-box i {
+            color: #2196F3;
+            margin-right: 10px;
         }
     </style>
 </head>
@@ -166,33 +202,65 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
     <div class="container">
         <?php include 'sidebar.php'; ?>
+
         <main class="main-content">
             <header class="box_search_bar">
-                <h2>Thêm Nhân Viên Mới</h2>
+                <h2>Thêm Suất Chiếu Mới</h2>
                 <div class="user-info">
-                    <a href="nhanvien.php" style="color: #333; text-decoration: none;">
+                    <a href="suatchieu.php" style="color: #333; text-decoration: none;">
                         <i class="fas fa-arrow-left"></i> Quay lại
                     </a>
                 </div>
             </header>
+
             <div class="form-container">
+                <div class="info-box">
+                    <i class="fas fa-info-circle"></i>
+                    <strong>Lưu ý:</strong> Hệ thống sẽ kiểm tra trùng lặp. Không thể thêm 2 suất chiếu cùng phòng, cùng ngày, cùng giờ.
+                </div>
+
                 <form method="POST">
                     <div class="form-group">
-                        <label>Tên nhân viên <span style="color: red;">*</span></label>
-                        <input type="text" name="ten" required>
+                        <label>Phim <span style="color: red;">*</span></label>
+                        <select name="id_phim" required>
+                            <option value="">-- Chọn phim --</option>
+                            <?php while ($row = mysqli_fetch_assoc($kq_phim)) { ?>
+                                <option value="<?php echo $row['id_phim']; ?>">
+                                    <?php echo $row['ten_phim']; ?>
+                                </option>
+                            <?php } ?>
+                        </select>
                     </div>
+
                     <div class="form-group">
-                        <label>Số điện thoại <span style="color: red;">*</span></label>
-                        <input type="text" name="sdt" required>
+                        <label>Phòng chiếu <span style="color: red;">*</span></label>
+                        <select name="id_phong" required>
+                            <option value="">-- Chọn phòng --</option>
+                            <?php while ($row = mysqli_fetch_assoc($kq_phong)) { ?>
+                                <option value="<?php echo $row['id_phong']; ?>">
+                                    <?php echo $row['ten_phong'] ?? 'Phòng ' . $row['id_phong']; ?>
+                                </option>
+                            <?php } ?>
+                        </select>
                     </div>
+
                     <div class="form-group">
-                        <label>Mật khẩu <span style="color: red;">*</span></label>
-                        <input type="password" name="mat_khau" required>
+                        <label>Ngày chiếu <span style="color: red;">*</span></label>
+                        <input type="date" name="date_chieu" required min="<?php echo date('Y-m-d'); ?>">
                     </div>
+
+                    <div class="form-group">
+                        <label>Giờ chiếu <span style="color: red;">*</span></label>
+                        <input type="time" name="thoi_gian" required>
+                        <small style="color: #666; display: block; margin-top: 5px;">
+                            Khung giờ gợi ý: 09:00, 13:00, 17:00, 21:00
+                        </small>
+                    </div>
+
                     <div class="form-actions">
-                        <a href="nhanvien.php" class="btn-cancel">Hủy</a>
+                        <a href="suatchieu.php" class="btn-cancel">Hủy</a>
                         <button type="submit" class="btn-submit">
-                            <i class="fas fa-save"></i> Lưu
+                            <i class="fas fa-save"></i> Lưu suất chiếu
                         </button>
                     </div>
                 </form>
@@ -205,7 +273,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         if (notification) {
             <?php if ($success_message): ?>
                 setTimeout(() => {
-                    window.location.href = 'nhanvien.php';
+                    window.location.href = 'suatchieu.php';
                 }, 2000);
             <?php else: ?>
                 setTimeout(() => {
@@ -213,7 +281,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                     setTimeout(() => {
                         notification.remove();
                     }, 300);
-                }, 4000);
+                }, 5000);
             <?php endif; ?>
         }
     </script>

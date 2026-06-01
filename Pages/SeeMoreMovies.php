@@ -55,12 +55,17 @@ $releaseDate = $row['ngay_khoi_chieu'];
 $isUpcoming = (strtotime($releaseDate) > strtotime($currentDate));
 
 // Lấy lịch chiếu của phim (chỉ lấy nếu phim đang chiếu)
+// Chỉ hiển thị suất chiếu của ngày hôm nay
 $showtimesByDate = [];
 if (!$isUpcoming) {
+    // Lấy ngày hôm nay
+    $today = date('Y-m-d');
+
     $sqlShowtimes = "SELECT id_suat, id_phong, date_chieu, thoi_gian 
                      FROM suatchieu 
                      WHERE id_phim = $id 
-                     ORDER BY date_chieu, thoi_gian";
+                     AND date_chieu = '$today'
+                     ORDER BY thoi_gian";
     $showtimesResult = $conn->query($sqlShowtimes);
 
     // Nhóm suất chiếu theo ngày
@@ -105,7 +110,7 @@ if (!$isUpcoming) {
 
     .box_seemore {
         width: min(1180px, 95%);
-        margin: 70px auto 50px;
+        margin: 20px auto 50px;
         padding: 28px 26px 24px;
         color: #fcfcfc;
         display: flex;
@@ -116,6 +121,30 @@ if (!$isUpcoming) {
         border: 1px solid rgba(255, 255, 255, 0.12);
         box-shadow: 0 24px 80px rgba(0, 0, 0, 0.35);
         backdrop-filter: blur(10px);
+    }
+
+    .top-actions {
+        width: min(1180px, 95%);
+        margin: 0 auto;
+        display: flex;
+        justify-content: flex-start;
+        padding-left: 10px;
+    }
+
+    .top-actions button {
+        padding: 10px 18px;
+        background: rgba(255, 255, 255, 0.12);
+        color: #f7f7f7;
+        border: 1px solid rgba(255, 255, 255, 0.14);
+        border-radius: 999px;
+        cursor: pointer;
+        transition: all 0.25s ease;
+    }
+
+    .top-actions button:hover {
+        background: rgba(255, 255, 255, 0.18);
+        border-color: rgba(255, 255, 255, 0.2);
+        transform: translateY(-1px);
     }
 
     .box_seemore h5 {
@@ -205,6 +234,29 @@ if (!$isUpcoming) {
     .btn_box button:hover {
         background: #ff3d3d;
         color: white;
+        border-color: transparent;
+        transform: translateY(-1px);
+    }
+
+    .top-actions {
+        width: min(1180px, 95%);
+        margin: 40px auto 0;
+        display: flex;
+        justify-content: flex-start;
+    }
+
+    .top-actions button {
+        padding: 10px 18px;
+        background: rgba(255, 255, 255, 0.16);
+        color: #f7f7f7;
+        border: 1px solid rgba(255, 255, 255, 0.18);
+        border-radius: 999px;
+        cursor: pointer;
+        transition: all 0.25s ease;
+    }
+
+    .top-actions button:hover {
+        background: #ff3d3d;
         border-color: transparent;
         transform: translateY(-1px);
     }
@@ -357,6 +409,9 @@ if (!$isUpcoming) {
 <?php include __DIR__ . '/../Module/TrailerModal.php'; ?>
 
 <body>
+    <div class="top-actions">
+        <button type="button" onclick="history.back()"><strong>← Quay lại</strong></button>
+    </div>
     <div class="box_seemore">
         <h5> Nội dung phim </h5>
 

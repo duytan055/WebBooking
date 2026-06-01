@@ -17,7 +17,8 @@ $prefix = strpos($scriptPath, '/Pages/') !== false ? '..' : '.';
         height: auto;
         min-height: 70px;
         top: 0;
-        z-index: 1000;
+        z-index: 9999;
+        position: relative;
     }
 
     .box1_icon i {
@@ -56,6 +57,14 @@ $prefix = strpos($scriptPath, '/Pages/') !== false ? '..' : '.';
         margin-right: 50px;
     }
 
+    .menu_list {
+        display: flex;
+        list-style: none;
+        margin: 0;
+        padding: 0;
+        align-items: center;
+    }
+
     .menu_items {
         position: relative;
         display: inline-block;
@@ -89,7 +98,7 @@ $prefix = strpos($scriptPath, '/Pages/') !== false ? '..' : '.';
 
         transition: 0.5s ease;
 
-        z-index: 10;
+        z-index: 10000;
     }
 
     .hover_container a {
@@ -144,6 +153,8 @@ $prefix = strpos($scriptPath, '/Pages/') !== false ? '..' : '.';
         transform: translateY(10px);
 
         transition: 0.3s;
+
+        z-index: 10000;
     }
 
     .user_dropdown a {
@@ -191,23 +202,23 @@ $prefix = strpos($scriptPath, '/Pages/') !== false ? '..' : '.';
     <div class="box1_menu">
         <ul class="menu_list">
             <li class="menu_items" style="font-size: 18px">
-                <a href="../Pages/trangChu.php"><strong>Trang chủ</strong></a>
+                <a href="<?php echo $prefix; ?>/Pages/trangChu.php"><strong>Trang chủ</strong></a>
             </li>
             <li class="menu_items" id="item_phim" style="font-size: 18px">
                 <a href="#"><strong>Phim</strong></a>
                 <div class="hover_container">
-                    <a href="../Pages/NowMovies.php">Phim đang chiếu</a>
-                    <a href="../Pages/SoonMovies.php">Phim sắp chiếu</a>
+                    <a href="<?php echo $prefix; ?>/Pages/NowMovies.php">Phim đang chiếu</a>
+                    <a href="<?php echo $prefix; ?>/Pages/SoonMovies.php">Phim sắp chiếu</a>
                 </div>
             </li>
             <li class="menu_items" style="font-size: 18px">
-                <a href="../Pages/TopPhim.php"><strong>Top Phim</strong></a>
+                <a href="<?php echo $prefix; ?>/Pages/TopPhim.php"><strong>Top Phim</strong></a>
             </li>
             <li class="menu_items" style="font-size: 18px">
-                <a href="../Pages/KhuyenMai.php"><strong>Khuyến mãi</strong></a>
+                <a href="<?php echo $prefix; ?>/Pages/KhuyenMai.php"><strong>Khuyến mãi</strong></a>
             </li>
             <li class="menu_items" style="font-size: 18px">
-                <a href="../Pages/trangLienHe.php"><strong>Liên hệ</strong></a>
+                <a href="<?php echo $prefix; ?>/Pages/trangLienHe.php"><strong>Liên hệ</strong></a>
             </li>
         </ul>
     </div>
@@ -227,11 +238,11 @@ $prefix = strpos($scriptPath, '/Pages/') !== false ? '..' : '.';
 
                 <div class="user_dropdown">
 
-                    <a href="../Pages/profileUser.php">
+                    <a href="<?php echo $prefix; ?>/Pages/profileUser.php">
                         <i class="fa-solid fa-user"></i> Hồ sơ
                     </a>
 
-                    <a href="../LoginAndSign-up/logout.php">
+                    <a href="<?php echo $prefix; ?>/LoginAndSign-up/logout.php">
                         <i class="fa-solid fa-right-from-bracket"></i> Đăng xuất
                     </a>
 
@@ -243,11 +254,12 @@ $prefix = strpos($scriptPath, '/Pages/') !== false ? '..' : '.';
         } else {
         ?>
             <div class="nav_button" style="font-size: 15px; color: white">
-                <a href="../LoginAndSign-up/login.php">Đăng Nhập</a>
+                <a href="<?php echo $prefix; ?>/LoginAndSign-up/login.php">Đăng Nhập</a>
             </div>
             <div class="nav_button" style="font-size: 15px; color: white">
-                <a href="../LoginAndSign-up/Sign-up.php"> Đăng Ký</a>
-            </div><?php
-                } ?>
+                <a href="<?php echo $prefix; ?>/LoginAndSign-up/Sign-up.php"> Đăng Ký</a>
+            </div>
+        <?php
+        } ?>
     </div>
 </nav>

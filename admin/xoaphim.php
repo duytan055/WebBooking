@@ -1,8 +1,10 @@
 <?php
+session_start();
 include __DIR__ . '/../Connect/connecDB.php';
 
 // Kiểm tra ID phim
 if (!isset($_GET['id'])) {
+    $_SESSION['error_message'] = 'Không tìm thấy ID phim!';
     header('Location: phim.php');
     exit;
 }
@@ -39,10 +41,16 @@ if ($phim) {
             unlink("img/" . $phim['hinh_anh']);
         }
 
-        echo "<script>alert('Xóa phim thành công!'); window.location.href='phim.php';</script>";
+        $_SESSION['success_message'] = 'Xóa phim thành công!';
+        header('Location: phim.php');
+        exit;
     } else {
-        echo "<script>alert('Lỗi: " . mysqli_error($conn) . "'); window.location.href='phim.php';</script>";
+        $_SESSION['error_message'] = 'Lỗi: ' . mysqli_error($conn);
+        header('Location: phim.php');
+        exit;
     }
 } else {
-    echo "<script>alert('Không tìm thấy phim!'); window.location.href='phim.php';</script>";
+    $_SESSION['error_message'] = 'Không tìm thấy phim!';
+    header('Location: phim.php');
+    exit;
 }

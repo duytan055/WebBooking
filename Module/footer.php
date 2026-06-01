@@ -129,3 +129,9 @@
         </div>
     </div>
 </body>
+<?php
+// Đóng kết nối database ở cuối trang
+if (isset($conn) && $conn instanceof mysqli) {
+    $conn->close();
+}
+?>

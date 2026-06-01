@@ -1,7 +1,9 @@
 <?php
+session_start();
 include __DIR__ . '/../Connect/connecDB.php';
 
 if (!isset($_GET['id'])) {
+    $_SESSION['error_message'] = 'Không tìm thấy ID nhân viên!';
     header('Location: nhanvien.php');
     exit;
 }
@@ -12,9 +14,13 @@ $kq = mysqli_query($conn, $sql);
 $nhanvien = mysqli_fetch_assoc($kq);
 
 if (!$nhanvien) {
-    echo "<script>alert('Không tìm thấy nhân viên!'); window.location.href='nhanvien.php';</script>";
+    $_SESSION['error_message'] = 'Không tìm thấy nhân viên!';
+    header('Location: nhanvien.php');
     exit;
 }
+
+$success_message = '';
+$error_message = '';
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $ten = mysqli_real_escape_string($conn, $_POST['ten']);
@@ -31,9 +37,9 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $sql_update .= " WHERE id_nhanvien = '$id_nhanvien'";
 
     if (mysqli_query($conn, $sql_update)) {
-        echo "<script>alert('Cập nhật nhân viên thành công!'); window.location.href='nhanvien.php';</script>";
+        $success_message = 'Cập nhật nhân viên thành công!';
     } else {
-        echo "<script>alert('Lỗi: " . mysqli_error($conn) . "');</script>";
+        $error_message = 'Lỗi: ' . mysqli_error($conn);
     }
 }
 ?>
@@ -48,6 +54,59 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     <link rel="stylesheet" href="admin.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css" />
     <style>
+        .notification {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            padding: 15px 20px;
+            border-radius: 8px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            z-index: 10000;
+            animation: slideIn 0.3s ease-out;
+            max-width: 400px;
+        }
+
+        .notification.error {
+            background: #f44336;
+            color: white;
+        }
+
+        .notification.success {
+            background: #4CAF50;
+            color: white;
+        }
+
+        .notification i {
+            font-size: 20px;
+        }
+
+        @keyframes slideIn {
+            from {
+                transform: translateX(400px);
+                opacity: 0;
+            }
+
+            to {
+                transform: translateX(0);
+                opacity: 1;
+            }
+        }
+
+        @keyframes slideOut {
+            from {
+                transform: translateX(0);
+                opacity: 1;
+            }
+
+            to {
+                transform: translateX(400px);
+                opacity: 0;
+            }
+        }
+
         .form-container {
             background: white;
             padding: 30px;
@@ -114,6 +173,20 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 </head>
 
 <body>
+    <?php if ($error_message): ?>
+        <div class="notification error" id="notification">
+            <i class="fas fa-exclamation-circle"></i>
+            <span><?php echo $error_message; ?></span>
+        </div>
+    <?php endif; ?>
+
+    <?php if ($success_message): ?>
+        <div class="notification success" id="notification">
+            <i class="fas fa-check-circle"></i>
+            <span><?php echo $success_message; ?></span>
+        </div>
+    <?php endif; ?>
+
     <div class="container">
         <?php include 'sidebar.php'; ?>
         <main class="main-content">
@@ -149,6 +222,24 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             </div>
         </main>
     </div>
+
+    <script>
+        const notification = document.getElementById('notification');
+        if (notification) {
+            <?php if ($success_message): ?>
+                setTimeout(() => {
+                    window.location.href = 'nhanvien.php';
+                }, 2000);
+            <?php else: ?>
+                setTimeout(() => {
+                    notification.style.animation = 'slideOut 0.3s ease-out';
+                    setTimeout(() => {
+                        notification.remove();
+                    }, 300);
+                }, 4000);
+            <?php endif; ?>
+        }
+    </script>
 </body>
 
 </html>
