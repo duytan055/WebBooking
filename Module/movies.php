@@ -11,7 +11,7 @@ $result = $conn->query($sql);
         justify-content: center;
         align-items: center;
         margin: 40px 0 20px;
-        padding-left: 5%;
+
     }
 
     .movies-section-title h2 {

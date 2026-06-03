@@ -10,6 +10,7 @@ if (!isset($_SESSION['user_id'])) {
 $user_id = intval($_SESSION['user_id']);
 $user = null;
 $saveMessage = '';
+$changePasswordMessage = '';
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['save_profile'])) {
     $ten = trim($_POST['ten'] ?? '');
@@ -34,6 +35,54 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['save_profile'])) {
             $stmt->close();
         } else {
             $saveMessage = 'Lỗi hệ thống. Vui lòng thử lại sau.';
+        }
+    }
+}
+
+// Xử lý đổi mật khẩu
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['change_password'])) {
+    $old_password = trim($_POST['old_password'] ?? '');
+    $new_password = trim($_POST['new_password'] ?? '');
+    $confirm_password = trim($_POST['confirm_password'] ?? '');
+
+    if (empty($old_password)) {
+        $changePasswordMessage = 'Vui lòng nhập mật khẩu cũ';
+    } elseif (empty($new_password)) {
+        $changePasswordMessage = 'Vui lòng nhập mật khẩu mới';
+    } elseif (empty($confirm_password)) {
+        $changePasswordMessage = 'Vui lòng xác nhận mật khẩu mới';
+    } elseif ($new_password !== $confirm_password) {
+        $changePasswordMessage = 'Mật khẩu xác nhận không khớp';
+    } elseif (strlen($new_password) < 8) {
+        $changePasswordMessage = 'Mật khẩu phải có ít nhất 8 ký tự';
+    } elseif (!preg_match('/[A-Z]/', $new_password) || !preg_match('/[a-z]/', $new_password) || !preg_match('/[0-9]/', $new_password) || !preg_match('/[!@#$%^&*]/', $new_password)) {
+        $changePasswordMessage = 'Mật khẩu phải chứa ít nhất 1 chữ hoa, 1 chữ thường, 1 số và 1 ký tự đặc biệt';
+    } else {
+        // Kiểm tra mật khẩu cũ
+        $stmt = $conn->prepare('SELECT mat_khau FROM nguoidung WHERE id_user = ?');
+        if ($stmt) {
+            $stmt->bind_param('i', $user_id);
+            $stmt->execute();
+            $result = $stmt->get_result();
+            if ($result && $result->num_rows > 0) {
+                $row = $result->fetch_assoc();
+                if ($row['mat_khau'] === $old_password) {
+                    // Cập nhật mật khẩu mới
+                    $stmt_update = $conn->prepare('UPDATE nguoidung SET mat_khau = ? WHERE id_user = ?');
+                    if ($stmt_update) {
+                        $stmt_update->bind_param('si', $new_password, $user_id);
+                        if ($stmt_update->execute()) {
+                            $changePasswordMessage = 'Đổi mật khẩu thành công';
+                        } else {
+                            $changePasswordMessage = 'Lỗi hệ thống. Vui lòng thử lại';
+                        }
+                        $stmt_update->close();
+                    }
+                } else {
+                    $changePasswordMessage = 'Mật khẩu cũ không chính xác';
+                }
+            }
+            $stmt->close();
         }
     }
 }
@@ -74,6 +123,12 @@ function escape($value)
         width: min(1160px, 96%);
         margin: 0 auto 60px;
         padding: 40px 0 20px;
+    }
+
+    .top-actions {
+        display: flex;
+        justify-content: flex-start;
+        margin-bottom: 20px;
     }
 
     .profile-header {
@@ -550,11 +605,259 @@ function escape($value)
             justify-content: center;
         }
     }
+
+    /* Modal styles */
+    .modal {
+        display: none;
+        position: fixed;
+        z-index: 10000;
+        left: 0;
+        top: 0;
+        width: 100%;
+        height: 100%;
+        overflow: auto;
+        background: rgba(0, 0, 0, 0.6);
+    }
+
+    .modal.show {
+        display: flex;
+    }
+
+    .modal-content {
+        background: rgba(15, 23, 42, 0.95);
+        border: 1px solid rgba(255, 255, 255, 0.08);
+        border-radius: 28px;
+        padding: 40px;
+        margin: auto;
+        width: 90%;
+        max-width: 450px;
+        box-shadow: 0 28px 80px rgba(0, 0, 0, 0.4);
+        animation: modalSlideIn 0.3s ease-out;
+    }
+
+    @keyframes modalSlideIn {
+        from {
+            transform: scale(0.95);
+            opacity: 0;
+        }
+
+        to {
+            transform: scale(1);
+            opacity: 1;
+        }
+    }
+
+    .modal-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 24px;
+    }
+
+    .modal-header h2 {
+        margin: 0;
+        font-size: 1.6rem;
+        color: #f8fafc;
+    }
+
+    .close-modal {
+        font-size: 28px;
+        font-weight: bold;
+        color: #94a3b8;
+        cursor: pointer;
+        border: none;
+        background: none;
+        transition: color 0.2s ease;
+    }
+
+    .close-modal:hover {
+        color: #f8fafc;
+    }
+
+    .password-requirements {
+        background: rgba(249, 115, 22, 0.08);
+        border: 1px solid rgba(249, 115, 22, 0.24);
+        border-radius: 12px;
+        padding: 12px 16px;
+        color: #fcd34d;
+        font-size: 0.85rem;
+        margin-bottom: 20px;
+        line-height: 1.6;
+    }
+
+    .requirement {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        margin: 4px 0;
+    }
+
+    .requirement i {
+        width: 16px;
+        text-align: center;
+        font-size: 0.9rem;
+    }
+
+    .requirement.met {
+        color: #86efac;
+    }
+
+    .requirement.unmet {
+        color: #fca5a5;
+    }
+
+    .modal-form-group {
+        margin-bottom: 18px;
+    }
+
+    .modal-form-group label {
+        display: block;
+        margin-bottom: 8px;
+        color: #e2e8f0;
+        font-weight: 500;
+        font-size: 0.95rem;
+    }
+
+    .modal-form-group input {
+        width: 100%;
+        padding: 12px 16px;
+        border-radius: 12px;
+        border: 1px solid rgba(148, 163, 184, 0.24);
+        background: rgba(15, 23, 42, 0.9);
+        color: #f8fafc;
+        outline: none;
+        transition: border-color 0.2s ease, box-shadow 0.2s ease;
+        box-sizing: border-box;
+    }
+
+    .modal-form-group input:focus {
+        border-color: rgba(56, 189, 248, 0.5);
+        box-shadow: 0 0 0 4px rgba(56, 189, 248, 0.08);
+    }
+
+    .modal-message {
+        padding: 12px 16px;
+        border-radius: 12px;
+        margin-bottom: 16px;
+        font-size: 0.95rem;
+    }
+
+    .modal-message.error {
+        background: rgba(248, 113, 113, 0.12);
+        border: 1px solid rgba(248, 113, 113, 0.24);
+        color: #fca5a5;
+    }
+
+    .modal-message.success {
+        background: rgba(34, 197, 94, 0.12);
+        border: 1px solid rgba(34, 197, 94, 0.24);
+        color: #86efac;
+    }
+
+    .modal-actions {
+        display: flex;
+        gap: 12px;
+        justify-content: center;
+        margin-top: 24px;
+    }
+
+    .modal-btn {
+        padding: 12px 24px;
+        border-radius: 12px;
+        border: none;
+        font-weight: 600;
+        cursor: pointer;
+        transition: transform 0.2s ease, box-shadow 0.2s ease;
+        flex: 1;
+    }
+
+    .modal-btn.primary {
+        background: linear-gradient(135deg, #38bdf8, #0ea5e9);
+        color: white;
+        box-shadow: 0 12px 30px rgba(56, 189, 248, 0.18);
+    }
+
+    .modal-btn.primary:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 18px 34px rgba(56, 189, 248, 0.25);
+    }
+
+    .modal-btn.secondary {
+        background: rgba(255, 255, 255, 0.08);
+        color: #cbd5e1;
+        border: 1px solid rgba(255, 255, 255, 0.12);
+    }
+
+    .modal-btn.secondary:hover {
+        background: rgba(255, 255, 255, 0.12);
+        color: #f8fafc;
+    }
 </style>
 
-<?php include '../Module/header.php'; ?>
+<!-- Modal Đổi Mật Khẩu -->
+<div id="changePasswordModal" class="modal">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h2>Đổi Mật Khẩu</h2>
+            <button class="close-modal">&times;</button>
+        </div>
+
+        <?php if (!empty($changePasswordMessage)): ?>
+            <div class="modal-message <?= strpos($changePasswordMessage, 'thành công') !== false ? 'success' : 'error' ?>">
+                <?= htmlspecialchars($changePasswordMessage) ?>
+            </div>
+        <?php endif; ?>
+
+        <form method="post">
+            <div class="password-requirements">
+                <strong>Yêu cầu mật khẩu mới:</strong>
+                <div class="requirement" id="length-req">
+                    <i class="fas fa-times"></i> Ít nhất 8 ký tự
+                </div>
+                <div class="requirement" id="upper-req">
+                    <i class="fas fa-times"></i> Ít nhất 1 chữ hoa (A-Z)
+                </div>
+                <div class="requirement" id="lower-req">
+                    <i class="fas fa-times"></i> Ít nhất 1 chữ thường (a-z)
+                </div>
+                <div class="requirement" id="number-req">
+                    <i class="fas fa-times"></i> Ít nhất 1 số (0-9)
+                </div>
+                <div class="requirement" id="special-req">
+                    <i class="fas fa-times"></i> Ít nhất 1 ký tự đặc biệt (!@#$%^&*)
+                </div>
+            </div>
+
+            <div class="modal-form-group">
+                <label for="old_password">Mật Khẩu Cũ</label>
+                <input type="password" id="old_password" name="old_password" placeholder="Nhập mật khẩu cũ" required>
+            </div>
+
+            <div class="modal-form-group">
+                <label for="new_password">Mật Khẩu Mới</label>
+                <input type="password" id="new_password" name="new_password" placeholder="Nhập mật khẩu mới" required>
+            </div>
+
+            <div class="modal-form-group">
+                <label for="confirm_password">Xác Nhận Mật Khẩu</label>
+                <input type="password" id="confirm_password" name="confirm_password" placeholder="Nhập lại mật khẩu" required>
+            </div>
+
+            <div class="modal-actions">
+                <button type="submit" name="change_password" class="modal-btn primary">Đổi Mật Khẩu</button>
+                <button type="button" class="modal-btn secondary close-modal">Hủy</button>
+            </div>
+        </form>
+    </div>
+</div>
 
 <div class="profile-frame">
+    <div class="top-actions">
+        <button type="button" onclick="history.back()" class="secondary-btn" style="width: auto; padding: 10px 22px;">
+            <i class="fas fa-arrow-left"></i> Quay lại
+        </button>
+    </div>
+
     <section class="profile-header">
         <h1>Hồ sơ của tôi</h1>
     </section>
@@ -589,7 +892,7 @@ function escape($value)
                 </div>
 
                 <div class="profile-actions">
-                    <button type="button" class="primary-btn">Đổi mật khẩu</button>
+                    <button type="button" id="changePasswordBtn" class="primary-btn">Đổi mật khẩu</button>
                     <button type="button" id="updateInfoBtn" class="secondary-btn">Cập nhật thông tin</button>
                 </div>
             </div>
@@ -682,6 +985,59 @@ function escape($value)
             accountPanel.classList.toggle('active');
             updateInfoBtn.textContent = accountPanel.classList.contains('active') ? 'Thu gọn thông tin' : 'Cập nhật thông tin';
         });
+
+        // Modal Đổi Mật Khẩu
+        const changePasswordBtn = document.getElementById('changePasswordBtn');
+        const changePasswordModal = document.getElementById('changePasswordModal');
+        const closeModalButtons = document.querySelectorAll('.close-modal');
+        const newPasswordInput = document.getElementById('new_password');
+
+        if (changePasswordBtn && changePasswordModal) {
+            changePasswordBtn.addEventListener('click', function(event) {
+                event.preventDefault();
+                changePasswordModal.classList.add('show');
+            });
+        }
+
+        closeModalButtons.forEach(btn => {
+            btn.addEventListener('click', function() {
+                changePasswordModal.classList.remove('show');
+            });
+        });
+
+        window.addEventListener('click', function(event) {
+            if (event.target === changePasswordModal) {
+                changePasswordModal.classList.remove('show');
+            }
+        });
+
+        // Password validation for new password
+        if (newPasswordInput) {
+            newPasswordInput.addEventListener('input', function() {
+                const password = this.value;
+                updateRequirement('length-req', password.length >= 8);
+                updateRequirement('upper-req', /[A-Z]/.test(password));
+                updateRequirement('lower-req', /[a-z]/.test(password));
+                updateRequirement('number-req', /[0-9]/.test(password));
+                updateRequirement('special-req', /[!@#$%^&*]/.test(password));
+            });
+        }
+
+        function updateRequirement(id, isMet) {
+            const elem = document.getElementById(id);
+            if (elem) {
+                const icon = elem.querySelector('i');
+                if (isMet) {
+                    elem.classList.remove('unmet');
+                    elem.classList.add('met');
+                    icon.className = 'fas fa-check';
+                } else {
+                    elem.classList.remove('met');
+                    elem.classList.add('unmet');
+                    icon.className = 'fas fa-times';
+                }
+            }
+        }
     });
 </script>
 

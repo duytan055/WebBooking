@@ -89,12 +89,11 @@ h2 {
 
 .login_app {
   display: flex;
-  margin-left: 34%;
+  justify-content: center;
 }
 .login_app i {
   color: white;
   font-size: 20px;
-  margin-left: 25px;
 }
 .form-sign-up {
   position: relative;
@@ -119,13 +118,11 @@ h2 {
 
 .sign_up_app {
   display: flex;
-  margin-left: 29%;
+  justify-content: center;
 }
-.sign_up_app a {
-  display: inline;
+.sign_up_app i {
   color: white;
-  font-size: 30px;
-  margin-left: 30px;
+  font-size: 20px;
 }
 
 h3 {

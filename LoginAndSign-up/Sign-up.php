@@ -21,13 +21,16 @@ if (isset($_POST['register'])) {
     $password_error = 'Mật khẩu phải tối thiểu 8 ký tự, có ít nhất 1 chữ hoa, 1 chữ thường và 1 ký tự đặc biệt.';
     $error_message = $password_error;
   } else {
-    $stmt = $conn->prepare('SELECT id_user FROM nguoidung WHERE email = ?');
+    $stmt = $conn->prepare('SELECT ten, email, sdt, cccd FROM nguoidung WHERE ten = ? OR email = ? OR sdt = ? OR cccd = ? LIMIT 1');
     if ($stmt) {
-      $stmt->bind_param('s', $email);
+      $stmt->bind_param('ssss', $username, $email, $phone, $cccd);
       $stmt->execute();
-      $resultEmail = $stmt->get_result();
-      if ($resultEmail && $resultEmail->num_rows > 0) {
-        $error_message = 'Email đã tồn tại';
+      $result = $stmt->get_result();
+      if ($result && $row = $result->fetch_assoc()) {
+        if ($row['ten'] === $username) $error_message = 'Tên người dùng đã tồn tại';
+        elseif ($row['email'] === $email) $error_message = 'Email đã tồn tại';
+        elseif ($row['sdt'] === $phone) $error_message = 'Số điện thoại đã tồn tại';
+        elseif ($row['cccd'] === $cccd) $error_message = 'CCCD đã tồn tại';
       } else {
         $stmtInsert = $conn->prepare('INSERT INTO nguoidung (ten, email, cccd, sdt, ngay_sinh, mat_khau) VALUES (?, ?, ?, ?, ?, ?)');
         if ($stmtInsert) {
@@ -168,7 +171,6 @@ if (isset($_POST['register'])) {
       </form>
       <h2>- - - - - - - - -or- - - - - - - - -</h2>
       <div class="sign_up_app">
-        <a href="#" target="_blank"><i class="fa-brands fa-facebook"></i></a>
         <a href="#" target="_blank"><i class="fa-brands fa-google"></i></a>
       </div>
       <h3 style="color: rgb(192, 185, 185)">

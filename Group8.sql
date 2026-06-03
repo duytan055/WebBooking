@@ -24,7 +24,7 @@ CREATE TABLE nguoidung (
     email VARCHAR(100) UNIQUE,
     cccd VARCHAR(20),
     sdt VARCHAR(20),
-    ngay_sinh DATETIME,
+    ngay_sinh DATE,
     mat_khau VARCHAR(100)
 );
 
@@ -172,4 +172,15 @@ CREATE TABLE chinhsach (
     noi_dung LONGTEXT,
     ngay_tao DATETIME DEFAULT CURRENT_TIMESTAMP,
     ngay_cap_nhat DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+);
+
+--forgot password OTP table
+CREATE TABLE IF NOT EXISTS password_reset_otp (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    email VARCHAR(100) NOT NULL,
+    otp VARCHAR(10) NOT NULL,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    expires_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    is_used BOOLEAN DEFAULT FALSE,
+    FOREIGN KEY (email) REFERENCES nguoidung (email) ON DELETE CASCADE
 );

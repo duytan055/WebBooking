@@ -140,12 +140,11 @@ if (isset($_POST["login"])) {
         </div>
         <div class="rememberL" style="color: rgb(192, 185, 185)">
           <label><input type="checkbox" />Remember me </label>
-          <a id="abc" href="#" style="color: rgb(192, 185, 185)">Forget password</a>
+          <a id="abc" href="forgot_password.php" style="color: rgb(192, 185, 185)">Forget password</a>
         </div>
         <button name="login" type="submit" class="button">Login</button>
         <h2>- - - - - - - - -or- - - - - - - - -</h2>
         <div class="login_app">
-          <a href="#" target="_blank"><i class="fa-brands fa-facebook"></i></a>
           <a href="#" target="_blank"><i class="fa-brands fa-google"></i></a>
         </div>
         <p style="color: rgb(192, 185, 185)">

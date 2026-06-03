@@ -1,0 +1,12 @@
+{
+    "name": "tann1/web-booking",
+    "authors": [
+        {
+            "name": "duytan0502",
+            "email": "tann14195@gmail.com"
+        }
+    ],
+    "require": {
+        "phpmailer/phpmailer": "*"
+    }
+}
