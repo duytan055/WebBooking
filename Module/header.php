@@ -21,9 +21,10 @@ $prefix = strpos($scriptPath, '/Pages/') !== false ? '..' : '.';
         position: relative;
     }
 
-    .box1_icon i {
-        font-size: 20px;
-        margin: 0 12px;
+    .box1_icon img {
+        height: 80px;
+        width: 250px;
+
     }
 
     .box1_icon {
@@ -186,17 +187,8 @@ $prefix = strpos($scriptPath, '/Pages/') !== false ? '..' : '.';
 
 <nav class="box1">
     <div class="box1_icon">
-        <a href="https://www.facebook.com/duytan.801/" target="_blank">
-            <i class="fa-brands fa-square-facebook" style="color: white"></i>
-        </a>
-        <a
-            href="https://www.linkedin.com/in/jim-nguyen-814255390/"
-            target="_blank">
-            <i class="fa-brands fa-linkedin" style="color: white"></i>
-        </a>
-
-        <a href="https://x.com/NguynTn70344539" target="_blank">
-            <i class="fa-brands fa-x-twitter" style="color: white"></i>
+        <a href="<?php echo $prefix; ?>/Pages/trangChu.php">
+            <img src="<?php echo $prefix; ?>/Logo/logo1.png" alt="Logo">
         </a>
     </div>
     <div class="box1_menu">

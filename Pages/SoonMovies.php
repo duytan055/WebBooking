@@ -10,7 +10,8 @@ LEFT JOIN phim_daodien pdd ON p.id_phim = pdd.id_phim
 LEFT JOIN daodien dd ON pdd.id_daodien = dd.id_daodien
 LEFT JOIN phim_dienvien pdv ON p.id_phim = pdv.id_phim
 LEFT JOIN dienvien dv ON pdv.id_dienvien = dv.id_dienvien
-WHERE p.trang_thai = 'sap_chieu'
+WHERE p.ngay_khoi_chieu > CURDATE()
+AND (p.ngay_ket_thuc IS NULL OR p.ngay_ket_thuc >= CURDATE())
 GROUP BY p.id_phim";
 $result = $conn->query($sql);
 ?>
@@ -295,7 +296,7 @@ $result = $conn->query($sql);
                 <?php while ($row = $result->fetch_assoc()) { ?>
                     <li class="movie-item">
                         <div class="box_img">
-                            <img src="<?= htmlspecialchars($row['poster']) ?>" alt="<?= htmlspecialchars($row['ten_phim']) ?>">
+                            <img src="../poster/<?= htmlspecialchars($row['poster']) ?>" alt="<?= htmlspecialchars($row['ten_phim']) ?>">
                         </div>
 
                         <div class="box_hover">

@@ -34,11 +34,11 @@ if ($phim) {
 
     if (mysqli_query($conn, $sql_delete)) {
         // Xóa file ảnh nếu tồn tại
-        if ($phim['poster'] && file_exists("img/" . $phim['poster'])) {
-            unlink("img/" . $phim['poster']);
+        if ($phim['poster'] && file_exists("../poster/" . $phim['poster'])) {
+            unlink("../poster/" . $phim['poster']);
         }
-        if ($phim['hinh_anh'] && file_exists("img/" . $phim['hinh_anh'])) {
-            unlink("img/" . $phim['hinh_anh']);
+        if ($phim['hinh_anh'] && file_exists("../poster/" . $phim['hinh_anh'])) {
+            unlink("../poster/" . $phim['hinh_anh']);
         }
 
         $_SESSION['success_message'] = 'Xóa phim thành công!';

@@ -215,7 +215,7 @@ $result = $conn->query($sql);
             ?>
                 <li class="movies-item">
                     <div class="movies-item-img">
-                        <img src="<?= $row['poster'] ?>" alt="<?= $row['ten_phim'] ?>">
+                        <img src="../poster/<?= $row['poster'] ?>" alt="<?= $row['ten_phim'] ?>">
                     </div>
                     <div class="movies-hover">
                         <a href="#" class="movies-play-icon openTrailer" data-trailer="<?= $row['trailer_phim'] ?>">

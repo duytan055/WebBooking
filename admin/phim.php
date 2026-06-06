@@ -288,7 +288,7 @@ $row_sc = mysqli_fetch_assoc($kq_sc);
                                     <td>
 
                                         <img
-                                            src="<?php echo $row['poster']; ?>"
+                                            src="../poster/<?php echo $row['poster']; ?>"
                                             width="70"
                                             height="100"
                                             style="border-radius:10px">

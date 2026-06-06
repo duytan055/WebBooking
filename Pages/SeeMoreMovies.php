@@ -417,7 +417,7 @@ if (!$isUpcoming) {
 
         <div class="seemore_container">
             <div class="img_item">
-                <img src="<?= $row['poster'] ?>" alt="Poster <?= htmlspecialchars($row['ten_phim']) ?>" />
+                <img src="../poster/<?= $row['poster'] ?>" alt="Poster <?= htmlspecialchars($row['ten_phim']) ?>" />
             </div>
             <div class="description_item">
                 <h1 class="movie-title"><?= $row['ten_phim'] ?></h1>
@@ -427,7 +427,7 @@ if (!$isUpcoming) {
                     <span><strong>Đạo diễn:</strong> <?= $row['dao_dien'] ?></span>
                     <span><strong>Thời lượng:</strong> <?= $row['thoi_luong'] ?> phút</span>
                     <span><strong>Diễn viên:</strong> <?= $row['dien_vien'] ?></span>
-                    <span><strong>Độ tuổi:</strong> <?= $row['do_tuoi'] ?></span>
+                    <span><strong>Độ tuổi:</strong> <?= $row['do_tuoi'] ?> - <?= $row['mo_ta_do_tuoi'] ?></span>
                 </div>
                 <div class="btn_box">
                     <button type="button" class="openTrailer" data-trailer="<?= htmlspecialchars($row['trailer_phim']) ?>"><strong>▶ Trailer</strong></button>

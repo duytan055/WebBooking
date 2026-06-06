@@ -300,7 +300,7 @@ $result = $conn->query($sql);
                 <?php while ($row = $result->fetch_assoc()) { ?>
                     <li class="movie-item">
                         <div class="box_img">
-                            <img src="<?= htmlspecialchars($row['poster']) ?>" alt="<?= htmlspecialchars($row['ten_phim']) ?>">
+                            <img src="../poster/<?= htmlspecialchars($row['poster']) ?>" alt="<?= htmlspecialchars($row['ten_phim']) ?>">
                         </div>
 
                         <div class="box_hover">

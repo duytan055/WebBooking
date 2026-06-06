@@ -11,17 +11,6 @@ if (!isset($_GET['id'])) {
 
 $id_phim = mysqli_real_escape_string($conn, $_GET['id']);
 
-// Lấy thông tin phim
-$sql = "SELECT * FROM phim WHERE id_phim = '$id_phim'";
-$kq = mysqli_query($conn, $sql);
-$phim = mysqli_fetch_assoc($kq);
-
-if (!$phim) {
-    $_SESSION['error_message'] = 'Không tìm thấy phim!';
-    header('Location: phim.php');
-    exit;
-}
-
 // Lấy danh sách độ tuổi
 $sql_dotuoi = "SELECT * FROM dotuoi";
 $kq_dotuoi = mysqli_query($conn, $sql_dotuoi);
@@ -73,7 +62,12 @@ if (isset($_POST['them_suat_moi'])) {
 }
 
 // Xử lý cập nhật phim
-if ($_SERVER['REQUEST_METHOD'] == 'POST') {
+if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['cap_nhat_phim'])) {
+    // Lấy thông tin phim hiện tại để xử lý ảnh cũ
+    $sql_old = "SELECT poster, hinh_anh FROM phim WHERE id_phim = '$id_phim'";
+    $res_old = mysqli_query($conn, $sql_old);
+    $phim_old = mysqli_fetch_assoc($res_old);
+
     $ten_phim = mysqli_real_escape_string($conn, $_POST['ten_phim']);
     $the_loai = mysqli_real_escape_string($conn, $_POST['the_loai']);
     $thoi_luong = mysqli_real_escape_string($conn, $_POST['thoi_luong']);
@@ -84,12 +78,12 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $trang_thai = mysqli_real_escape_string($conn, $_POST['trang_thai']);
     $trailer_phim = mysqli_real_escape_string($conn, $_POST['trailer_phim']);
 
-    $poster = $phim['poster'];
-    $hinh_anh = $phim['hinh_anh'];
+    $poster = $phim_old['poster'];
+    $hinh_anh = $phim_old['hinh_anh'];
 
     // Xử lý upload poster mới
     if (isset($_FILES['poster']) && $_FILES['poster']['error'] == 0) {
-        $target_dir = "img/";
+        $target_dir = "../poster/";
         $file_extension = pathinfo($_FILES['poster']['name'], PATHINFO_EXTENSION);
         $new_filename = time() . '_' . uniqid() . '.' . $file_extension;
         $target_file = $target_dir . $new_filename;
@@ -109,7 +103,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
     // Xử lý upload hình ảnh mới
     if (isset($_FILES['hinh_anh']) && $_FILES['hinh_anh']['error'] == 0) {
-        $target_dir = "img/";
+        $target_dir = "../poster/";
         $file_extension = pathinfo($_FILES['hinh_anh']['name'], PATHINFO_EXTENSION);
         $new_filename = time() . '_' . uniqid() . '.' . $file_extension;
         $target_file = $target_dir . $new_filename;
@@ -138,11 +132,71 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                    WHERE id_phim = '$id_phim'";
 
     if (mysqli_query($conn, $sql_update)) {
+        // Cập nhật Đạo diễn: Xóa cũ thêm mới
+        mysqli_query($conn, "DELETE FROM phim_daodien WHERE id_phim = '$id_phim'");
+        if (!empty($_POST['dao_dien'])) {
+            $arr_dd = explode(',', $_POST['dao_dien']);
+            foreach ($arr_dd as $dd_name) {
+                $dd_name = mysqli_real_escape_string($conn, trim($dd_name));
+                if (empty($dd_name)) continue;
+
+                $check_dd = mysqli_query($conn, "SELECT id_daodien FROM daodien WHERE ten_dao_dien = '$dd_name'");
+                if ($row_dd = mysqli_fetch_assoc($check_dd)) {
+                    $id_dd = $row_dd['id_daodien'];
+                } else {
+                    mysqli_query($conn, "INSERT INTO daodien (ten_dao_dien) VALUES ('$dd_name')");
+                    $id_dd = mysqli_insert_id($conn);
+                }
+                mysqli_query($conn, "INSERT INTO phim_daodien (id_phim, id_daodien) VALUES ('$id_phim', '$id_dd')");
+            }
+        }
+
+        // Cập nhật Diễn viên: Xóa cũ thêm mới
+        mysqli_query($conn, "DELETE FROM phim_dienvien WHERE id_phim = '$id_phim'");
+        if (!empty($_POST['dien_vien'])) {
+            $arr_dv = explode(',', $_POST['dien_vien']);
+            foreach ($arr_dv as $dv_name) {
+                $dv_name = mysqli_real_escape_string($conn, trim($dv_name));
+                if (empty($dv_name)) continue;
+
+                $check_dv = mysqli_query($conn, "SELECT id_dienvien FROM dienvien WHERE ten_dien_vien = '$dv_name'");
+                if ($row_dv = mysqli_fetch_assoc($check_dv)) {
+                    $id_dv = $row_dv['id_dienvien'];
+                } else {
+                    mysqli_query($conn, "INSERT INTO dienvien (ten_dien_vien) VALUES ('$dv_name')");
+                    $id_dv = mysqli_insert_id($conn);
+                }
+                mysqli_query($conn, "INSERT INTO phim_dienvien (id_phim, id_dienvien) VALUES ('$id_phim', '$id_dv')");
+            }
+        }
+
         $success_message = 'Cập nhật phim thành công!';
     } else {
         $error_message = 'Lỗi: ' . mysqli_error($conn);
     }
 }
+
+// Lấy thông tin phim MỚI NHẤT (Sau khi đã có thể đã cập nhật ở trên)
+$sql = "SELECT * FROM phim WHERE id_phim = '$id_phim'";
+$kq = mysqli_query($conn, $sql);
+$phim = mysqli_fetch_assoc($kq);
+
+if (!$phim) {
+    $_SESSION['error_message'] = 'Không tìm thấy phim!';
+    header('Location: phim.php');
+    exit;
+}
+
+// Lấy danh sách đạo diễn và diễn viên hiện tại để hiển thị trong form
+$res_dd = mysqli_query($conn, "SELECT GROUP_CONCAT(d.ten_dao_dien SEPARATOR ', ') as ds_dd 
+                                FROM phim_daodien pd JOIN daodien d ON pd.id_daodien = d.id_daodien 
+                                WHERE pd.id_phim = '$id_phim'");
+$phim['dao_dien'] = mysqli_fetch_assoc($res_dd)['ds_dd'] ?? '';
+
+$res_dv = mysqli_query($conn, "SELECT GROUP_CONCAT(d.ten_dien_vien SEPARATOR ', ') as ds_dv 
+                                FROM phim_dienvien pd JOIN dienvien d ON pd.id_dienvien = d.id_dienvien 
+                                WHERE pd.id_phim = '$id_phim'");
+$phim['dien_vien'] = mysqli_fetch_assoc($res_dv)['ds_dv'] ?? '';
 ?>
 
 <!DOCTYPE html>
@@ -310,7 +364,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             <header class="box_search_bar">
                 <h2>Sửa Phim</h2>
                 <div class="user-info">
-                    <a href="phim.php" style="color: #333; text-decoration: none;">
+                    <a href="phim.php" style="color: white; text-decoration: none;">
                         <i class="fas fa-arrow-left"></i> Quay lại
                     </a>
                 </div>
@@ -330,12 +384,22 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
                     <div class="form-group">
                         <label>Thời lượng (phút) <span style="color: red;">*</span></label>
-                        <input type="number" name="thoi_luong" value="<?php echo $phim['thoi_luong']; ?>" min="1" required>
+                        <input type="number" name="thoi_luong" value="<?php echo $phim['thoi_luong']; ?>">
+                    </div>
+
+                    <div class="form-group">
+                        <label>Đạo diễn (Cách nhau bằng dấu phẩy)</label>
+                        <input type="text" name="dao_dien" value="<?php echo htmlspecialchars($phim['dao_dien']); ?>">
+                    </div>
+
+                    <div class="form-group">
+                        <label>Diễn viên (Cách nhau bằng dấu phẩy)</label>
+                        <input type="text" name="dien_vien" value="<?php echo htmlspecialchars($phim['dien_vien']); ?>">
                     </div>
 
                     <div class="form-group">
                         <label>Ngày khởi chiếu <span style="color: red;">*</span></label>
-                        <input type="date" name="ngay_khoi_chieu" value="<?php echo $phim['ngay_khoi_chieu']; ?>" required>
+                        <input type="date" name="ngay_khoi_chieu" value="<?php echo $phim['ngay_khoi_chieu']; ?>">
                     </div>
 
                     <div class="form-group">
@@ -368,7 +432,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                         <label>Poster</label>
                         <input type="file" name="poster" accept="image/*">
                         <?php if ($phim['poster']) { ?>
-                            <img src="img/<?php echo $phim['poster']; ?>" class="current-image" alt="Current poster">
+                            <img src="../poster/<?php echo $phim['poster']; ?>" class="current-image" alt="Current poster">
                         <?php } ?>
                     </div>
 
@@ -376,7 +440,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                         <label>Hình ảnh</label>
                         <input type="file" name="hinh_anh" accept="image/*">
                         <?php if ($phim['hinh_anh']) { ?>
-                            <img src="img/<?php echo $phim['hinh_anh']; ?>" class="current-image" alt="Current image">
+                            <img src="../poster/<?php echo $phim['hinh_anh']; ?>" class="current-image" alt="Current image">
                         <?php } ?>
                     </div>
 
@@ -392,7 +456,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
                     <div class="form-actions">
                         <a href="phim.php" class="btn-cancel">Hủy</a>
-                        <button type="submit" class="btn-submit">
+                        <button type="submit" name="cap_nhat_phim" class="btn-submit">
                             <i class="fas fa-save"></i> Cập nhật
                         </button>
                     </div>
@@ -472,10 +536,10 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                                 $count++;
                             ?>
                                 <tr style="border-bottom: 1px solid #eee;">
-                                    <td style="padding: 12px; color: #333;"><?php echo $suat['id_suat']; ?></td>
-                                    <td style="padding: 12px; color: #333;"><?php echo date('d/m/Y', strtotime($suat['date_chieu'])); ?></td>
-                                    <td style="padding: 12px; color: #333;"><?php echo date('H:i', strtotime($suat['thoi_gian'])); ?></td>
-                                    <td style="padding: 12px; color: #333;"><?php echo $suat['ten_phong'] ?? 'Phòng ' . $suat['id_phong']; ?></td>
+                                    <td style="padding: 12px; text-align: left; color: #333;"><?php echo $suat['id_suat']; ?></td>
+                                    <td style="padding: 12px; text-align: left; color: #333;"><?php echo date('d/m/Y', strtotime($suat['date_chieu'])); ?></td>
+                                    <td style="padding: 12px; text-align: left; color: #333;"><?php echo date('H:i', strtotime($suat['thoi_gian'])); ?></td>
+                                    <td style="padding: 12px; text-align: left; color: #333;"><?php echo $suat['ten_phong'] ?? 'Phòng ' . $suat['id_phong']; ?></td>
                                     <td style="padding: 12px; text-align: center;">
                                         <a href="?id=<?php echo $id_phim; ?>&delete_suat=<?php echo $suat['id_suat']; ?>"
                                             onclick="return confirm('Bạn có chắc muốn xóa suất chiếu này?')"

@@ -184,3 +184,12 @@ CREATE TABLE IF NOT EXISTS password_reset_otp (
     is_used BOOLEAN DEFAULT FALSE,
     FOREIGN KEY (email) REFERENCES nguoidung (email) ON DELETE CASCADE
 );
+
+--giữ ghế tạm thời
+CREATE TABLE IF NOT EXISTS ghe_tam_giu (
+    id_suat INT,
+    id_ghe INT,
+    id_user INT,
+    expires_at DATETIME,
+    PRIMARY KEY (id_suat, id_ghe)
+);

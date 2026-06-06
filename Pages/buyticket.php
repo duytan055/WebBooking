@@ -10,18 +10,144 @@ if (!isset($_SESSION['user_id'])) {
 <?php
 include __DIR__ . '/../Connect/connecDB.php';
 
+// --- XỬ LÝ AJAX GIỮ GHẾ ---
+if (isset($_POST['action'])) {
+    header('Content-Type: application/json');
+    $action = $_POST['action'];
+    $sId = (int)$_POST['suat_id'];
+    $gId = isset($_POST['ghe_id']) ? (int)$_POST['ghe_id'] : 0;
+    $uId = (int)$_SESSION['user_id'];
+
+    // --- HÀNH ĐỘNG: GIỮ GHẾ TẠM THỜI (4 PHÚT) ---
+    if ($action === 'hold') {
+        $checkPaid = $conn->prepare("SELECT 1 FROM chitietve WHERE id_suat = ? AND id_ghe = ?");
+        $checkPaid->bind_param('ii', $sId, $gId);
+        $checkPaid->execute();
+        if ($checkPaid->get_result()->num_rows > 0) {
+            echo json_encode(['status' => 'error', 'message' => 'Ghế này đã được bán!']);
+            exit;
+        }
+
+        // 2. Kiểm tra xem có ai khác đang giữ không (chưa hết hạn 4 phút)
+        $checkHold = $conn->prepare("SELECT 1 FROM ghe_tam_giu WHERE id_suat = ? AND id_ghe = ? AND expires_at > NOW() AND id_user != ?");
+        $checkHold->bind_param('iii', $sId, $gId, $uId);
+        $checkHold->execute();
+        if ($checkHold->get_result()->num_rows > 0) {
+            echo json_encode(['status' => 'error', 'message' => 'Ghế này đang được người khác chọn!']);
+            exit;
+        }
+
+        // 3. Lưu vào "bảng tạm" ghe_tam_giu với thời hạn 4 phút
+        $stmt = $conn->prepare("INSERT INTO ghe_tam_giu (id_suat, id_ghe, id_user, expires_at) 
+                               VALUES (?, ?, ?, DATE_ADD(NOW(), INTERVAL 4 MINUTE)) 
+                               ON DUPLICATE KEY UPDATE id_user = VALUES(id_user), expires_at = VALUES(expires_at)");
+        $stmt->bind_param('iii', $sId, $gId, $uId);
+        $stmt->execute();
+        echo json_encode(['status' => 'success']);
+        exit;
+    }
+
+    // --- HÀNH ĐỘNG: HUỶ GIỮ GHẾ (KHI BỎ CHỌN) ---
+    if ($action === 'release') {
+        $stmt = $conn->prepare("DELETE FROM ghe_tam_giu WHERE id_suat = ? AND id_ghe = ? AND id_user = ?");
+        $stmt->bind_param('iii', $sId, $gId, $uId);
+        $stmt->execute();
+        echo json_encode(['status' => 'success']);
+        exit;
+    }
+
+    // --- HÀNH ĐỘNG: LÀM MỚI THỜI GIAN GIỮ (KHI CHUYỂN TRANG/BƯỚC) ---
+    if ($action === 'refresh_hold') {
+        // Reset lại 4 phút cho tất cả ghế mà user này đang giữ trong suất chiếu này
+        $stmt = $conn->prepare("UPDATE ghe_tam_giu SET expires_at = DATE_ADD(NOW(), INTERVAL 4 MINUTE) 
+                               WHERE id_suat = ? AND id_user = ?");
+        $stmt->bind_param('ii', $sId, $uId);
+        $stmt->execute();
+        echo json_encode(['status' => 'success']);
+        exit;
+    }
+
+    // --- LOGIC XỬ LÝ THANH TOÁN (CHECKOUT) ---
+    if ($action === 'checkout') {
+        // Lấy nội dung ghế từ "bảng tạm" ghe_tam_giu để chuyển sang bảng chính thức
+        $stmtCheck = $conn->prepare("SELECT g.id_ghe, g.loai_ghe FROM ghe_tam_giu gt 
+                                   JOIN ghe g ON gt.id_ghe = g.id_ghe 
+                                   WHERE gt.id_suat = ? AND gt.id_user = ? AND gt.expires_at > NOW()");
+        $stmtCheck->bind_param('ii', $sId, $uId);
+        $stmtCheck->execute();
+        $res = $stmtCheck->get_result();
+
+        $seatsToBook = [];
+        $totalSeatMoney = 0;
+        while ($row = $res->fetch_assoc()) {
+            $seatsToBook[] = $row;
+            // Tính tiền dựa trên loại ghế (giống logic JS)
+            $price = ($row['loai_ghe'] === 'vip' ? 70000 : ($row['loai_ghe'] === 'couple' ? 90000 : 50000));
+            $totalSeatMoney += $price;
+        }
+
+        if (empty($seatsToBook)) {
+            echo json_encode(['status' => 'error', 'message' => 'Phiên giữ ghế đã hết hạn hoặc bạn chưa chọn ghế!']);
+            exit;
+        }
+
+        // Bắt đầu giao dịch database
+        $conn->begin_transaction();
+        try {
+            // Lấy thông tin người dùng từ bảng nguoidung
+            $stmtUser = $conn->prepare("SELECT ten, sdt FROM nguoidung WHERE id_user = ?");
+            $stmtUser->bind_param('i', $uId);
+            $stmtUser->execute();
+            $userData = $stmtUser->get_result()->fetch_assoc();
+
+            $comboMoney = (int)($_POST['combo_money'] ?? 0);
+            $discount = (int)($_POST['discount'] ?? 0);
+            $finalTotal = $totalSeatMoney + $comboMoney - $discount;
+            $pttt = $_POST['payment_method'] ?? 'VNPAY';
+
+            // 2. Tạo bản ghi đặt vé (datve)
+            $sqlDatVe = "INSERT INTO datve (id_user, id_suat, tong_tien, phuong_thuc_thanh_toan, ten_nguoi_dat, so_dien_thoai, giam_gia, trang_thai) 
+                         VALUES (?, ?, ?, ?, ?, ?, ?, 'Đã thanh toán')";
+            $stmtDV = $conn->prepare($sqlDatVe);
+            $stmtDV->bind_param('iidssii', $uId, $sId, $finalTotal, $pttt, $userData['ten'], $userData['sdt'], $discount);
+            $stmtDV->execute();
+            $idDatVe = $conn->insert_id;
+
+            // 3. Tạo chi tiết vé (chitietve) và xóa trong bảng ghe_tam_giu
+            $stmtCTV = $conn->prepare("INSERT INTO chitietve (id_datve, id_suat, id_ghe, gia_ve, trang_thai) VALUES (?, ?, ?, ?, 'Đã thanh toán')");
+            $stmtDelHold = $conn->prepare("DELETE FROM ghe_tam_giu WHERE id_suat = ? AND id_ghe = ? AND id_user = ?");
+
+            foreach ($seatsToBook as $seat) {
+                $price = ($seat['loai_ghe'] === 'vip' ? 70000 : ($seat['loai_ghe'] === 'couple' ? 90000 : 50000));
+                $stmtCTV->bind_param('iiid', $idDatVe, $sId, $seat['id_ghe'], $price);
+                $stmtCTV->execute();
+
+                $stmtDelHold->bind_param('iii', $sId, $seat['id_ghe'], $uId);
+                $stmtDelHold->execute();
+            }
+
+            $conn->commit();
+            echo json_encode(['status' => 'success', 'message' => 'Thanh toán thành công! Chúc bạn xem phim vui vẻ.']);
+        } catch (Exception $e) {
+            $conn->rollback();
+            echo json_encode(['status' => 'error', 'message' => 'Lỗi hệ thống khi thanh toán: ' . $e->getMessage()]);
+        }
+        exit;
+    }
+}
+?>
+<?php
 $movieName = '';
 $duration = '';
 $showtimes = [];
-$showtimeGroups = [];
 $selectedShowtime = isset($_GET['showtime']) ? (int)$_GET['showtime'] : 0;
+$movieId = isset($_GET['id']) ? (int)$_GET['id'] : 0;
 
-if (isset($_GET['id'])) {
-    $id = (int)$_GET['id'];
+if ($movieId > 0) {
     $sqlMovie = "SELECT ten_phim, thoi_luong FROM phim WHERE id_phim = ?";
     $stmtMovie = $conn->prepare($sqlMovie);
     if ($stmtMovie) {
-        $stmtMovie->bind_param('i', $id);
+        $stmtMovie->bind_param('i', $movieId);
         $stmtMovie->execute();
         $res = $stmtMovie->get_result();
         if ($res && $res->num_rows) {
@@ -38,7 +164,7 @@ if (isset($_GET['id'])) {
     $showtimeQuery = "SELECT id_suat, id_phong, date_chieu, thoi_gian FROM suatchieu WHERE id_phim = ? AND date_chieu = ? ORDER BY thoi_gian";
     $stmtShow = $conn->prepare($showtimeQuery);
     if ($stmtShow) {
-        $stmtShow->bind_param('is', $id, $today);
+        $stmtShow->bind_param('is', $movieId, $today);
         $stmtShow->execute();
         $res2 = $stmtShow->get_result();
         if ($res2) {
@@ -49,16 +175,78 @@ if (isset($_GET['id'])) {
         $stmtShow->close();
     }
 
-    foreach ($showtimes as $s) {
-        $date = $s['date_chieu'];
-        if (!isset($showtimeGroups[$date])) {
-            $showtimeGroups[$date] = [];
-        }
-        $showtimeGroups[$date][] = $s;
-    }
-
     if ($selectedShowtime === 0 && count($showtimes) > 0) {
         $selectedShowtime = $showtimes[0]['id_suat'];
+    }
+}
+
+// --- LOGIC LẤY TẤT CẢ GHẾ CỦA PHÒNG ---
+$roomSeats = [];
+if ($selectedShowtime > 0) {
+    // Tìm id_phong từ id_suat để biết suất chiếu này ở phòng nào
+    $sqlGetRoom = "SELECT id_phong FROM suatchieu WHERE id_suat = ?";
+    $stmtGetRoom = $conn->prepare($sqlGetRoom);
+    if ($stmtGetRoom) {
+        $stmtGetRoom->bind_param('i', $selectedShowtime);
+        $stmtGetRoom->execute();
+        $resRoom = $stmtGetRoom->get_result();
+        if ($rowR = $resRoom->fetch_assoc()) {
+            $id_phong = $rowR['id_phong'];
+            // Lấy danh sách toàn bộ ghế của phòng đó
+            $sqlSeats = "SELECT id_ghe, ma_ghe, loai_ghe FROM ghe WHERE id_phong = ? ORDER BY ma_ghe";
+            $stmtSeats = $conn->prepare($sqlSeats);
+            if ($stmtSeats) {
+                $stmtSeats->bind_param('i', $id_phong);
+                $stmtSeats->execute();
+                $resS = $stmtSeats->get_result();
+                while ($s = $resS->fetch_assoc()) {
+                    $roomSeats[] = $s;
+                }
+                $stmtSeats->close();
+            }
+        }
+        $stmtGetRoom->close();
+    }
+}
+
+// --- LOGIC KIỂM TRA GHẾ ĐÃ ĐẶT ---
+$bookedSeats = [];
+if ($selectedShowtime > 0) {
+    // Dọn dẹp các bản ghi giữ ghế đã hết hạn
+    $conn->query("DELETE FROM ghe_tam_giu WHERE expires_at < NOW()");
+
+    $sqlBooked = "SELECT id_ghe FROM chitietve WHERE id_suat = ?";
+    $stmtBooked = $conn->prepare($sqlBooked);
+    if ($stmtBooked) {
+        $stmtBooked->bind_param('i', $selectedShowtime);
+        $stmtBooked->execute();
+        $resBooked = $stmtBooked->get_result();
+        while ($rowB = $resBooked->fetch_assoc()) {
+            $bookedSeats[] = (int)$rowB['id_ghe'];
+        }
+        $stmtBooked->close();
+    }
+}
+
+// --- LOGIC LẤY GHẾ ĐANG ĐƯỢC GIỮ ---
+$otherHoldingSeats = [];
+$myHoldingSeats = [];
+if ($selectedShowtime > 0) {
+    $uId = (int)$_SESSION['user_id'];
+    $sqlHold = "SELECT id_ghe, id_user FROM ghe_tam_giu WHERE id_suat = ? AND expires_at > NOW()";
+    $stmtHold = $conn->prepare($sqlHold);
+    if ($stmtHold) {
+        $stmtHold->bind_param('i', $selectedShowtime);
+        $stmtHold->execute();
+        $resHold = $stmtHold->get_result();
+        while ($rowH = $resHold->fetch_assoc()) {
+            if ((int)$rowH['id_user'] === $uId) {
+                $myHoldingSeats[] = (int)$rowH['id_ghe'];
+            } else {
+                $otherHoldingSeats[] = (int)$rowH['id_ghe'];
+            }
+        }
+        $stmtHold->close();
     }
 }
 ?>
@@ -248,21 +436,47 @@ if (isset($_GET['id'])) {
     }
 
     .legend-swatch.normal {
-        background: rgba(56, 189, 248, 0.18);
+        background: rgba(56, 189, 248, 0.25);
     }
 
     .legend-swatch.vip {
-        background: rgba(236, 72, 153, 0.18);
+        background: rgba(236, 72, 153, 0.45);
     }
 
     .legend-swatch.couple {
-        background: rgba(168, 85, 247, 0.18);
+        background: rgba(168, 85, 247, 0.55);
     }
 
-    .legend-swatch.active {
-        transform: scale(1.08);
-        box-shadow: 0 6px 18px rgba(0, 0, 0, 0.45);
-        border: 2px solid rgba(255, 255, 255, 0.12);
+    /* Ghế đã thanh toán: Màu xám đậm */
+    .seat.booked {
+        background: #1e293b !important;
+        color: #64748b !important;
+        cursor: not-allowed !important;
+        pointer-events: none;
+        box-shadow: none !important;
+        transform: none !important;
+        opacity: 0.6;
+        border: 1px solid rgba(255, 255, 255, 0.05) !important;
+    }
+
+    /* Ghế đang được người khác giữ: Màu cam đậm */
+    .seat.holding {
+        background: #92400e !important;
+        color: #fcd34d !important;
+        cursor: not-allowed !important;
+        pointer-events: none;
+        box-shadow: none !important;
+        transform: none !important;
+        opacity: 0.8;
+        border: 1px solid rgba(251, 191, 36, 0.2) !important;
+    }
+
+    .legend-swatch.holding {
+        background: #92400e;
+    }
+
+    .legend-swatch.booked {
+        background: #1e293b;
     }
 
     .seat-map {
@@ -270,6 +484,7 @@ if (isset($_GET['id'])) {
         flex-direction: column;
         gap: 16px;
     }
+
 
     .row {
         display: grid;
@@ -288,7 +503,7 @@ if (isset($_GET['id'])) {
         border-radius: 12px;
         display: grid;
         place-items: center;
-        background: rgba(56, 189, 248, 0.18);
+        background: rgba(56, 189, 248, 0.25);
         color: #ffffff;
         font-size: 0.82rem;
         cursor: pointer;
@@ -304,24 +519,27 @@ if (isset($_GET['id'])) {
     }
 
     .seat.vip {
-        background: rgba(236, 72, 153, 0.18);
+        background: rgba(236, 72, 153, 0.45);
         color: #fee2e2;
     }
 
     .seat.couple {
-        background: rgba(168, 85, 247, 0.18);
+        background: rgba(168, 85, 247, 0.55);
         color: #ede9fe;
-        border-radius: 14px;
-        /* couple seats span two columns to appear longer */
-        grid-column: span 2;
-        aspect-ratio: 1.4 / 1;
-        padding-left: 6px;
-        padding-right: 6px;
+        box-shadow: 0 6px 16px rgba(168, 85, 247, 0.12);
+        border: 1px solid rgba(168, 85, 247, 0.2);
     }
 
     .seat.vip {
         box-shadow: 0 6px 16px rgba(236, 72, 153, 0.08);
         border: 1px solid rgba(236, 72, 153, 0.12);
+    }
+
+    .seat.selected {
+        transform: scale(1.15) !important;
+        box-shadow: 0 0 25px rgba(255, 255, 255, 0.5) !important;
+        border: 2px solid #ffffff !important;
+        z-index: 10;
     }
 
     .seat.selected.normal {
@@ -335,7 +553,7 @@ if (isset($_GET['id'])) {
     }
 
     .seat.selected.couple {
-        background: linear-gradient(135deg, #f472b6, #a78bfa);
+        background: linear-gradient(135deg, #a855f7, #7c3aed);
         color: #0f172a;
     }
 
@@ -781,6 +999,8 @@ if (isset($_GET['id'])) {
                     <div class="legend-item"><span class="legend-swatch normal" data-type="normal"></span> Ghế thường</div>
                     <div class="legend-item"><span class="legend-swatch vip" data-type="vip"></span> Ghế VIP</div>
                     <div class="legend-item"><span class="legend-swatch couple" data-type="couple"></span> Ghế đôi</div>
+                    <div class="legend-item"><span class="legend-swatch holding"></span> Đang giữ</div>
+                    <div class="legend-item"><span class="legend-swatch booked"></span> Ghế đã bán</div>
                 </div>
             </div>
 
@@ -834,20 +1054,20 @@ if (isset($_GET['id'])) {
                     <article class="combo-card">
                         <img src="https://upload.wikimedia.org/wikipedia/commons/7/7a/Popcorn_and_soda.jpg" alt="Star Classic">
                         <div class="combo-card__body">
-                            <h3>STAR CLASSIC</h3>
+                            <h3>CLASSIC COMBO</h3>
                             <p>1 Bắp + 1 Nước</p>
                             <strong>80.000 đ</strong>
-                            <button type="button" onclick="addCombo('STAR CLASSIC',80000)">Thêm</button>
+                            <button type="button" onclick="addCombo('CLASSIC COMBO',80000)">Thêm</button>
                         </div>
                     </article>
 
                     <article class="combo-card">
                         <img src="https://upload.wikimedia.org/wikipedia/commons/6/66/Popcorn_and_Coke.jpg" alt="Star Premium">
                         <div class="combo-card__body">
-                            <h3>STAR PREMIUM</h3>
+                            <h3>PREMIUM COMBO</h3>
                             <p>2 Nước + 1 Bắp</p>
                             <strong>105.000 đ</strong>
-                            <button type="button" onclick="addCombo('STAR PREMIUM',105000)">Thêm</button>
+                            <button type="button" onclick="addCombo('PREMIUM COMBO',105000)">Thêm</button>
                         </div>
                     </article>
 
@@ -857,7 +1077,7 @@ if (isset($_GET['id'])) {
                             <h3>COUPLE COMBO</h3>
                             <p>2 Bắp + 2 Nước</p>
                             <strong>150.000 đ</strong>
-                            <button type="button" onclick="addCombo('COUPLE',150000)">Thêm</button>
+                            <button type="button" onclick="addCombo('COUPLE COMBO',150000)">Thêm</button>
                         </div>
                     </article>
                 </div>
@@ -950,6 +1170,15 @@ if (isset($_GET['id'])) {
         </section>
     </main>
 
+    <script>
+        // Truyền dữ liệu từ PHP sang JavaScript
+        const movieId = <?php echo $movieId; ?>;
+        const roomSeats = <?php echo json_encode($roomSeats); ?>;
+        const bookedSeats = <?php echo json_encode($bookedSeats); ?>;
+        const otherHoldingSeats = <?php echo json_encode($otherHoldingSeats); ?>;
+        const myHoldingSeats = <?php echo json_encode($myHoldingSeats); ?>;
+        const selectedShowtime = <?php echo $selectedShowtime; ?>;
+    </script>
     <script src="buyticket.js"></script>
 </body>
 

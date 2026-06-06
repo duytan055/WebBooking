@@ -1,3 +1,8 @@
+<?php
+$scriptPath = $_SERVER['SCRIPT_NAME'] ?? '';
+$prefix = strpos($scriptPath, '/Pages/') !== false ? '..' : '.';
+?>
+
 <head>
 
     <style>
@@ -81,6 +86,11 @@
             font-size: 13px;
             color: #777;
         }
+
+        .footer-logo {
+            height: 90px;
+            margin-bottom: 10px;
+        }
     </style>
 </head>
 
@@ -124,13 +134,13 @@
                 </div>
             </div>
             <div class="footer-bottom">
+                <img src="<?php echo $prefix; ?>/Logo/logo1.png" alt="Logo" class="footer-logo">
                 <p>© 2026 CINEMA BOOKING | All Rights Reserved</p>
             </div>
         </div>
     </div>
 </body>
 <?php
-// Đóng kết nối database ở cuối trang
 if (isset($conn) && $conn instanceof mysqli) {
     $conn->close();
 }

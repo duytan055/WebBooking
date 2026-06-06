@@ -23,7 +23,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     // Xử lý upload poster
     $poster = '';
     if (isset($_FILES['poster']) && $_FILES['poster']['error'] == 0) {
-        $target_dir = "img/";
+        $target_dir = "../poster/";
         $file_extension = pathinfo($_FILES['poster']['name'], PATHINFO_EXTENSION);
         $new_filename = time() . '_' . uniqid() . '.' . $file_extension;
         $target_file = $target_dir . $new_filename;
@@ -40,7 +40,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     // Xử lý upload hình ảnh
     $hinh_anh = '';
     if (isset($_FILES['hinh_anh']) && $_FILES['hinh_anh']['error'] == 0) {
-        $target_dir = "img/";
+        $target_dir = "../poster/";
         $file_extension = pathinfo($_FILES['hinh_anh']['name'], PATHINFO_EXTENSION);
         $new_filename = time() . '_' . uniqid() . '.' . $file_extension;
         $target_file = $target_dir . $new_filename;
@@ -55,6 +55,44 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
     if (mysqli_query($conn, $sql)) {
         $id_phim_moi = mysqli_insert_id($conn);
+
+        // Xử lý thêm Đạo diễn
+        if (!empty($_POST['dao_dien'])) {
+            $arr_dd = explode(',', $_POST['dao_dien']);
+            foreach ($arr_dd as $dd_name) {
+                $dd_name = mysqli_real_escape_string($conn, trim($dd_name));
+                if (empty($dd_name)) continue;
+
+                // Kiểm tra tồn tại
+                $check_dd = mysqli_query($conn, "SELECT id_daodien FROM daodien WHERE ten_dao_dien = '$dd_name'");
+                if ($row_dd = mysqli_fetch_assoc($check_dd)) {
+                    $id_dd = $row_dd['id_daodien'];
+                } else {
+                    mysqli_query($conn, "INSERT INTO daodien (ten_dao_dien) VALUES ('$dd_name')");
+                    $id_dd = mysqli_insert_id($conn);
+                }
+                mysqli_query($conn, "INSERT INTO phim_daodien (id_phim, id_daodien) VALUES ('$id_phim_moi', '$id_dd')");
+            }
+        }
+
+        // Xử lý thêm Diễn viên
+        if (!empty($_POST['dien_vien'])) {
+            $arr_dv = explode(',', $_POST['dien_vien']);
+            foreach ($arr_dv as $dv_name) {
+                $dv_name = mysqli_real_escape_string($conn, trim($dv_name));
+                if (empty($dv_name)) continue;
+
+                // Kiểm tra tồn tại
+                $check_dv = mysqli_query($conn, "SELECT id_dienvien FROM dienvien WHERE ten_dien_vien = '$dv_name'");
+                if ($row_dv = mysqli_fetch_assoc($check_dv)) {
+                    $id_dv = $row_dv['id_dienvien'];
+                } else {
+                    mysqli_query($conn, "INSERT INTO dienvien (ten_dien_vien) VALUES ('$dv_name')");
+                    $id_dv = mysqli_insert_id($conn);
+                }
+                mysqli_query($conn, "INSERT INTO phim_dienvien (id_phim, id_dienvien) VALUES ('$id_phim_moi', '$id_dv')");
+            }
+        }
 
         // Thêm suất chiếu nếu có
         if (isset($_POST['them_suat_chieu']) && $_POST['them_suat_chieu'] == '1') {
@@ -239,7 +277,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             <header class="box_search_bar">
                 <h2>Thêm Phim Mới</h2>
                 <div class="user-info">
-                    <a href="phim.php" style="color: #333; text-decoration: none;">
+                    <a href="phim.php" style="color: white; text-decoration: none;">
                         <i class="fas fa-arrow-left"></i> Quay lại
                     </a>
                 </div>
@@ -260,6 +298,16 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                     <div class="form-group">
                         <label>Thời lượng (phút) <span style="color: red;">*</span></label>
                         <input type="number" name="thoi_luong" min="1" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Đạo diễn (Cách nhau bằng dấu phẩy)</label>
+                        <input type="text" name="dao_dien" placeholder="VD: Christopher Nolan, James Cameron">
+                    </div>
+
+                    <div class="form-group">
+                        <label>Diễn viên (Cách nhau bằng dấu phẩy)</label>
+                        <input type="text" name="dien_vien" placeholder="VD: Leonardo DiCaprio, Cillian Murphy">
                     </div>
 
                     <div class="form-group">
