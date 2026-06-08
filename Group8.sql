@@ -193,3 +193,10 @@ CREATE TABLE IF NOT EXISTS ghe_tam_giu (
     expires_at DATETIME,
     PRIMARY KEY (id_suat, id_ghe)
 );
+
+CREATE EVENT cleanup_hold_seat
+ON SCHEDULE EVERY 1 MINUTE
+DO
+  DELETE FROM ghe_tam_giu WHERE expires_at < NOW();
+
+ALTER TABLE ghe_tam_giu ADD UNIQUE KEY uniq_seat (id_suat, id_ghe);

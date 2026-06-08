@@ -182,8 +182,8 @@ $result = $conn->query($sql);
                     <div class="promo-card__content">
                         <h3 class="promo-card__title"><?= htmlspecialchars($row['ten_khuyenmai']) ?></h3>
                         <div class="promo-card__info">
-                            <span>Bắt đầu: <?= htmlspecialchars($row['ngay_bat_dau']) ?></span>
-                            <span>Kết thúc: <?= htmlspecialchars($row['ngay_ket_thuc']) ?></span>
+                            <span>Bắt đầu: <?= date('d/m/Y', strtotime($row['ngay_bat_dau'])) ?></span>
+                            <span>Kết thúc: <?= date('d/m/Y', strtotime($row['ngay_ket_thuc'])) ?></span>
                         </div>
                         <p class="promo-card__description">Đừng bỏ lỡ cơ hội nhận ưu đãi hấp dẫn cho phim chiếu rạp yêu thích.</p>
                         <div class="promo-card__action">

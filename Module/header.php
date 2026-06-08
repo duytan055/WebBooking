@@ -1,7 +1,11 @@
 <?php
+if (session_status() === PHP_SESSION_NONE) {
+    session_start();
+}
 $scriptPath = $_SERVER['SCRIPT_NAME'] ?? '';
 $prefix = strpos($scriptPath, '/Pages/') !== false ? '..' : '.';
 ?>
+
 <link
     rel="stylesheet"
     href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css" />
@@ -216,15 +220,16 @@ $prefix = strpos($scriptPath, '/Pages/') !== false ? '..' : '.';
     </div>
 
     <div class="box1_button">
+
         <?php
-        if (isset($_SESSION['username'])) {
+        if (isset($_SESSION['user'])) {
         ?>
             <div class="user_menu">
 
                 <p class="user_name">
                     Xin chào,
                     <strong>
-                        <?php echo $_SESSION['username']; ?>
+                        <?php echo $_SESSION['user']['name']; ?>
                     </strong>
                 </p>
 

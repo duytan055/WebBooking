@@ -1,5 +1,8 @@
 <?php
 include __DIR__ . "/../Connect/connecDB.php";
+require __DIR__ . '/../API/config-google.php';
+
+$url = $client->createAuthUrl();
 
 $error_message = '';
 $success_message = '';
@@ -171,7 +174,9 @@ if (isset($_POST['register'])) {
       </form>
       <h2>- - - - - - - - -or- - - - - - - - -</h2>
       <div class="sign_up_app">
-        <a href="#" target="_blank"><i class="fa-brands fa-google"></i></a>
+        <a href="<?= $url ?>">
+          <i class="fa-brands fa-google"></i>
+        </a>
       </div>
       <h3 style="color: rgb(192, 185, 185)">
         Do you already have an account?

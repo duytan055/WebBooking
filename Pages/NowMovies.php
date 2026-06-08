@@ -298,7 +298,8 @@ $result = $conn->query($sql);
         <div class="movie-box">
             <ul class="movie-list">
                 <?php while ($row = $result->fetch_assoc()) { ?>
-                    <li class="movie-item">
+                    <li class="movie-item"
+                        data-link="../Pages/SeeMoreMovies.php?id=<?= $row['id_phim'] ?>">
                         <div class="box_img">
                             <img src="../poster/<?= htmlspecialchars($row['poster']) ?>" alt="<?= htmlspecialchars($row['ten_phim']) ?>">
                         </div>
@@ -307,11 +308,15 @@ $result = $conn->query($sql);
                             <div class="top">
                                 <h3 class="title"><?= htmlspecialchars($row['ten_phim']) ?></h3>
                                 <p class="time">⏱ <?= htmlspecialchars($row['thoi_luong']) ?> phút</p>
-                                <p class="date">Ngày khởi chiếu: <?= htmlspecialchars($row['ngay_khoi_chieu']) ?></p>
+                                <p class="date">Ngày khởi chiếu: <?= date('d/m/Y', strtotime($row['ngay_khoi_chieu'])) ?></p>
                                 <p class="desc"><?= htmlspecialchars($row['mo_ta']) ?></p>
                             </div>
                             <div class="box_button">
-                                <button type="button" class="openTrailer" data-trailer="<?= htmlspecialchars($row['trailer_phim']) ?>"><strong>▶ Trailer</strong></button>
+                                <button
+                                    type="button"
+                                    class="openTrailer"
+                                    data-trailer="<?= htmlspecialchars($row['trailer_phim']) ?>">
+                                    <strong>▶ Trailer</strong></button>
                                 <a href="../Pages/buyticket.php?id=<?= $row['id_phim'] ?>"><button type="button"><strong>🎟 Đặt vé</strong></button></a>
                             </div>
                             <div class="bottom">
@@ -326,4 +331,22 @@ $result = $conn->query($sql);
         </div>
     </div>
 </div>
+<script>
+    document.querySelectorAll('.movie-item').forEach(item => {
+
+        item.addEventListener('click', function(e) {
+
+            if (
+                e.target.closest('.openTrailer') ||
+                e.target.closest('a') ||
+                e.target.closest('button')
+            ) {
+                return;
+            }
+
+            window.location.href = this.dataset.link;
+        });
+
+    });
+</script>
 <?php include '../Module/footer.php' ?>

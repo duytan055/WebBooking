@@ -3,37 +3,52 @@ session_start();
 include __DIR__ . '/../Connect/connecDB.php';
 
 $sql = "SELECT 
-            p.id_phim,
-            p.ten_phim,
-            p.poster,
-            p.the_loai,
-            p.thoi_luong,
-            COUNT(DISTINCT ct.id_ve) as so_luong_ve,
-            COALESCE(SUM(ct.gia_ve), 0) as doanh_thu,
-            GROUP_CONCAT(DISTINCT dd.ten_dao_dien SEPARATOR ', ') as dao_dien
-        FROM phim p
-        LEFT JOIN suatchieu sc ON p.id_phim = sc.id_phim
-        LEFT JOIN chitietve ct ON sc.id_suat = ct.id_suat AND ct.trang_thai = 'Đã thanh toán'
-        LEFT JOIN phim_daodien pd ON p.id_phim = pd.id_phim
-        LEFT JOIN daodien dd ON pd.id_daodien = dd.id_daodien
-        WHERE p.trang_thai IN ('Đang chiếu', 'Sắp chiếu')
-        GROUP BY p.id_phim
-        HAVING so_luong_ve > 0
-        ORDER BY so_luong_ve DESC, doanh_thu DESC
-        LIMIT 50";
+    p.id_phim,
+    p.ten_phim,
+    p.poster,
+    p.the_loai,
+    p.thoi_luong,
+    sales.so_luong_ve,
+    GROUP_CONCAT(DISTINCT dd.ten_dao_dien SEPARATOR ', ') AS dao_dien
 
+FROM phim p
+
+JOIN (
+    SELECT 
+        sc.id_phim,
+        COUNT(ct.id_ve) AS so_luong_ve
+    FROM suatchieu sc
+    JOIN chitietve ct 
+        ON sc.id_suat = ct.id_suat
+    WHERE ct.trang_thai = 'Da thanh toan'
+    GROUP BY sc.id_phim
+) sales 
+    ON p.id_phim = sales.id_phim
+
+LEFT JOIN phim_daodien pd 
+    ON p.id_phim = pd.id_phim
+
+LEFT JOIN daodien dd 
+    ON pd.id_daodien = dd.id_daodien
+
+GROUP BY p.id_phim
+
+ORDER BY sales.so_luong_ve DESC
+
+LIMIT 10
+";
 $result = $conn->query($sql);
-$topMovies = [];
+$allMovies = [];
 
 if ($result) {
     while ($row = $result->fetch_assoc()) {
-        $topMovies[] = $row;
+        $allMovies[] = $row;
     }
 }
+$top10Booked = $allMovies;
 
-$totalMovies = count($topMovies);
-$totalRevenue = array_sum(array_column($topMovies, 'doanh_thu'));
-$totalTickets = array_sum(array_column($topMovies, 'so_luong_ve'));
+$totalMovies = count($allMovies);
+$totalTickets = array_sum(array_column($allMovies, 'so_luong_ve'));
 ?>
 
 <!DOCTYPE html>
@@ -183,10 +198,16 @@ $totalTickets = array_sum(array_column($topMovies, 'so_luong_ve'));
             margin-bottom: 40px;
         }
 
+        .section-title {
+            font-size: 24px;
+            margin: 0 0 20px 0;
+            color: #38bdf8;
+        }
+
         /* Table Header */
         .table-header {
             display: grid;
-            grid-template-columns: 70px 1fr 180px 140px 140px;
+            grid-template-columns: 70px 1fr 180px 140px;
             gap: 16px;
             padding: 12px 20px;
             border-bottom: 2px solid rgba(56, 189, 248, 0.2);
@@ -207,7 +228,7 @@ $totalTickets = array_sum(array_column($topMovies, 'so_luong_ve'));
 
         .movie-item {
             display: grid;
-            grid-template-columns: 70px 1fr 180px 140px 140px;
+            grid-template-columns: 70px 1fr 180px 140px;
             gap: 16px;
             padding: 16px 20px;
             border-radius: 12px;
@@ -498,35 +519,27 @@ $totalTickets = array_sum(array_column($topMovies, 'so_luong_ve'));
                             <div class="stat-label"><i class="fas fa-ticket-alt"></i> Tổng vé bán</div>
                             <div class="stat-value"><?= number_format($totalTickets) ?></div>
                         </div>
-                        <div class="stat-card">
-                            <div class="stat-label"><i class="fas fa-money-bill-wave"></i> Tổng doanh thu</div>
-                            <div class="stat-value"><?= number_format($totalRevenue) ?>đ</div>
-                        </div>
                     </div>
                 </div>
 
                 <!-- Table Section -->
                 <?php if ($totalMovies > 0) : ?>
                     <div class="table-section">
+                        <h2 class="section-title"><i class="fas fa-ticket-alt"></i> Top 10 Phim Đặt Vé Nhiều Nhất</h2>
                         <!-- Table Header -->
                         <div class="table-header">
                             <div>#</div>
                             <div>Tên phim</div>
-                            <div>Thể loại</div>
+                            <div class="genre-header">Thể loại</div>
                             <div>Số vé bán</div>
-                            <div>Doanh thu</div>
                         </div>
 
                         <!-- Movie List -->
                         <div class="movie-list">
-                            <?php foreach ($topMovies as $index => $movie) :
+                            <?php foreach ($top10Booked as $index => $movie) :
                                 $rank = $index + 1;
-                                $rankClass = '';
-                                if ($rank === 1) $rankClass = 'top-1';
-                                elseif ($rank === 2) $rankClass = 'top-2';
-                                elseif ($rank === 3) $rankClass = 'top-3';
-
-                                $poster = !empty($movie['poster']) ? $movie['poster'] : '../LoginAndSign-up/image1.webp';
+                                $rankClass = ($rank === 1) ? 'top-1' : (($rank === 2) ? 'top-2' : (($rank === 3) ? 'top-3' : ''));
+                                $posterUrl = !empty($movie['poster']) ? (strpos($movie['poster'], 'http') === 0 ? $movie['poster'] : '../poster/' . $movie['poster']) : '../LoginAndSign-up/image1.webp';
                                 $director = !empty($movie['dao_dien']) ? $movie['dao_dien'] : 'Đang cập nhật';
                             ?>
                                 <div class="movie-item">
@@ -539,7 +552,7 @@ $totalTickets = array_sum(array_column($topMovies, 'so_luong_ve'));
                                     </div>
 
                                     <div class="movie-info">
-                                        <img src="<?= htmlspecialchars($poster) ?>"
+                                        <img src="<?= htmlspecialchars($posterUrl) ?>"
                                             alt="<?= htmlspecialchars($movie['ten_phim']) ?>"
                                             class="movie-poster"
                                             onerror="this.src='../LoginAndSign-up/image1.webp'">
@@ -559,10 +572,6 @@ $totalTickets = array_sum(array_column($topMovies, 'so_luong_ve'));
                                     <div class="tickets">
                                         <i class="fas fa-ticket-alt"></i>
                                         <?= number_format($movie['so_luong_ve']) ?>
-                                    </div>
-
-                                    <div class="revenue">
-                                        <?= number_format($movie['doanh_thu']) ?>đ
                                     </div>
                                 </div>
                             <?php endforeach; ?>

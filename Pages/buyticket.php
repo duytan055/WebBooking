@@ -2,7 +2,7 @@
 session_start();
 
 // Kiểm tra đăng nhập
-if (!isset($_SESSION['user_id'])) {
+if (!isset($_SESSION['user'])) {
     header('Location: ../LoginAndSign-up/login.php');
     exit();
 }
@@ -16,35 +16,39 @@ if (isset($_POST['action'])) {
     $action = $_POST['action'];
     $sId = (int)$_POST['suat_id'];
     $gId = isset($_POST['ghe_id']) ? (int)$_POST['ghe_id'] : 0;
-    $uId = (int)$_SESSION['user_id'];
+    $uId = (int)$_SESSION['user']['id'];
 
     // --- HÀNH ĐỘNG: GIỮ GHẾ TẠM THỜI (4 PHÚT) ---
     if ($action === 'hold') {
-        $checkPaid = $conn->prepare("SELECT 1 FROM chitietve WHERE id_suat = ? AND id_ghe = ?");
-        $checkPaid->bind_param('ii', $sId, $gId);
-        $checkPaid->execute();
-        if ($checkPaid->get_result()->num_rows > 0) {
-            echo json_encode(['status' => 'error', 'message' => 'Ghế này đã được bán!']);
+        if ($action === 'hold') {
+
+            $stmt = $conn->prepare("
+        SELECT 1 FROM chitietve 
+        WHERE id_suat = ? AND id_ghe = ?
+        LIMIT 1
+    ");
+            $stmt->bind_param('ii', $sId, $gId);
+            $stmt->execute();
+
+            if ($stmt->get_result()->num_rows > 0) {
+                echo json_encode(['status' => 'error', 'message' => 'Ghế đã bán']);
+                exit;
+            }
+
+            $stmt = $conn->prepare("
+        INSERT INTO ghe_tam_giu (id_suat, id_ghe, id_user, expires_at)
+        VALUES (?, ?, ?, DATE_ADD(NOW(), INTERVAL 4 MINUTE))
+        ON DUPLICATE KEY UPDATE
+            id_user = VALUES(id_user),
+            expires_at = VALUES(expires_at)
+    ");
+
+            $stmt->bind_param('iii', $sId, $gId, $uId);
+            $stmt->execute();
+
+            echo json_encode(['status' => 'success']);
             exit;
         }
-
-        // 2. Kiểm tra xem có ai khác đang giữ không (chưa hết hạn 4 phút)
-        $checkHold = $conn->prepare("SELECT 1 FROM ghe_tam_giu WHERE id_suat = ? AND id_ghe = ? AND expires_at > NOW() AND id_user != ?");
-        $checkHold->bind_param('iii', $sId, $gId, $uId);
-        $checkHold->execute();
-        if ($checkHold->get_result()->num_rows > 0) {
-            echo json_encode(['status' => 'error', 'message' => 'Ghế này đang được người khác chọn!']);
-            exit;
-        }
-
-        // 3. Lưu vào "bảng tạm" ghe_tam_giu với thời hạn 4 phút
-        $stmt = $conn->prepare("INSERT INTO ghe_tam_giu (id_suat, id_ghe, id_user, expires_at) 
-                               VALUES (?, ?, ?, DATE_ADD(NOW(), INTERVAL 4 MINUTE)) 
-                               ON DUPLICATE KEY UPDATE id_user = VALUES(id_user), expires_at = VALUES(expires_at)");
-        $stmt->bind_param('iii', $sId, $gId, $uId);
-        $stmt->execute();
-        echo json_encode(['status' => 'success']);
-        exit;
     }
 
     // --- HÀNH ĐỘNG: HUỶ GIỮ GHẾ (KHI BỎ CHỌN) ---
@@ -68,70 +72,33 @@ if (isset($_POST['action'])) {
     }
 
     // --- LOGIC XỬ LÝ THANH TOÁN (CHECKOUT) ---
-    if ($action === 'checkout') {
-        // Lấy nội dung ghế từ "bảng tạm" ghe_tam_giu để chuyển sang bảng chính thức
-        $stmtCheck = $conn->prepare("SELECT g.id_ghe, g.loai_ghe FROM ghe_tam_giu gt 
-                                   JOIN ghe g ON gt.id_ghe = g.id_ghe 
-                                   WHERE gt.id_suat = ? AND gt.id_user = ? AND gt.expires_at > NOW()");
-        $stmtCheck->bind_param('ii', $sId, $uId);
-        $stmtCheck->execute();
-        $res = $stmtCheck->get_result();
+    if ($action === 'hold') {
 
-        $seatsToBook = [];
-        $totalSeatMoney = 0;
-        while ($row = $res->fetch_assoc()) {
-            $seatsToBook[] = $row;
-            // Tính tiền dựa trên loại ghế (giống logic JS)
-            $price = ($row['loai_ghe'] === 'vip' ? 70000 : ($row['loai_ghe'] === 'couple' ? 90000 : 50000));
-            $totalSeatMoney += $price;
-        }
+        $stmt = $conn->prepare("
+        SELECT 1 FROM chitietve 
+        WHERE id_suat = ? AND id_ghe = ?
+        LIMIT 1
+    ");
+        $stmt->bind_param('ii', $sId, $gId);
+        $stmt->execute();
 
-        if (empty($seatsToBook)) {
-            echo json_encode(['status' => 'error', 'message' => 'Phiên giữ ghế đã hết hạn hoặc bạn chưa chọn ghế!']);
+        if ($stmt->get_result()->num_rows > 0) {
+            echo json_encode(['status' => 'error', 'message' => 'Ghế đã bán']);
             exit;
         }
 
-        // Bắt đầu giao dịch database
-        $conn->begin_transaction();
-        try {
-            // Lấy thông tin người dùng từ bảng nguoidung
-            $stmtUser = $conn->prepare("SELECT ten, sdt FROM nguoidung WHERE id_user = ?");
-            $stmtUser->bind_param('i', $uId);
-            $stmtUser->execute();
-            $userData = $stmtUser->get_result()->fetch_assoc();
+        $stmt = $conn->prepare("
+        INSERT INTO ghe_tam_giu (id_suat, id_ghe, id_user, expires_at)
+        VALUES (?, ?, ?, DATE_ADD(NOW(), INTERVAL 4 MINUTE))
+        ON DUPLICATE KEY UPDATE
+            id_user = VALUES(id_user),
+            expires_at = VALUES(expires_at)
+    ");
 
-            $comboMoney = (int)($_POST['combo_money'] ?? 0);
-            $discount = (int)($_POST['discount'] ?? 0);
-            $finalTotal = $totalSeatMoney + $comboMoney - $discount;
-            $pttt = $_POST['payment_method'] ?? 'VNPAY';
+        $stmt->bind_param('iii', $sId, $gId, $uId);
+        $stmt->execute();
 
-            // 2. Tạo bản ghi đặt vé (datve)
-            $sqlDatVe = "INSERT INTO datve (id_user, id_suat, tong_tien, phuong_thuc_thanh_toan, ten_nguoi_dat, so_dien_thoai, giam_gia, trang_thai) 
-                         VALUES (?, ?, ?, ?, ?, ?, ?, 'Đã thanh toán')";
-            $stmtDV = $conn->prepare($sqlDatVe);
-            $stmtDV->bind_param('iidssii', $uId, $sId, $finalTotal, $pttt, $userData['ten'], $userData['sdt'], $discount);
-            $stmtDV->execute();
-            $idDatVe = $conn->insert_id;
-
-            // 3. Tạo chi tiết vé (chitietve) và xóa trong bảng ghe_tam_giu
-            $stmtCTV = $conn->prepare("INSERT INTO chitietve (id_datve, id_suat, id_ghe, gia_ve, trang_thai) VALUES (?, ?, ?, ?, 'Đã thanh toán')");
-            $stmtDelHold = $conn->prepare("DELETE FROM ghe_tam_giu WHERE id_suat = ? AND id_ghe = ? AND id_user = ?");
-
-            foreach ($seatsToBook as $seat) {
-                $price = ($seat['loai_ghe'] === 'vip' ? 70000 : ($seat['loai_ghe'] === 'couple' ? 90000 : 50000));
-                $stmtCTV->bind_param('iiid', $idDatVe, $sId, $seat['id_ghe'], $price);
-                $stmtCTV->execute();
-
-                $stmtDelHold->bind_param('iii', $sId, $seat['id_ghe'], $uId);
-                $stmtDelHold->execute();
-            }
-
-            $conn->commit();
-            echo json_encode(['status' => 'success', 'message' => 'Thanh toán thành công! Chúc bạn xem phim vui vẻ.']);
-        } catch (Exception $e) {
-            $conn->rollback();
-            echo json_encode(['status' => 'error', 'message' => 'Lỗi hệ thống khi thanh toán: ' . $e->getMessage()]);
-        }
+        echo json_encode(['status' => 'success']);
         exit;
     }
 }
@@ -232,7 +199,7 @@ if ($selectedShowtime > 0) {
 $otherHoldingSeats = [];
 $myHoldingSeats = [];
 if ($selectedShowtime > 0) {
-    $uId = (int)$_SESSION['user_id'];
+    $uId = (int)$_SESSION['user']['id'];
     $sqlHold = "SELECT id_ghe, id_user FROM ghe_tam_giu WHERE id_suat = ? AND expires_at > NOW()";
     $stmtHold = $conn->prepare($sqlHold);
     if ($stmtHold) {

@@ -423,7 +423,7 @@ if (!$isUpcoming) {
                 <h1 class="movie-title"><?= $row['ten_phim'] ?></h1>
                 <div class="movie-meta">
                     <span><strong>Thể loại:</strong> <?= $row['the_loai'] ?></span>
-                    <span><strong>Khởi chiếu:</strong> <?= $row['ngay_khoi_chieu'] ?></span>
+                    <span><strong>Khởi chiếu:</strong> <?= date('d/m/Y', strtotime($row['ngay_khoi_chieu'])) ?></span>
                     <span><strong>Đạo diễn:</strong> <?= $row['dao_dien'] ?></span>
                     <span><strong>Thời lượng:</strong> <?= $row['thoi_luong'] ?> phút</span>
                     <span><strong>Diễn viên:</strong> <?= $row['dien_vien'] ?></span>

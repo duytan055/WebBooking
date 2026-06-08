@@ -2,12 +2,13 @@
 session_start();
 include __DIR__ . '/../Connect/connecDB.php';
 
-if (!isset($_SESSION['user_id'])) {
+if (!isset($_SESSION['user'])) {
     header('Location: ../LoginAndSign-up/login.php');
     exit;
 }
 
-$user_id = intval($_SESSION['user_id']);
+
+$user_id = intval($_SESSION['user']['id']);
 $user = null;
 $saveMessage = '';
 $changePasswordMessage = '';
@@ -89,6 +90,25 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['change_password'])) {
 
 $sql = "SELECT * FROM nguoidung WHERE id_user = $user_id";
 $result = $conn->query($sql);
+$history_sql = "SELECT
+    d.id_datve,
+    p.ten_phim,
+    CONCAT(sc.date_chieu,' ',sc.thoi_gian) AS suat_chieu,
+    GROUP_CONCAT(g.ma_ghe ORDER BY g.ma_ghe SEPARATOR ', ') AS danh_sach_ghe,
+    d.tong_tien,
+    d.trang_thai,
+    d.thoi_gian_dat
+FROM datve d
+JOIN suatchieu sc ON d.id_suat = sc.id_suat
+JOIN phim p ON sc.id_phim = p.id_phim
+JOIN chitietve ct ON d.id_datve = ct.id_datve
+JOIN ghe g ON ct.id_ghe = g.id_ghe
+WHERE d.id_user = $user_id
+GROUP BY d.id_datve
+ORDER BY d.thoi_gian_dat DESC
+";
+
+$history_result = mysqli_query($conn, $history_sql);
 if ($result && $result->num_rows > 0) {
     $user = $result->fetch_assoc();
 } else {
@@ -152,11 +172,10 @@ function escape($value)
     }
 
     .profile-hero {
-        display: grid;
-        grid-template-columns: 1.1fr 1fr;
+        display: flex;
+        flex-direction: column;
         gap: 28px;
         margin-bottom: 28px;
-        align-items: start;
     }
 
     .card {
@@ -170,6 +189,9 @@ function escape($value)
     }
 
     .profile-card {
+        max-width: 800px;
+        width: 100%;
+        margin: 0 auto;
         position: relative;
         overflow: hidden;
     }
@@ -277,7 +299,7 @@ function escape($value)
         padding: 14px 18px;
         border-radius: 18px;
         background: rgba(56, 189, 248, 0.12);
-        color: #dbeafe;
+        color: #38bdf8;
         border: 1px solid rgba(56, 189, 248, 0.24);
         text-align: center;
     }
@@ -354,37 +376,6 @@ function escape($value)
         box-shadow: 0 12px 30px rgba(56, 189, 248, 0.18);
     }
 
-    .account-panel {
-        display: none !important;
-    }
-
-    .account-panel.active {
-        display: flex !important;
-    }
-
-    .profile-grid {
-        display: grid;
-        grid-template-columns: 1fr;
-        gap: 28px;
-        margin-top: 18px;
-    }
-
-    .account-card {
-        display: flex;
-        flex-direction: column;
-        background: rgba(15, 23, 42, 0.82);
-        border: 1px solid rgba(255, 255, 255, 0.08);
-        border-radius: 28px;
-        padding: 28px;
-        box-shadow: 0 22px 64px rgba(0, 0, 0, 0.16);
-    }
-
-    .account-card h3 {
-        margin: 0 0 16px;
-        font-size: 1.35rem;
-        color: #f8fafc;
-    }
-
     .account-card-content {
         position: relative;
         z-index: 1;
@@ -442,18 +433,6 @@ function escape($value)
         box-shadow: 0 0 0 4px rgba(56, 189, 248, 0.08);
     }
 
-    .detail-item textarea {
-        min-height: 90px;
-        resize: vertical;
-        font-family: inherit;
-    }
-
-    .account-card .profile-actions {
-        justify-content: center;
-        margin-top: auto;
-        width: 100%;
-    }
-
     .account-card .profile-actions a {
         width: auto;
     }
@@ -469,85 +448,119 @@ function escape($value)
     }
 
     .history-header {
-        display: flex;
-        align-items: flex-start;
+        margin-bottom: 20px;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+        padding-bottom: 15px;
     }
 
-    .history-header p {
-        margin: 4px 0 0;
-        color: #cbd5e1;
-        line-height: 1.7;
-        max-width: 420px;
+    .history-header h3 {
+        margin: 0;
+        font-size: 1.5rem;
+        color: #38bdf8;
+        display: flex;
+        align-items: center;
+        gap: 12px;
     }
 
     .history-table {
         width: 100%;
         border-collapse: separate;
-        border-spacing: 0 8px;
+        border-spacing: 0 12px;
         overflow: hidden;
         background: transparent;
     }
 
     .history-table thead th {
-        color: #e2e8f0;
-        font-weight: 600;
+        color: #94a3b8;
+        font-weight: 700;
         text-align: left;
-        padding: 16px 18px;
-        background: rgba(15, 23, 42, 0.95);
-        border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+        padding: 12px 20px;
+        text-transform: uppercase;
+        font-size: 0.8rem;
+        letter-spacing: 1px;
     }
 
     .history-table tbody tr {
-        background: rgba(255, 255, 255, 0.04);
-        border-radius: 20px;
-        box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.06);
+        background: rgba(30, 41, 59, 0.4);
+        border: 1px solid rgba(255, 255, 255, 0.05);
+        transition: all 0.3s ease;
+    }
+
+    .history-table tbody tr:hover {
+        background: rgba(56, 189, 248, 0.08);
+        transform: scale(1.005);
+        box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
     }
 
     .history-table tbody td {
-        padding: 18px 18px;
+        padding: 20px;
         color: #cbd5e1;
         vertical-align: middle;
-        border: none;
+        border-top: 1px solid rgba(255, 255, 255, 0.05);
+        border-bottom: 1px solid rgba(255, 255, 255, 0.05);
     }
 
     .history-table tbody tr td:first-child {
+        border-left: 1px solid rgba(255, 255, 255, 0.05);
+        border-top-left-radius: 16px;
+        border-bottom-left-radius: 16px;
+        color: #38bdf8;
         font-weight: 600;
-        color: #ffffff;
+        font-family: monospace;
+        font-size: 1.1rem;
+    }
+
+    .history-table tbody tr td:last-child {
+        border-right: 1px solid rgba(255, 255, 255, 0.05);
+        border-top-right-radius: 16px;
+        border-bottom-right-radius: 16px;
+    }
+
+    .movie-name-cell {
+        color: #f8fafc !important;
+        font-weight: 600;
+    }
+
+    .price-cell {
+        color: #fbbf24 !important;
+        font-weight: 700;
     }
 
     .history-table tbody tr td[colspan] {
-        padding: 32px 18px;
+        padding: 40px 20px;
         text-align: center;
         color: #94a3b8;
         font-style: italic;
+        border-radius: 16px;
     }
 
     .history-status {
         display: inline-flex;
         align-items: center;
-        justify-content: center;
-        padding: 8px 14px;
-        border-radius: 999px;
-        font-size: 0.95rem;
-        font-weight: 600;
-        color: #ffffff;
-        background: rgba(56, 189, 248, 0.18);
-        border: 1px solid rgba(56, 189, 248, 0.28);
+        gap: 6px;
+        padding: 6px 12px;
+        border-radius: 10px;
+        font-size: 0.85rem;
+        font-weight: 700;
+        text-transform: uppercase;
     }
 
     .history-status.complete {
-        background: rgba(34, 197, 94, 0.16);
-        border-color: rgba(34, 197, 94, 0.28);
+        background: rgba(34, 197, 94, 0.1);
+        color: #4ade80;
+        border: 1px solid rgba(34, 197, 94, 0.2);
     }
 
     .history-status.pending {
-        background: rgba(234, 179, 8, 0.16);
-        border-color: rgba(234, 179, 8, 0.28);
+        background: rgba(251, 191, 36, 0.1);
+        color: #fbbf24;
+        border: 1px solid rgba(251, 191, 36, 0.2);
     }
 
     .history-status.cancelled {
-        background: rgba(248, 113, 113, 0.16);
-        border-color: rgba(248, 113, 113, 0.28);
+        background: rgba(248, 113, 113, 0.1);
+        color: #f87171;
+        border: 1px solid rgba(248, 113, 113, 0.2);
     }
 
     .history-empty {
@@ -567,7 +580,6 @@ function escape($value)
 
     @media (max-width: 980px) {
 
-        .profile-hero,
         .profile-grid {
             grid-template-columns: 1fr;
         }
@@ -851,6 +863,50 @@ function escape($value)
     </div>
 </div>
 
+<!-- Modal Cập Nhật Thông Tin -->
+<div id="updateInfoModal" class="modal">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h2>Cập Nhật Thông Tin</h2>
+            <button class="close-modal">&times;</button>
+        </div>
+
+        <?php if (!empty($saveMessage)): ?>
+            <div class="modal-message <?= strpos($saveMessage, 'thành công') !== false ? 'success' : 'error' ?>">
+                <?= htmlspecialchars($saveMessage) ?>
+            </div>
+        <?php endif; ?>
+
+        <form method="post">
+            <input type="hidden" name="save_profile" value="1">
+            <div class="modal-form-group">
+                <label>Họ và tên</label>
+                <input type="text" name="ten" value="<?= escape($user['ten']) ?>" required>
+            </div>
+            <div class="modal-form-group">
+                <label>Email</label>
+                <input type="email" name="email" value="<?= escape($user['email']) ?>" required>
+            </div>
+            <div class="modal-form-group">
+                <label>Số điện thoại</label>
+                <input type="text" name="sdt" value="<?= escape($user['sdt'] ?? '') ?>">
+            </div>
+            <div class="modal-form-group">
+                <label>CCCD</label>
+                <input type="text" name="cccd" value="<?= escape($user['cccd'] ?? '') ?>">
+            </div>
+            <div class="modal-form-group">
+                <label>Ngày sinh</label>
+                <input type="date" name="ngay_sinh" value="<?= escape($user['ngay_sinh'] ?? '') ?>">
+            </div>
+            <div class="modal-actions">
+                <button type="submit" class="modal-btn primary">Lưu thay đổi</button>
+                <button type="button" class="modal-btn secondary close-modal">Hủy</button>
+            </div>
+        </form>
+    </div>
+</div>
+
 <div class="profile-frame">
     <div class="top-actions">
         <button type="button" onclick="history.back()" class="secondary-btn" style="width: auto; padding: 10px 22px;">
@@ -901,67 +957,74 @@ function escape($value)
         <div class="card history-card">
             <div class="history-card-content">
                 <div class="history-header">
-                    <div>
-                        <p>Lịch sử giao dịch</p>
-                    </div>
+                    <h3><i class="fas fa-history"></i> Lịch sử giao dịch</h3>
                 </div>
 
                 <table class="history-table">
                     <thead>
                         <tr>
-                            <th>Mã giao dịch</th>
-                            <th>Ngày đặt</th>
-                            <th>Thành tiền</th>
+                            <th>Mã đơn</th>
+                            <th>Phim</th>
+                            <th>Suất chiếu</th>
+                            <th>Ghế</th>
+                            <th>Tổng tiền</th>
                             <th>Trạng thái</th>
+                            <th>Ngày đặt</th>
                         </tr>
                     </thead>
                     <tbody>
-                        <tr>
-                            <td colspan="4" class="history-empty">
-                                <strong>Chưa có giao dịch nào</strong>
-                            </td>
-                        </tr>
+
+                        <?php if (mysqli_num_rows($history_result) > 0): ?>
+
+                            <?php while ($row = mysqli_fetch_assoc($history_result)): ?>
+
+                                <tr>
+                                    <td>#<?= $row['id_datve'] ?></td>
+
+                                    <td class="movie-name-cell"><?= htmlspecialchars($row['ten_phim']) ?></td>
+
+                                    <td><?= date('d/m/Y H:i', strtotime($row['suat_chieu'])) ?></td>
+
+                                    <td><?= htmlspecialchars($row['danh_sach_ghe']) ?></td>
+
+                                    <td class="price-cell"><?= number_format($row['tong_tien']) ?>đ</td>
+
+                                    <td>
+                                        <?php if ($row['trang_thai'] == 'Đã thanh toán'): ?>
+                                            <span class="history-status complete">
+                                                <i class="fas fa-check-circle"></i>
+                                                Đã thanh toán
+                                            </span>
+                                        <?php else: ?>
+                                            <span class="history-status pending">
+                                                <?= htmlspecialchars($row['trang_thai']) ?>
+                                            </span>
+                                        <?php endif; ?>
+                                    </td>
+
+                                    <td>
+                                        <?= date('d/m/Y H:i', strtotime($row['thoi_gian_dat'])) ?>
+                                    </td>
+                                </tr>
+
+                            <?php endwhile; ?>
+
+                        <?php else: ?>
+
+                            <tr>
+                                <td colspan="7" class="history-empty">
+                                    <strong>Chưa có giao dịch nào</strong>
+                                </td>
+                            </tr>
+
+                        <?php endif; ?>
+
                     </tbody>
                 </table>
             </div>
         </div>
     </section>
 
-    <section class="profile-grid">
-        <div class="account-card account-panel" id="accountPanel">
-            <div class="account-card-content">
-                <h3>Thông tin tài khoản</h3>
-                <form method="post" class="account-form">
-                    <input type="hidden" name="save_profile" value="1">
-                    <div class="detail-list">
-                        <div class="detail-item">
-                            <span>Người dùng</span>
-                            <input type="text" name="ten" value="<?= escape($user['ten']) ?>" required>
-                        </div>
-                        <div class="detail-item">
-                            <span>Email</span>
-                            <input type="email" name="email" value="<?= escape($user['email']) ?>" required>
-                        </div>
-                        <div class="detail-item">
-                            <span>Số điện thoại</span>
-                            <input type="text" name="sdt" value="<?= escape($user['sdt'] ?? '') ?>">
-                        </div>
-                        <div class="detail-item">
-                            <span>CCCD</span>
-                            <input type="text" name="cccd" value="<?= escape($user['cccd'] ?? '') ?>">
-                        </div>
-                        <div class="detail-item">
-                            <span>Ngày sinh</span>
-                            <input type="date" name="ngay_sinh" value="<?= escape($user['ngay_sinh'] ?? '') ?>">
-                        </div>
-                    </div>
-                    <div class="profile-actions">
-                        <button type="submit" class="primaryB-btn">Lưu thay đổi</button>
-                    </div>
-                </form>
-            </div>
-        </div>
-    </section>
     <div class="logout-actions">
         <a href="../LoginAndSign-up/logout.php" class="primary-btn">Đăng xuất</a>
     </div>
@@ -970,27 +1033,27 @@ function escape($value)
 <script>
     document.addEventListener('DOMContentLoaded', function() {
         const updateInfoBtn = document.getElementById('updateInfoBtn');
-        const accountPanel = document.getElementById('accountPanel');
-
-        if (!updateInfoBtn || !accountPanel) {
-            return;
-        }
-
-        if (accountPanel.classList.contains('active')) {
-            updateInfoBtn.textContent = 'Thu gọn thông tin';
-        }
-
-        updateInfoBtn.addEventListener('click', function(event) {
-            event.preventDefault();
-            accountPanel.classList.toggle('active');
-            updateInfoBtn.textContent = accountPanel.classList.contains('active') ? 'Thu gọn thông tin' : 'Cập nhật thông tin';
-        });
-
-        // Modal Đổi Mật Khẩu
+        const updateInfoModal = document.getElementById('updateInfoModal');
         const changePasswordBtn = document.getElementById('changePasswordBtn');
         const changePasswordModal = document.getElementById('changePasswordModal');
         const closeModalButtons = document.querySelectorAll('.close-modal');
         const newPasswordInput = document.getElementById('new_password');
+
+        // Hiển thị modal tương ứng nếu có thông báo từ hệ thống
+        <?php if (!empty($changePasswordMessage)): ?>
+            changePasswordModal.classList.add('show');
+        <?php endif; ?>
+
+        <?php if (!empty($saveMessage)): ?>
+            updateInfoModal.classList.add('show');
+        <?php endif; ?>
+
+        if (updateInfoBtn && updateInfoModal) {
+            updateInfoBtn.addEventListener('click', function(e) {
+                e.preventDefault();
+                updateInfoModal.classList.add('show');
+            });
+        }
 
         if (changePasswordBtn && changePasswordModal) {
             changePasswordBtn.addEventListener('click', function(event) {
@@ -1001,12 +1064,14 @@ function escape($value)
 
         closeModalButtons.forEach(btn => {
             btn.addEventListener('click', function() {
+                updateInfoModal.classList.remove('show');
                 changePasswordModal.classList.remove('show');
             });
         });
 
         window.addEventListener('click', function(event) {
-            if (event.target === changePasswordModal) {
+            if (event.target === updateInfoModal || event.target === changePasswordModal) {
+                updateInfoModal.classList.remove('show');
                 changePasswordModal.classList.remove('show');
             }
         });

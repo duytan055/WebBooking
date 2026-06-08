@@ -21,6 +21,7 @@
 
 <body>
     <?php session_start(); ?>
+
     <?php include '../Module/header.php'; ?>
     <?php include '../Module/SliderMovies.php'; ?>
     <?php include '../Module/movies.php'; ?>

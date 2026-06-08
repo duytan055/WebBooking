@@ -75,7 +75,8 @@ function createSeatMap(seatsData, bookedSeatIds) {
       const isHoldingOther = otherHoldingSeats.includes(seatIdInt);
       const isHoldingMe = myHoldingSeats.includes(seatIdInt);
 
-      let seatClass = `seat ${seatData.loai_ghe}`.trim();
+      let seatClass =
+        `seat ${seatData.loai_ghe === "normal" ? "normal" : seatData.loai_ghe}`.trim();
       if (isBooked) seatClass += " booked";
       else if (isHoldingOther) seatClass += " holding";
       else if (isHoldingMe) seatClass += " selected";
@@ -235,7 +236,7 @@ function updateFinalTotal() {
 
 function applyDiscount() {
   const code = discountInput.value.trim().toUpperCase();
-  discount = code === "STARLIGHT" ? 20000 : 0;
+  discount = code === "G8Cenima" ? 20000 : 0;
   discountMoneyLabel.textContent = discount.toLocaleString() + " đ";
   if (paymentPage.classList.contains("active")) {
     updateFinalTotal();
