@@ -25,14 +25,9 @@ let seatPrices = {};
 let comboTotal = 0;
 let comboName = "";
 let discount = 0;
+let selectedPaymentMethod = "VNPAY"; // Default selected method
 let seatMoney = 0;
 
-// Global variables passed from PHP (assuming they are defined in the PHP script block before this JS file)
-// const movieId = ...;
-// const roomSeats = ...; // Array of {id_ghe, ma_ghe, loai_ghe}
-// const bookedSeats = ...; // Array of id_ghe (integers)
-
-// Initialize selected seats from server-side holding state
 myHoldingSeats.forEach((id) => {
   const seatData = roomSeats.find((s) => s.id_ghe == id);
   if (seatData) {
@@ -41,7 +36,6 @@ myHoldingSeats.forEach((id) => {
   }
 });
 
-// New function to create the seat map using data from PHP
 function createSeatMap(seatsData, bookedSeatIds) {
   seatMap.innerHTML = ""; // Clear existing seats
 
@@ -75,25 +69,34 @@ function createSeatMap(seatsData, bookedSeatIds) {
       const isHoldingOther = otherHoldingSeats.includes(seatIdInt);
       const isHoldingMe = myHoldingSeats.includes(seatIdInt);
 
-      let seatClass =
-        `seat ${seatData.loai_ghe === "normal" ? "normal" : seatData.loai_ghe}`.trim();
+      const type = (seatData.loai_ghe || "").trim().toLowerCase();
+
+      // CLASS
+      let seatClass = "seat";
+
+      if (type === "vip") seatClass += " vip";
+      else if (type === "couple") seatClass += " couple";
+      else seatClass += " normal";
+
+      // trạng thái
       if (isBooked) seatClass += " booked";
       else if (isHoldingOther) seatClass += " holding";
       else if (isHoldingMe) seatClass += " selected";
+
+      // GIÁ GHẾ (CHỈ GIỮ 1 LẦN DUY NHẤT)
+      if (type === "vip") {
+        seatPrices[seatData.ma_ghe] = 80000;
+      } else if (type === "couple") {
+        seatPrices[seatData.ma_ghe] = 100000;
+      } else {
+        seatPrices[seatData.ma_ghe] = 50000;
+      }
 
       seatElement.className = seatClass;
       seatElement.textContent = seatData.ma_ghe;
       seatElement.dataset.id = seatData.id_ghe; // Store actual seat ID
       seatElement.dataset.code = seatData.ma_ghe; // Store seat code
       seatElement.dataset.type = seatData.loai_ghe; // Store seat type
-
-      // Populate seatPrices map
-      seatPrices[seatData.ma_ghe] =
-        seatData.loai_ghe === "vip"
-          ? 70000
-          : seatData.loai_ghe === "couple"
-            ? 90000
-            : 50000;
 
       if (!isBooked && !isHoldingOther) {
         // Only add click listener if not booked
@@ -289,7 +292,7 @@ function goBack() {
   }
 }
 
-let timeLeft = 240; // 4 minutes
+let timeLeft = 240; // 4 minutes (align with PHP 4 minute interval)
 const timerElement = document.getElementById("timer");
 const timerInterval = setInterval(() => {
   const minutes = Math.floor(timeLeft / 60);
@@ -350,3 +353,97 @@ if (showtimeSelect) {
     window.location.href = `buyticket.php?id=${movieId}&showtime=${newShowtimeId}`;
   });
 }
+
+document.addEventListener("DOMContentLoaded", function () {
+  const methods = document.querySelectorAll(".method");
+  const qrDetails = document.getElementById("qrBankingDetails");
+  const bankOptions = document.querySelectorAll(".bank-option");
+  const payBtn = document.querySelector(".payBtn");
+
+  // Initialize selectedPaymentMethod based on active class in HTML
+  const initialActiveMethod = document.querySelector(".method.active");
+  if (initialActiveMethod) {
+    selectedPaymentMethod = initialActiveMethod.dataset.method;
+  } else {
+    selectedPaymentMethod = null; // No method initially selected
+  }
+
+  // Xử lý chọn phương thức thanh toán
+  methods.forEach((m) => {
+    m.addEventListener("click", function () {
+      const clickedMethod = this.dataset.method;
+
+      if (this.classList.contains("active")) {
+        // If already active, deselect it
+        this.classList.remove("active");
+        selectedPaymentMethod = null; // No method selected
+        qrDetails.style.display = "none";
+      } else {
+        // Deselect all others and select this one
+        methods.forEach((el) => el.classList.remove("active"));
+        this.classList.add("active");
+        selectedPaymentMethod = clickedMethod;
+
+        if (clickedMethod === "QR_BANKING") {
+          qrDetails.style.display = "block";
+        } else {
+          qrDetails.style.display = "none";
+        }
+      }
+    });
+  });
+
+  // Xử lý chọn ngân hàng cho QR Banking
+  bankOptions.forEach((b) => {
+    b.addEventListener("click", function () {
+      bankOptions.forEach((el) => el.classList.remove("active"));
+      this.classList.add("active");
+    });
+  });
+
+  // Xử lý nút thanh toán
+  if (payBtn) {
+    payBtn.addEventListener("click", function (e) {
+      if (!selectedPaymentMethod) {
+        alert("Vui lòng chọn một phương thức thanh toán.");
+        e.stopImmediatePropagation();
+        return;
+      }
+
+      if (selectedPaymentMethod === "QR_BANKING") {
+        const activeBank = document.querySelector(".bank-option.active");
+        if (!activeBank) {
+          alert("Vui lòng chọn một ngân hàng để thực hiện thanh toán QR.");
+          e.stopImmediatePropagation();
+          return;
+        }
+        // Giả lập hiển thị mã QR
+        document.getElementById("qrCodeDisplay").style.display = "block";
+        document.getElementById("qrTransferContent").innerText =
+          "WebBooking_ID" + Date.now();
+        document.getElementById("qrTransferAmount").innerText =
+          document.getElementById("finalTotal").innerText;
+        // Remove non-digits for QR data to ensure it's a clean number for the QR code
+        const totalAmountForQR = document
+          .getElementById("finalTotal")
+          .innerText.replace(/\D/g, "");
+        document.getElementById("qrCodeImage").src =
+          `https://api.qrserver.com/v1/create-qr-code/?size=250x250&data=QR_PAYMENT_${totalAmountForQR}_${activeBank.dataset.bank}`;
+        alert("Vui lòng quét mã QR bên dưới để hoàn tất thanh toán.");
+      } else {
+        // Redirect sang cổng thanh toán (Giả lập)
+        const gateway =
+          selectedPaymentMethod === "VNPAY"
+            ? "https://vnpay.vn/"
+            : "https://momo.vn/";
+        alert(
+          `Hệ thống đang chuyển hướng bạn tới cổng thanh toán ${selectedPaymentMethod}...`,
+        );
+        // In a real application, you would make an AJAX call to your PHP backend
+        // which then generates a payment URL and redirects the user.
+        // For now, we'll simulate a successful checkout after the alert.
+        checkout(selectedPaymentMethod); // Call the PHP checkout function
+      }
+    });
+  }
+});

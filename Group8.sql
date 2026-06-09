@@ -141,7 +141,11 @@ CREATE TABLE datve (
     ten_nguoi_dat VARCHAR(100),
     so_dien_thoai VARCHAR(20),
     giam_gia INT,
-    trang_thai VARCHAR(100),
+    trang_thai ENUM(
+        'PENDING',
+        'PAID',
+        'CANCELLED'
+    ) DEFAULT 'PENDING',
     created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
     CHECK (tong_tien >= 0),
     FOREIGN KEY (id_user) REFERENCES nguoidung (id_user),
@@ -157,8 +161,6 @@ CREATE TABLE chitietve (
     id_suat INT,
     id_ghe INT,
     gia_ve DECIMAL(10, 2),
-    trang_thai VARCHAR(100),
-    UNIQUE (id_suat, id_ghe),
     FOREIGN KEY (id_datve) REFERENCES datve (id_datve),
     FOREIGN KEY (id_suat) REFERENCES suatchieu (id_suat),
     FOREIGN KEY (id_ghe) REFERENCES ghe (id_ghe)

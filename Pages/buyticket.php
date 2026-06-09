@@ -18,12 +18,9 @@ if (isset($_POST['action'])) {
     $gId = isset($_POST['ghe_id']) ? (int)$_POST['ghe_id'] : 0;
     $uId = (int)$_SESSION['user']['id'];
 
-    // --- HÀNH ĐỘNG: GIỮ GHẾ TẠM THỜI (4 PHÚT) ---
-    if ($action === 'hold') {
-        if ($action === 'hold') {
-
-            $stmt = $conn->prepare("
-        SELECT 1 FROM chitietve 
+    switch ($action) {
+        case 'hold':
+            $stmt = $conn->prepare("SELECT 1 FROM chitietve 
         WHERE id_suat = ? AND id_ghe = ?
         LIMIT 1
     ");
@@ -35,8 +32,7 @@ if (isset($_POST['action'])) {
                 exit;
             }
 
-            $stmt = $conn->prepare("
-        INSERT INTO ghe_tam_giu (id_suat, id_ghe, id_user, expires_at)
+            $stmt = $conn->prepare("INSERT INTO ghe_tam_giu (id_suat, id_ghe, id_user, expires_at)
         VALUES (?, ?, ?, DATE_ADD(NOW(), INTERVAL 4 MINUTE))
         ON DUPLICATE KEY UPDATE
             id_user = VALUES(id_user),
@@ -48,58 +44,93 @@ if (isset($_POST['action'])) {
 
             echo json_encode(['status' => 'success']);
             exit;
-        }
-    }
 
-    // --- HÀNH ĐỘNG: HUỶ GIỮ GHẾ (KHI BỎ CHỌN) ---
-    if ($action === 'release') {
-        $stmt = $conn->prepare("DELETE FROM ghe_tam_giu WHERE id_suat = ? AND id_ghe = ? AND id_user = ?");
-        $stmt->bind_param('iii', $sId, $gId, $uId);
-        $stmt->execute();
-        echo json_encode(['status' => 'success']);
-        exit;
-    }
-
-    // --- HÀNH ĐỘNG: LÀM MỚI THỜI GIAN GIỮ (KHI CHUYỂN TRANG/BƯỚC) ---
-    if ($action === 'refresh_hold') {
-        // Reset lại 4 phút cho tất cả ghế mà user này đang giữ trong suất chiếu này
-        $stmt = $conn->prepare("UPDATE ghe_tam_giu SET expires_at = DATE_ADD(NOW(), INTERVAL 4 MINUTE) 
-                               WHERE id_suat = ? AND id_user = ?");
-        $stmt->bind_param('ii', $sId, $uId);
-        $stmt->execute();
-        echo json_encode(['status' => 'success']);
-        exit;
-    }
-
-    // --- LOGIC XỬ LÝ THANH TOÁN (CHECKOUT) ---
-    if ($action === 'hold') {
-
-        $stmt = $conn->prepare("
-        SELECT 1 FROM chitietve 
-        WHERE id_suat = ? AND id_ghe = ?
-        LIMIT 1
+        case 'release':
+            $stmt = $conn->prepare("DELETE FROM ghe_tam_giu 
+        WHERE id_suat = ? AND id_ghe = ? AND id_user = ?
     ");
-        $stmt->bind_param('ii', $sId, $gId);
-        $stmt->execute();
+            $stmt->bind_param('iii', $sId, $gId, $uId);
+            $stmt->execute();
 
-        if ($stmt->get_result()->num_rows > 0) {
-            echo json_encode(['status' => 'error', 'message' => 'Ghế đã bán']);
+            echo json_encode(['status' => 'success']);
             exit;
-        }
 
-        $stmt = $conn->prepare("
-        INSERT INTO ghe_tam_giu (id_suat, id_ghe, id_user, expires_at)
-        VALUES (?, ?, ?, DATE_ADD(NOW(), INTERVAL 4 MINUTE))
-        ON DUPLICATE KEY UPDATE
-            id_user = VALUES(id_user),
-            expires_at = VALUES(expires_at)
+        case 'refresh_hold':
+            $stmt = $conn->prepare("UPDATE ghe_tam_giu 
+        SET expires_at = DATE_ADD(NOW(), INTERVAL 4 MINUTE)
+        WHERE id_suat = ? AND id_user = ?
     ");
+            $stmt->bind_param('ii', $sId, $uId);
+            $stmt->execute();
 
-        $stmt->bind_param('iii', $sId, $gId, $uId);
-        $stmt->execute();
+            echo json_encode(['status' => 'success']);
+            exit;
 
-        echo json_encode(['status' => 'success']);
-        exit;
+        case 'checkout':
+            $combo = (int)$_POST['combo_money'];
+            $discount = (int)$_POST['discount'];
+            $paymentMethod = $_POST['payment_method'] ?? 'VNPAY';
+
+            // Lấy danh sách ghế đang giữ của user này cho suất chiếu này
+            $stmt = $conn->prepare("SELECT g.id_ghe, g.loai_ghe 
+        FROM ghe_tam_giu t
+        JOIN ghe g ON g.id_ghe = t.id_ghe
+        WHERE t.id_suat = ? AND t.id_user = ? AND t.expires_at > NOW()
+    ");
+            $stmt->bind_param("ii", $sId, $uId);
+            $stmt->execute();
+            $res = $stmt->get_result();
+
+            $seats = [];
+            $totalSeatMoney = 0;
+
+            while ($row = $res->fetch_assoc()) {
+                $seats[] = $row['id_ghe'];
+                $type = trim(strtolower($row['loai_ghe']));
+
+                if ($type === 'vip') $totalSeatMoney += 80000;
+                else if ($type === 'couple') $totalSeatMoney += 100000; // Đồng bộ với JS
+                else $totalSeatMoney += 50000;
+            }
+
+            if (empty($seats)) {
+                echo json_encode(['status' => 'error', 'message' => 'Không có ghế']);
+                exit;
+            }
+
+            $total = $totalSeatMoney + $combo - $discount;
+            if ($total < 0) $total = 0;
+
+            /**
+             * QUY TRÌNH THỰC TẾ (GATEWAY):
+             * 1. INSERT vào bảng 'datve' với trạng thái 'Chờ thanh toán'.
+             * 2. Gọi API cổng thanh toán để lấy URL.
+             * 3. Trả URL đó về cho JavaScript để redirect người dùng đi thanh toán.
+             * 
+             * GIẢ LẬP HIỆN TẠI:
+             * Để hệ thống hoạt động đồng bộ với Dashboard, chúng ta lưu trực tiếp 
+             * trạng thái 'Đã thanh toán' (khớp với profileUser.php và admin.php).
+             */
+            $stmt = $conn->prepare("INSERT INTO datve (id_user, id_suat, tong_tien, trang_thai, phuong_thuc_thanh_toan, thoi_gian_dat) VALUES (?, ?, ?, 'PENDING', ?, NOW())");
+            $stmt->bind_param("iiis", $uId, $sId, $total, $paymentMethod);
+            $stmt->execute();
+
+            $orderId = $conn->insert_id;
+
+            // Lưu chi tiết từng vé
+            $stmtSeat = $conn->prepare("INSERT INTO chitietve (id_datve, id_suat, id_ghe) VALUES (?, ?, ?)");
+            foreach ($seats as $gheId) {
+                $stmtSeat->bind_param("iii", $orderId, $sId, $gheId);
+                $stmtSeat->execute();
+            }
+
+            // Giải phóng ghế tạm giữ sau khi đã đặt thành công
+            $stmt = $conn->prepare("DELETE FROM ghe_tam_giu WHERE id_suat = ? AND id_user = ?");
+            $stmt->bind_param("ii", $sId, $uId);
+            $stmt->execute();
+
+            echo json_encode(['status' => 'success']);
+            exit;
     }
 }
 ?>
@@ -1054,7 +1085,6 @@ if ($selectedShowtime > 0) {
                 <div class="summary-card">
                     <div class="summary-card__item">
                         <h3>Combo đã chọn</h3>
-                        <p id="comboInfo">Không có</p>
                     </div>
                     <div class="summary-card__item summary-card__total">
                         <h3>Tổng tiền combo</h3>
@@ -1098,29 +1128,44 @@ if ($selectedShowtime > 0) {
             <aside class="summary-aside">
                 <div class="paymentBox">
                     <div class="info-block">
-                        <h3>Ngân hàng hỗ trợ</h3>
-                        <div class="bankLogos">
-                            <img src="../Picture_Bank/Vietcombank.webp" alt="Vietcombank">
-                            <img src="../Picture_Bank/MBBank.webp" alt="MBB">
-                            <img src="../Picture_Bank/Techcombank.webp" alt="Techcombank">
+                        <h3>PHƯƠNG THỨC THANH TOÁN</h3>
+                        <div class="paymentMethods">
+                            <div class="method active" data-method="VNPAY">
+                                <img src="../Picture_Bank/VNPAY.webp" alt="VNPAY">
+                                <p>VNPAY</p>
+                            </div>
+                            <div class="method" data-method="MOMO">
+                                <img src="../Picture_Bank/MoMo.webp" alt="MOMO">
+                                <p>MOMO</p>
+                            </div>
+                            <div class="method" data-method="QR_BANKING">
+                                <img src="../Picture_Bank/QR_Banking.webp" alt="QR Banking">
+                                <p>QR Banking</p>
+                            </div>
                         </div>
                     </div>
 
-                    <div class="info-block">
-                        <h3>PHƯƠNG THỨC THANH TOÁN</h3>
-                        <div class="paymentMethods">
-                            <article class="method">
-                                <img src="../Picture_Bank/VNPAY.webp" alt="VNPAY">
-                                <p>VNPAY</p>
-                            </article>
-                            <article class="method">
-                                <img src="../Picture_Bank/MoMo.webp" alt="MOMO">
-                                <p>MOMO</p>
-                            </article>
-                            <article class="method">
-                                <img src="../Picture_Bank/QR_Banking.webp" alt="QR Banking">
-                                <p>QR Banking</p>
-                            </article>
+                    <!-- New section for QR Banking details, initially hidden -->
+                    <div id="qrBankingDetails" style="display: none; margin-top: 20px;" class="info-block">
+                        <h3>Chọn ngân hàng</h3>
+                        <div class="bankSelection" style="display: flex; flex-wrap: wrap; gap: 10px; margin-bottom: 20px;">
+                            <div class="bank-option" data-bank="Vietcombank">
+                                <img src="../Picture_Bank/Vietcombank.webp" alt="Vietcombank">
+                            </div>
+                            <div class="bank-option" data-bank="MBBank">
+                                <img src="../Picture_Bank/MBBank.webp" alt="MBBank">
+                            </div>
+                            <div class="bank-option" data-bank="Techcombank">
+                                <img src="../Picture_Bank/Techcombank.webp" alt="Techcombank">
+                            </div>
+                            <!-- Add more banks as needed -->
+                        </div>
+                        <div id="qrCodeDisplay" style="text-align: center; display: none;">
+                            <h3>Quét mã QR để thanh toán</h3>
+                            <img id="qrCodeImage" src="" alt="Mã QR Thanh toán" style="max-width: 250px; height: auto; border: 1px solid rgba(56, 189, 248, 0.3); border-radius: 10px; padding: 10px;">
+                            <p style="margin-top: 10px; font-size: 0.9em; color: #cbd5e1;">Nội dung chuyển khoản: <strong id="qrTransferContent"></strong></p>
+                            <p style="font-size: 0.9em; color: #cbd5e1;">Số tiền: <strong id="qrTransferAmount"></strong></p>
+                            <p style="font-size: 0.8em; color: #94a3b8; margin-top: 5px;">(Đơn hàng sẽ được xác nhận sau khi hệ thống nhận được thanh toán)</p>
                         </div>
                     </div>
 

@@ -18,9 +18,9 @@ JOIN (
         sc.id_phim,
         COUNT(ct.id_ve) AS so_luong_ve
     FROM suatchieu sc
-    JOIN chitietve ct 
-        ON sc.id_suat = ct.id_suat
-    WHERE ct.trang_thai = 'Da thanh toan'
+    JOIN chitietve ct ON sc.id_suat = ct.id_suat
+    JOIN datve d ON ct.id_datve = d.id_datve
+    WHERE d.trang_thai = 'Đã thanh toán'
     GROUP BY sc.id_phim
 ) sales 
     ON p.id_phim = sales.id_phim
