@@ -176,7 +176,7 @@ CREATE TABLE chinhsach (
     ngay_cap_nhat DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
 );
 
---forgot password OTP table
+-- forgot password OTP table
 CREATE TABLE IF NOT EXISTS password_reset_otp (
     id INT AUTO_INCREMENT PRIMARY KEY,
     email VARCHAR(100) NOT NULL,
@@ -187,7 +187,7 @@ CREATE TABLE IF NOT EXISTS password_reset_otp (
     FOREIGN KEY (email) REFERENCES nguoidung (email) ON DELETE CASCADE
 );
 
---giữ ghế tạm thời
+-- giữ ghế tạm thời
 CREATE TABLE IF NOT EXISTS ghe_tam_giu (
     id_suat INT,
     id_ghe INT,
