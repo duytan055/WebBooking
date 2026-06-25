@@ -49,13 +49,12 @@ if ($result->num_rows == 0) {
 
 $row = $result->fetch_assoc();
 
-// Kiểm tra trạng thái phim: so sánh ngày khởi chiếu với ngày hiện tại
+
 $currentDate = date('Y-m-d');
 $releaseDate = $row['ngay_khoi_chieu'];
 $isUpcoming = (strtotime($releaseDate) > strtotime($currentDate));
 
-// Lấy lịch chiếu của phim (chỉ lấy nếu phim đang chiếu)
-// Chỉ hiển thị suất chiếu của ngày hôm nay
+
 $showtimesByDate = [];
 if (!$isUpcoming) {
     // Lấy ngày hôm nay

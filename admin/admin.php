@@ -2,11 +2,12 @@
 include __DIR__ . '/../Connect/connecDB.php';
 
 $timkiem = isset($_GET['timkiem']) ? trim($_GET['timkiem']) : '';
-$sql_ve = "SELECT COUNT(*) AS tongve FROM chitietve";
+$sql_ve = "SELECT COUNT(*) AS tongve FROM chitietve JOIN datve ON chitietve.id_datve = datve.id_datve
+WHERE datve.trang_thai = 'PAID'";
 $kq_ve = mysqli_query($conn, $sql_ve);
 $row_ve = mysqli_fetch_assoc($kq_ve);
 
-$sql_doanhthu = "SELECT SUM(tong_tien) AS doanhthu FROM datve";
+$sql_doanhthu = "SELECT SUM(tong_tien) AS doanhthu FROM datve WHERE trang_thai = 'PAID'";
 $kq_dt = mysqli_query($conn, $sql_doanhthu);
 $row_dt = mysqli_fetch_assoc($kq_dt);
 
@@ -29,7 +30,8 @@ FROM datve d
 LEFT JOIN nguoidung nd ON d.id_user = nd.id_user
 LEFT JOIN suatchieu sc ON d.id_suat = sc.id_suat
 LEFT JOIN phim p ON sc.id_phim = p.id_phim
-WHERE (
+WHERE d.trang_thai = 'PAID'
+AND (
     d.id_datve LIKE '%$timkiem%'
     OR nd.ten LIKE '%$timkiem%'
     OR p.ten_phim LIKE '%$timkiem%'
@@ -70,7 +72,8 @@ JOIN chitietve ct
 
 JOIN ghe g
     ON ct.id_ghe = g.id_ghe
-WHERE (
+WHERE d.trang_thai = 'PAID'
+AND (
     d.id_datve LIKE '%$timkiem%'
     OR nd.ten LIKE '%$timkiem%'
     OR p.ten_phim LIKE '%$timkiem%'
@@ -234,8 +237,8 @@ $kq = mysqli_query($conn, $sql);
 
                                     <td>
                                         <?php
-                                        if ($row['trang_thai'] == 'Đã thanh toán') {
-                                            echo "<span class='status completed'>Đã thanh toán</span>";
+                                        if ($row['trang_thai'] == 'PAID') {
+                                            echo "<span class='status completed'>PAID</span>";
                                         } else {
                                             echo "<span class='status pending'>{$row['trang_thai']}</span>";
                                         }

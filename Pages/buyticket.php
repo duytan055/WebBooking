@@ -66,6 +66,21 @@ if (isset($_POST['action'])) {
             echo json_encode(['status' => 'success']);
             exit;
 
+        case 'cancel_booking':
+            // User hủy đơn đang giữ ghế (chưa tạo datve) hoặc hủy đơn PENDING
+            // Giải phóng tất cả ghế user đang giữ cho suất chiếu này
+            $stmt = $conn->prepare("DELETE FROM ghe_tam_giu WHERE id_suat = ? AND id_user = ?");
+            $stmt->bind_param('ii', $sId, $uId);
+            $stmt->execute();
+
+            // Nếu đã có đơn PENDING thì cập nhật thành EXPIRED
+            $stmt = $conn->prepare("UPDATE datve SET trang_thai = 'EXPIRED' WHERE id_user = ? AND id_suat = ? AND trang_thai = 'PENDING'");
+            $stmt->bind_param('ii', $uId, $sId);
+            $stmt->execute();
+
+            echo json_encode(['status' => 'success', 'message' => 'Đã hủy đơn hàng']);
+            exit;
+
         case 'checkout':
             $combo = (int)$_POST['combo_money'];
             $discount = (int)$_POST['discount'];
@@ -80,7 +95,7 @@ if (isset($_POST['action'])) {
             $stmt->bind_param("ii", $sId, $uId);
             $stmt->execute();
             $res = $stmt->get_result();
-
+            $orderId = $conn->insert_id;
             $seats = [];
             $totalSeatMoney = 0;
 
@@ -94,25 +109,42 @@ if (isset($_POST['action'])) {
             }
 
             if (empty($seats)) {
-                echo json_encode(['status' => 'error', 'message' => 'Không có ghế']);
+                echo json_encode([
+                    'status' => 'success',
+                    'id_datve' => $orderId
+                ]);
                 exit;
             }
 
             $total = $totalSeatMoney + $combo - $discount;
             if ($total < 0) $total = 0;
 
-            /**
-             * QUY TRÌNH THỰC TẾ (GATEWAY):
-             * 1. INSERT vào bảng 'datve' với trạng thái 'Chờ thanh toán'.
-             * 2. Gọi API cổng thanh toán để lấy URL.
-             * 3. Trả URL đó về cho JavaScript để redirect người dùng đi thanh toán.
-             * 
-             * GIẢ LẬP HIỆN TẠI:
-             * Để hệ thống hoạt động đồng bộ với Dashboard, chúng ta lưu trực tiếp 
-             * trạng thái 'Đã thanh toán' (khớp với profileUser.php và admin.php).
-             */
-            $stmt = $conn->prepare("INSERT INTO datve (id_user, id_suat, tong_tien, trang_thai, phuong_thuc_thanh_toan, thoi_gian_dat) VALUES (?, ?, ?, 'PENDING', ?, NOW())");
-            $stmt->bind_param("iiis", $uId, $sId, $total, $paymentMethod);
+            $stmtUser = $conn->prepare(" SELECT ten, sdt
+    FROM nguoidung
+    WHERE id_user = ?
+");
+
+            $stmtUser->bind_param("i", $uId);
+            $stmtUser->execute();
+
+            $userInfo = $stmtUser->get_result()->fetch_assoc();
+            $hoTen = $userInfo['ten'];
+            $soDienThoai = $userInfo['sdt'];
+            $maGiaoDich = 'DH' . time() . rand(100, 999);
+            $stmt = $conn->prepare(" INSERT INTO datve(id_user,id_suat,thoi_gian_dat,tong_tien,phuong_thuc_thanh_toan,ma_giao_dich,ten_nguoi_dat,so_dien_thoai,giam_gia,trang_thai,created_at)VALUES(?,?,NOW(),?,?,?,?,?,?,'PENDING',NOW())");
+
+            $stmt->bind_param(
+                "iidssssi",
+                $uId,
+                $sId,
+                $total,
+                $paymentMethod,
+                $maGiaoDich,
+                $hoTen,
+                $soDienThoai,
+                $discount
+            );
+
             $stmt->execute();
 
             $orderId = $conn->insert_id;
@@ -126,10 +158,33 @@ if (isset($_POST['action'])) {
 
             // Giải phóng ghế tạm giữ sau khi đã đặt thành công
             $stmt = $conn->prepare("DELETE FROM ghe_tam_giu WHERE id_suat = ? AND id_user = ?");
+            $conn->query("UPDATE datve SET trang_thai='EXPIRED' WHERE trang_thai='PENDING' AND created_at < DATE_SUB(NOW(), INTERVAL 15 MINUTE)");
             $stmt->bind_param("ii", $sId, $uId);
             $stmt->execute();
 
-            echo json_encode(['status' => 'success']);
+            // KHÔNG gửi email ở đây. VNPAY gửi sau khi thanh toán thành công (vnpay_return.php).
+            // QR_BANKING gửi sau khi user xác nhận đã chuyển khoản (confirm_payment).
+
+            echo json_encode(['status' => 'success', 'id_datve' => $orderId]);
+            exit;
+
+        case 'confirm_payment':
+            $id_datve = (int)$_POST['id_datve'];
+
+            // Cập nhật trạng thái thành PAID
+            $stmt = $conn->prepare("UPDATE datve SET trang_thai = 'PAID' WHERE id_datve = ? AND trang_thai = 'PENDING'");
+            $stmt->bind_param('i', $id_datve);
+            $stmt->execute();
+
+            if ($stmt->affected_rows > 0) {
+                // Gửi email xác nhận vé
+                require_once __DIR__ . '/../Connect/sendMail.php';
+                sendTicketEmail($id_datve, $conn);
+
+                echo json_encode(['status' => 'success', 'message' => 'Thanh toán đã được xác nhận!']);
+            } else {
+                echo json_encode(['status' => 'error', 'message' => 'Đơn hàng không tồn tại hoặc đã được xử lý trước đó.']);
+            }
             exit;
     }
 }
@@ -181,7 +236,6 @@ if ($movieId > 0) {
 // --- LOGIC LẤY TẤT CẢ GHẾ CỦA PHÒNG ---
 $roomSeats = [];
 if ($selectedShowtime > 0) {
-    // Tìm id_phong từ id_suat để biết suất chiếu này ở phòng nào
     $sqlGetRoom = "SELECT id_phong FROM suatchieu WHERE id_suat = ?";
     $stmtGetRoom = $conn->prepare($sqlGetRoom);
     if ($stmtGetRoom) {
@@ -190,7 +244,6 @@ if ($selectedShowtime > 0) {
         $resRoom = $stmtGetRoom->get_result();
         if ($rowR = $resRoom->fetch_assoc()) {
             $id_phong = $rowR['id_phong'];
-            // Lấy danh sách toàn bộ ghế của phòng đó
             $sqlSeats = "SELECT id_ghe, ma_ghe, loai_ghe FROM ghe WHERE id_phong = ? ORDER BY ma_ghe";
             $stmtSeats = $conn->prepare($sqlSeats);
             if ($stmtSeats) {
@@ -209,11 +262,17 @@ if ($selectedShowtime > 0) {
 
 // --- LOGIC KIỂM TRA GHẾ ĐÃ ĐẶT ---
 $bookedSeats = [];
+$pendingSeats = [];
 if ($selectedShowtime > 0) {
-    // Dọn dẹp các bản ghi giữ ghế đã hết hạn
     $conn->query("DELETE FROM ghe_tam_giu WHERE expires_at < NOW()");
 
-    $sqlBooked = "SELECT id_ghe FROM chitietve WHERE id_suat = ?";
+    // Tất cả ghế đã tồn tại trong chitietve (đã đặt, bất kể trạng thái) đều là ghế đã bán
+    $sqlBooked = "SELECT ct.id_ghe
+FROM chitietve ct
+JOIN datve dv ON ct.id_datve = dv.id_datve
+WHERE ct.id_suat = ?
+AND dv.trang_thai IN ('PAID','PENDING')
+";
     $stmtBooked = $conn->prepare($sqlBooked);
     if ($stmtBooked) {
         $stmtBooked->bind_param('i', $selectedShowtime);
@@ -861,12 +920,41 @@ if ($selectedShowtime > 0) {
         background: rgba(255, 255, 255, 0.04);
         border: 1px solid rgba(255, 255, 255, 0.1);
         text-align: center;
+        cursor: pointer;
+        transition: all 0.2s ease;
+    }
+
+    .method.active {
+        border: 2px solid #38bdf8;
+        box-shadow: 0 0 15px rgba(56, 189, 248, 0.3);
+        background: rgba(56, 189, 248, 0.08);
     }
 
     .method p {
         margin: 12px 0 0;
         color: #cbd5e1;
         font-size: 0.95rem;
+    }
+
+    .bank-option {
+        cursor: pointer;
+        padding: 8px;
+        border: 2px solid transparent;
+        border-radius: 12px;
+        transition: all 0.2s ease;
+        background: rgba(255, 255, 255, 0.05);
+    }
+
+    .bank-option.active {
+        border-color: #38bdf8;
+        background: rgba(56, 189, 248, 0.1);
+    }
+
+    .bank-option img {
+        height: 30px;
+        /* Thu nhỏ hình ảnh ngân hàng */
+        width: auto;
+        display: block;
     }
 
     .discount {
@@ -910,6 +998,8 @@ if ($selectedShowtime > 0) {
 
     .payBtn {
         width: 100%;
+        display: none;
+        /* Ẩn nút thanh toán ban đầu */
     }
 
     .seat-list {
@@ -1130,13 +1220,9 @@ if ($selectedShowtime > 0) {
                     <div class="info-block">
                         <h3>PHƯƠNG THỨC THANH TOÁN</h3>
                         <div class="paymentMethods">
-                            <div class="method active" data-method="VNPAY">
+                            <div class="method" data-method="VNPAY">
                                 <img src="../Picture_Bank/VNPAY.webp" alt="VNPAY">
                                 <p>VNPAY</p>
-                            </div>
-                            <div class="method" data-method="MOMO">
-                                <img src="../Picture_Bank/MoMo.webp" alt="MOMO">
-                                <p>MOMO</p>
                             </div>
                             <div class="method" data-method="QR_BANKING">
                                 <img src="../Picture_Bank/QR_Banking.webp" alt="QR Banking">
@@ -1176,7 +1262,10 @@ if ($selectedShowtime > 0) {
                     <p class="pricing total-line">Giảm giá: <strong id="discountMoney">0 đ</strong></p>
                     <p class="pricing total-line"><span>Tổng thanh toán:</span> <strong id="finalTotal">0 đ</strong></p>
 
-                    <button class="primary-btn payBtn" type="button">THANH TOÁN</button>
+                    <div style="display: flex; gap: 12px; margin-top: 10px;">
+                        <button class="primary-btn payBtn" type="button">THANH TOÁN</button>
+                        <button class="secondary-btn cancelBtn" type="button" onclick="cancelOrder()" style="flex:1; background: rgba(248,113,113,0.15); border: 1px solid rgba(248,113,113,0.3); color: #f87171; border-radius:999px; padding:14px 20px; font-weight:700; cursor:pointer;">HỦY ĐƠN</button>
+                    </div>
                 </div>
             </aside>
         </section>
@@ -1187,9 +1276,16 @@ if ($selectedShowtime > 0) {
         const movieId = <?php echo $movieId; ?>;
         const roomSeats = <?php echo json_encode($roomSeats); ?>;
         const bookedSeats = <?php echo json_encode($bookedSeats); ?>;
+        const pendingSeats = <?php echo json_encode($pendingSeats); ?>;
         const otherHoldingSeats = <?php echo json_encode($otherHoldingSeats); ?>;
         const myHoldingSeats = <?php echo json_encode($myHoldingSeats); ?>;
         const selectedShowtime = <?php echo $selectedShowtime; ?>;
+
+
+
+        document.addEventListener('DOMContentLoaded', () => {
+
+        });
     </script>
     <script src="buyticket.js"></script>
 </body>

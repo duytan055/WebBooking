@@ -101,17 +101,15 @@ $prefix = strpos($scriptPath, '/Pages/') !== false ? '..' : '.';
                 <h3>Thông tin</h3>
                 <ul>
                     <li><a href="../Pages/trangChu.php">Trang chủ</a></li>
-                    <li><a href="../Pages/trangPhim.php">Phim</a></li>
+                    <li><a href="../Pages/NowMovies.php">Phim</a></li>
                     <li><a href="../Pages/TopPhim.php">Top Phim</a></li>
-                    <li><a href="../Pages/trangKhuyenMai.php">Khuyến mãi</a></li>
+                    <li><a href="../Pages/KhuyenMai.php">Khuyến mãi</a></li>
                 </ul>
             </div>
             <div class="footer-col">
                 <h3>Hỗ trợ</h3>
                 <ul>
-                    <li><a href="#">Liên hệ</a></li>
-                    <li><a href="#">Câu hỏi thường gặp</a></li>
-                    <li><a href="#">Hướng dẫn đặt vé</a></li>
+                    <li><a href="../Pages/trangLienHe.php">Liên hệ</a></li>
                 </ul>
             </div>
             <div class="footer-col">

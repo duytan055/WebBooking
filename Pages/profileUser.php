@@ -94,15 +94,15 @@ $history_sql = "SELECT
     d.id_datve,
     p.ten_phim,
     CONCAT(sc.date_chieu,' ',sc.thoi_gian) AS suat_chieu,
-    GROUP_CONCAT(g.ma_ghe ORDER BY g.ma_ghe SEPARATOR ', ') AS danh_sach_ghe,
+    COALESCE(GROUP_CONCAT(g.ma_ghe ORDER BY g.ma_ghe SEPARATOR ', '), '---') AS danh_sach_ghe,
     d.tong_tien,
     d.trang_thai,
     d.thoi_gian_dat
 FROM datve d
-JOIN suatchieu sc ON d.id_suat = sc.id_suat
-JOIN phim p ON sc.id_phim = p.id_phim
-JOIN chitietve ct ON d.id_datve = ct.id_datve
-JOIN ghe g ON ct.id_ghe = g.id_ghe
+LEFT JOIN suatchieu sc ON d.id_suat = sc.id_suat
+LEFT JOIN phim p ON sc.id_phim = p.id_phim
+LEFT JOIN chitietve ct ON d.id_datve = ct.id_datve
+LEFT JOIN ghe g ON ct.id_ghe = g.id_ghe
 WHERE d.id_user = $user_id
 GROUP BY d.id_datve
 ORDER BY d.thoi_gian_dat DESC
@@ -990,14 +990,20 @@ function escape($value)
                                     <td class="price-cell"><?= number_format($row['tong_tien']) ?>đ</td>
 
                                     <td>
-                                        <?php if ($row['trang_thai'] == 'Đã thanh toán'): ?>
+                                        <?php if ($row['trang_thai'] == 'Đã thanh toán' || $row['trang_thai'] == 'PAID'): ?>
                                             <span class="history-status complete">
                                                 <i class="fas fa-check-circle"></i>
                                                 Đã thanh toán
                                             </span>
+                                        <?php elseif ($row['trang_thai'] == 'EXPIRED'): ?>
+                                            <span class="history-status cancelled">
+                                                <i class="fas fa-times-circle"></i>
+                                                Đã hủy
+                                            </span>
                                         <?php else: ?>
                                             <span class="history-status pending">
-                                                <?= htmlspecialchars($row['trang_thai']) ?>
+                                                <i class="fas fa-clock"></i>
+                                                Chờ thanh toán
                                             </span>
                                         <?php endif; ?>
                                     </td>

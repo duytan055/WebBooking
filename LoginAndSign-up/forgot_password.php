@@ -10,7 +10,7 @@ $message = '';
 $messageType = '';
 $session_email = $_SESSION['reset_email'] ?? '';
 
-// Xử lý khi nhấn nút Hủy (xóa session và quay về login)
+
 if (isset($_GET['action']) && $_GET['action'] === 'cancel') {
     unset($_SESSION['reset_email']);
     header('Location: login.php');

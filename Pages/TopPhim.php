@@ -20,7 +20,7 @@ JOIN (
     FROM suatchieu sc
     JOIN chitietve ct ON sc.id_suat = ct.id_suat
     JOIN datve d ON ct.id_datve = d.id_datve
-    WHERE d.trang_thai = 'Đã thanh toán'
+    WHERE d.trang_thai = 'PAID'
     GROUP BY sc.id_phim
 ) sales 
     ON p.id_phim = sales.id_phim
