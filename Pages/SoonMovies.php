@@ -2,7 +2,7 @@
 session_start();
 include __DIR__ . '/../Connect/connecDB.php';
 $sql = "SELECT 
-    p.*,
+    p.*,    
     GROUP_CONCAT(DISTINCT dd.ten_dao_dien SEPARATOR ', ') AS dao_dien,
     GROUP_CONCAT(DISTINCT dv.ten_dien_vien SEPARATOR ', ') AS dien_vien
 FROM phim p

@@ -19,13 +19,13 @@ const discountInput = document.getElementById("discountInput");
 const infoShowtime = document.getElementById("infoShowtime");
 const summaryMovieName = document.getElementById("summaryMovieName");
 
-let selectedSeats = []; // Stores seat codes (e.g., "A01")
-let selectedSeatIds = []; // Stores actual id_ghe (integers)
+let selectedSeats = [];
+let selectedSeatIds = [];
 let seatPrices = {};
 let comboTotal = 0;
 let comboName = "";
 let discount = 0;
-let selectedPaymentMethod = null; // Mặc định chưa chọn phương thức nào
+let selectedPaymentMethod = null;
 let seatMoney = 0;
 
 myHoldingSeats.forEach((id) => {
@@ -37,9 +37,8 @@ myHoldingSeats.forEach((id) => {
 });
 
 function createSeatMap(seatsData, bookedSeatIds) {
-  seatMap.innerHTML = ""; // Clear existing seats
+  seatMap.innerHTML = "";
 
-  // Group seats by row letter
   const rows = {};
   seatsData.forEach((seat) => {
     const rowLetter = seat.ma_ghe.charAt(0);
@@ -49,13 +48,12 @@ function createSeatMap(seatsData, bookedSeatIds) {
     rows[rowLetter].push(seat);
   });
 
-  // Sort rows by letter and seats within rows by number
   const sortedRowLetters = Object.keys(rows).sort();
 
   sortedRowLetters.forEach((rowLetter) => {
     const rowDiv = document.createElement("div");
     rowDiv.className = "row";
-    // Sort seats within the row by their number (e.g., A01, A02)
+
     rows[rowLetter].sort((a, b) => {
       const numA = parseInt(a.ma_ghe.substring(1));
       const numB = parseInt(b.ma_ghe.substring(1));
@@ -75,19 +73,16 @@ function createSeatMap(seatsData, bookedSeatIds) {
 
       const type = (seatData.loai_ghe || "").trim().toLowerCase();
 
-      // CLASS
       let seatClass = "seat";
 
       if (type === "vip") seatClass += " vip";
       else if (type === "couple") seatClass += " couple";
       else seatClass += " normal";
 
-      // trạng thái
       if (isBooked) seatClass += " booked";
       else if (isHoldingOther) seatClass += " holding";
       else if (isHoldingMe) seatClass += " selected";
 
-      // GIÁ GHẾ (CHỈ GIỮ 1 LẦN DUY NHẤT)
       if (type === "vip") {
         seatPrices[seatData.ma_ghe] = 80000;
       } else if (type === "couple") {
@@ -98,12 +93,11 @@ function createSeatMap(seatsData, bookedSeatIds) {
 
       seatElement.className = seatClass;
       seatElement.textContent = seatData.ma_ghe;
-      seatElement.dataset.id = seatData.id_ghe; // Store actual seat ID
-      seatElement.dataset.code = seatData.ma_ghe; // Store seat code
-      seatElement.dataset.type = seatData.loai_ghe; // Store seat type
+      seatElement.dataset.id = seatData.id_ghe;
+      seatElement.dataset.code = seatData.ma_ghe;
+      seatElement.dataset.type = seatData.loai_ghe;
 
       if (!isBooked && !isHoldingOther) {
-        // Only add click listener if not booked
         seatElement.addEventListener("click", () =>
           selectSeat(seatElement, seatData.ma_ghe, seatData.id_ghe),
         );
@@ -139,7 +133,7 @@ async function selectSeat(seatElement, seatCode, seatId) {
     seatElement.classList.contains("booked") ||
     seatElement.classList.contains("holding")
   ) {
-    return; // Cannot select booked seats
+    return;
   }
 
   const isSelected = seatElement.classList.contains("selected");
@@ -182,7 +176,6 @@ function updateUI() {
   seatTotalLabel.textContent = seatMoney.toLocaleString() + " đ";
 }
 
-// Hàm gia hạn thời gian giữ ghế trên Server khi chuyển bước
 async function refreshHoldOnServer() {
   try {
     const response = await fetch("buyticket.php", {
@@ -209,7 +202,6 @@ async function goCombo() {
     return;
   }
 
-  // Kiểm tra và gia hạn giữ ghế trên DB trước khi qua trang Combo
   const ok = await refreshHoldOnServer();
   if (!ok) return;
 
@@ -224,7 +216,6 @@ function addCombo(name, price) {
 }
 
 async function goPayment() {
-  // Tiếp tục gia hạn giữ ghế khi qua trang Thanh toán
   const ok = await refreshHoldOnServer();
   if (!ok) return;
 
@@ -243,7 +234,7 @@ async function goPayment() {
   seatMoneyLabel.textContent = seatMoney.toLocaleString() + " đ";
   comboInfoLabel.textContent = comboName || "Không có";
   comboMoneyLabel.textContent = comboTotal.toLocaleString() + " đ";
-  // Fill payment info for movie and showtime
+
   if (infoMovie && summaryMovieName) {
     infoMovie.textContent = summaryMovieName.textContent;
   }
@@ -269,7 +260,7 @@ function applyDiscount() {
   }
 }
 
-// --- LOGIC THANH TOÁN (GỬI DỮ LIỆU VỀ SERVER) ---
+// --- LOGIC THANH TOÁN ---
 async function checkout(method) {
   if (selectedSeatIds.length === 0) {
     alert("Vui lòng chọn ghế trước khi thanh toán!");
@@ -297,7 +288,6 @@ async function checkout(method) {
           "../payment/vnpay_payment.php?id_datve=" + result.id_datve;
         return;
       }
-      // QR_BANKING: show QR code after order is created
       if (selectedPaymentMethod === "QR_BANKING") {
         showQRCode(result.id_datve);
         return;
@@ -325,10 +315,10 @@ function showQRCode(orderId) {
   const activeBank = document.querySelector(".bank-option.active");
   document.getElementById("qrCodeImage").src =
     `https://api.qrserver.com/v1/create-qr-code/?size=250x250&data=QR_PAYMENT_${totalAmountForQR}_${activeBank.dataset.bank}`;
-  // Thay nút THANH TOÁN thành nút xác nhận đã chuyển khoản
+
   payBtn.disabled = false;
   payBtn.textContent = "TÔI ĐÃ THANH TOÁN";
-  // Gắn sự kiện mới: xác nhận thanh toán
+
   payBtn.onclick = function () {
     confirmPayment(orderId);
   };
@@ -451,7 +441,6 @@ methods.forEach((m) => {
   });
 });
 
-// Xử lý chọn ngân hàng cho QR Banking
 bankOptions.forEach((b) => {
   b.addEventListener("click", function () {
     bankOptions.forEach((el) => el.classList.remove("active"));
@@ -474,7 +463,7 @@ if (payBtn) {
         e.stopImmediatePropagation();
         return;
       }
-      // Gọi checkout để tạo đơn hàng trước, sau đó hiển thị QR
+
       checkout();
     } else {
       checkout();

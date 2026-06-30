@@ -55,7 +55,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
         if (mysqli_query($conn, $sql)) {
             $success_message = 'Cập nhật suất chiếu thành công!';
-            // Refresh data
+
             $result = mysqli_query($conn, "SELECT * FROM suatchieu WHERE id_suat = $id");
             $suatchieu = mysqli_fetch_assoc($result);
         } else {

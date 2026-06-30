@@ -1,25 +1,25 @@
 <?php
 include __DIR__ . '/../Connect/connecDB.php';
 
-// Lấy danh sách phim
+
 $sql_phim = "SELECT id_phim, ten_phim FROM phim ORDER BY ten_phim";
 $kq_phim = mysqli_query($conn, $sql_phim);
 
-// Lấy danh sách phòng chiếu
+
 $sql_phong = "SELECT id_phong, ten_phong FROM phongchieu ORDER BY id_phong";
 $kq_phong = mysqli_query($conn, $sql_phong);
 
 $success_message = '';
 $error_message = '';
 
-// Xử lý thêm suất chiếu
+
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $id_phim = mysqli_real_escape_string($conn, $_POST['id_phim']);
     $id_phong = mysqli_real_escape_string($conn, $_POST['id_phong']);
     $date_chieu = mysqli_real_escape_string($conn, $_POST['date_chieu']);
     $thoi_gian = mysqli_real_escape_string($conn, $_POST['thoi_gian']);
 
-    // Kiểm tra trùng lặp (cùng phòng, cùng ngày, cùng giờ)
+
     $check_sql = "SELECT * FROM suatchieu 
                   WHERE id_phong = '$id_phong' 
                   AND date_chieu = '$date_chieu' 

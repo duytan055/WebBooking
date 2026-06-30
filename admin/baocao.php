@@ -212,76 +212,10 @@ $kq_top = mysqli_query($conn, $sql_top);
 
             </div>
 
-            <!-- BẢNG BÁO CÁO -->
-
-            <section class="data-section">
-
-                <div class="table-title">
-
-                    <h3>Top Phim Doanh Thu</h3>
-
-                </div>
-
-                <div class="table-wrapper">
-
-                    <table>
-
-                        <thead>
-
-                            <tr>
-
-                                <th>Tên phim</th>
-                                <th>Số vé bán</th>
-                                <th>Doanh thu</th>
-
-                            </tr>
-
-                        </thead>
-
-                        <tbody>
-
-                            <?php
-                            $kq_top_reset = mysqli_query($conn, $sql_top);
-                            while ($row = mysqli_fetch_assoc($kq_top_reset)) {
-                            ?>
-
-                                <tr>
-
-                                    <td>
-                                        <?php echo $row['ten_phim']; ?>
-                                    </td>
-
-                                    <td>
-                                        <?php echo $row['soluong']; ?>
-                                    </td>
-
-                                    <td>
-
-                                        <?php
-                                        echo number_format($row['tongtien']);
-                                        ?>đ
-
-                                    </td>
-
-                                </tr>
-
-                            <?php
-                            }
-                            ?>
-
-                        </tbody>
-
-                    </table>
-
-                </div>
-
-            </section>
-
             <script>
                 // Dữ liệu từ PHP
                 const movieData = [
                     <?php
-                    mysqli_data_seek($kq_top, 0);
                     $count = 0;
                     while ($row = mysqli_fetch_assoc($kq_top)) {
                         if ($count >= 5) break;
@@ -387,9 +321,7 @@ $kq_top = mysqli_query($conn, $sql_top);
                             tooltip: {
                                 callbacks: {
                                     label: function(context) {
-                                        const total = context.dataset.data.reduce((a, b) => a + b, 0);
-                                        const percentage = ((context.parsed / total) * 100).toFixed(1);
-                                        return context.label + ': ' + context.parsed + ' vé (' + percentage + '%)';
+                                        return context.label + ': ' + context.parsed + ' vé ';
                                     }
                                 }
                             }

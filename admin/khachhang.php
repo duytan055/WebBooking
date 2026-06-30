@@ -2,11 +2,11 @@
 session_start();
 include __DIR__ . '/../Connect/connecDB.php';
 
-// Get notification messages from session
+
 $success_message = $_SESSION['success_message'] ?? '';
 $error_message = $_SESSION['error_message'] ?? '';
 
-// Clear messages after reading
+
 unset($_SESSION['success_message']);
 unset($_SESSION['error_message']);
 

@@ -56,14 +56,13 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     if (mysqli_query($conn, $sql)) {
         $id_phim_moi = mysqli_insert_id($conn);
 
-        // Xử lý thêm Đạo diễn
         if (!empty($_POST['dao_dien'])) {
             $arr_dd = explode(',', $_POST['dao_dien']);
             foreach ($arr_dd as $dd_name) {
                 $dd_name = mysqli_real_escape_string($conn, trim($dd_name));
                 if (empty($dd_name)) continue;
 
-                // Kiểm tra tồn tại
+
                 $check_dd = mysqli_query($conn, "SELECT id_daodien FROM daodien WHERE ten_dao_dien = '$dd_name'");
                 if ($row_dd = mysqli_fetch_assoc($check_dd)) {
                     $id_dd = $row_dd['id_daodien'];
@@ -82,7 +81,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                 $dv_name = mysqli_real_escape_string($conn, trim($dv_name));
                 if (empty($dv_name)) continue;
 
-                // Kiểm tra tồn tại
+
                 $check_dv = mysqli_query($conn, "SELECT id_dienvien FROM dienvien WHERE ten_dien_vien = '$dv_name'");
                 if ($row_dv = mysqli_fetch_assoc($check_dv)) {
                     $id_dv = $row_dv['id_dienvien'];
@@ -94,7 +93,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             }
         }
 
-        // Thêm suất chiếu nếu có
+
         if (isset($_POST['them_suat_chieu']) && $_POST['them_suat_chieu'] == '1') {
             $ngay_chieu = mysqli_real_escape_string($conn, $_POST['ngay_chieu']);
             $so_suat = (int)$_POST['so_suat'];
@@ -423,7 +422,6 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             <?php endif; ?>
         }
 
-        // Quản lý suất chiếu
         const toggleSuatChieu = document.getElementById('toggle_suat_chieu');
         const suatChieuContainer = document.getElementById('suat_chieu_container');
         const themSuatChieu = document.getElementById('them_suat_chieu');
