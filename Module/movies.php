@@ -242,7 +242,7 @@ $result = $conn->query($sql);
 
 <script>
     (function() {
-        // Sử dụng IIFE để tránh xung đột biến global
+        
         const moviesSlider = document.getElementById("moviesSlider");
         const moviesNextBtn = document.querySelector(".movies-next");
         const moviesPrevBtn = document.querySelector(".movies-prev");
@@ -259,7 +259,7 @@ $result = $conn->query($sql);
             const firstMovie = moviesSlider.querySelector('.movies-item');
             return firstMovie ? firstMovie.offsetWidth + 20 : 300;
         }
-
+//Nút tăng
         function moviesSlideNext() {
             const maxScroll = moviesSlider.scrollWidth - moviesSlider.clientWidth;
             const step = getMoviesStep();
@@ -272,7 +272,7 @@ $result = $conn->query($sql);
             }
             moviesSlider.style.transform = `translateX(-${moviesScrollAmount}px)`;
         }
-
+//Nút lùi
         function moviesSlidePrev() {
             const step = getMoviesStep();
             if (moviesScrollAmount <= 5) {
@@ -283,12 +283,11 @@ $result = $conn->query($sql);
             }
             moviesSlider.style.transform = `translateX(-${moviesScrollAmount}px)`;
         }
-
-        // Start AutoPlay
+//Tự động chạy
         function startMoviesAutoPlay() {
             moviesAutoPlayInterval = setInterval(moviesSlideNext, 2000);
         }
-
+//Tự trở lại đầu
         function resetMoviesAutoPlay() {
             clearInterval(moviesAutoPlayInterval);
             startMoviesAutoPlay();
@@ -304,11 +303,9 @@ $result = $conn->query($sql);
             resetMoviesAutoPlay();
         });
 
-        // Pause on hover
         moviesSlider.addEventListener('mouseenter', () => clearInterval(moviesAutoPlayInterval));
         moviesSlider.addEventListener('mouseleave', startMoviesAutoPlay);
 
-        // Init
         startMoviesAutoPlay();
     })();
 </script>

@@ -3,6 +3,9 @@ session_start();
 include __DIR__ . "/../Connect/connecDB.php";
 require __DIR__ . '/../vendor/autoload.php';
 
+$dotenv = Dotenv\Dotenv::createImmutable(__DIR__ . '/..');
+$dotenv->load();
+
 use PHPMailer\PHPMailer\PHPMailer;
 use PHPMailer\PHPMailer\Exception;
 
@@ -41,16 +44,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['send_otp'])) {
                         try {
 
                             $mail->isSMTP();
-                            $mail->Host = 'smtp.gmail.com';
+                            $mail->Host       = $_ENV['SMTP_HOST'];
                             $mail->SMTPAuth   = true;
-
-                            $mail->Username = 'tann14195@gmail.com';
-                            $mail->Password = 'dsgc wqzl gklo pipe';
-
+                            $mail->Username   = $_ENV['SMTP_USER'];
+                            $mail->Password   = $_ENV['SMTP_PASS'];
                             $mail->SMTPSecure = PHPMailer::ENCRYPTION_STARTTLS;
-                            $mail->Port       = 587;
-
-                            $mail->CharSet = 'UTF-8';
+                            $mail->Port       = $_ENV['SMTP_PORT'];
 
                             $mail->setFrom(
                                 'tann14195@gmail.com',

@@ -2,14 +2,15 @@
 
 require_once __DIR__ . '/../vendor/autoload.php';
 
+$dotenv = Dotenv\Dotenv::createImmutable(__DIR__ . '/..');
+$dotenv->load();
+
 $client = new Google_Client();
 
-$client->setClientId('115926101504-n9u9l2isn07jgg5qditr84m9fie115rm.apps.googleusercontent.com');
-$client->setClientSecret('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');
+$client->setClientId($_ENV['GOOGLE_CLIENT_ID']);
+$client->setClientSecret($_ENV['GOOGLE_CLIENT_SECRET']);
 
-$client->setRedirectUri(
-    'http://localhost/WebBooking/API/login-google.php'
-);
+$client->setRedirectUri($_ENV['GOOGLE_REDIRECT_URI']);
 
 $client->addScope('email');
 $client->addScope('profile');
