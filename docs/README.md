@@ -50,3 +50,20 @@ Tài liệu này được tổ chức để:
 - Hiển thị tình trạng hiện tại của các phần chính.
 - Ghi lại những việc đã hoàn thành và các điểm cần cải tiến.
 - Hướng dẫn bước tiếp theo để hoàn thiện dự án.
+
+<img width="1868" height="877" alt="image7" src="https://github.com/user-attachments/assets/596b917b-608a-407f-8864-a3bcf80351eb" />
+<img width="1551" height="887" alt="image6" src="https://github.com/user-attachments/assets/85826907-6496-40fd-9d0a-b6a34bf0c795" />
+<img width="1517" height="870" alt="image5" src="https://github.com/user-attachments/assets/c8ca8244-1e4b-49e1-b992-a282798b7ebe" />
+<img width="1862" height="892" alt="image4" src="https://github.com/user-attachments/assets/5ff8c174-6f3c-4b73-874b-151886859890" />
+<img width="1907" height="885" alt="image3" src="https://github.com/user-attachments/assets/d63114bd-bc27-4af3-ab5d-fa724042575e" />
+<img width="1861" height="881" alt="image2" src="https://github.com/user-attachments/assets/eb968dd9-93fb-4879-bf07-1cbcf54a4243" />
+<img width="1857" height="893" alt="image1" src="https://github.com/user-attachments/assets/7e41dd6c-a573-41b2-b3e2-c91462e672f8" />
+<img width="1836" height="891" alt="image15" src="https://github.com/user-attachments/assets/70ae7183-dd8d-4cb4-9ad3-fa5b39e23651" />
+<img width="1873" height="892" alt="image14" src="https://github.com/user-attachments/assets/6d417485-daa8-4f3b-bb7a-7c92c3e1897b" />
+<img width="1861" height="897" alt="image13" src="https://github.com/user-attachments/assets/a857feb2-c55d-4c68-837d-c72195165287" />
+<img width="1861" height="882" alt="image12" src="https://github.com/user-attachments/assets/276144df-e3d8-4ead-8ef0-0c37ecf9e350" />
+<img width="1853" height="873" alt="image11" src="https://github.com/user-attachments/assets/d65caac0-7fe7-48ce-bd16-d2443c743a96" />
+<img width="1773" height="886" alt="image10" src="https://github.com/user-attachments/assets/2b62714f-1b14-4644-a1e4-fb84c9df70c9" />
+<img width="1858" height="902" alt="image9" src="https://github.com/user-attachments/assets/a78bb62c-9ed3-49da-8eca-4f275aec8ee2" />
+<img width="1856" height="892" alt="image8" src="https://github.com/user-attachments/assets/36160dec-2ea0-40cf-874c-3217f334ef2c" />
+
