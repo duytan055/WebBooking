@@ -50,7 +50,7 @@ Tài liệu này được tổ chức để:
 - Hiển thị tình trạng hiện tại của các phần chính.
 - Ghi lại những việc đã hoàn thành và các điểm cần cải tiến.
 - Hướng dẫn bước tiếp theo để hoàn thiện dự án.
-
+<img width="1891" height="910" alt="Ảnh chụp màn hình 2026-08-31 231833" src="https://github.com/user-attachments/assets/1443cf9f-eee5-4d97-ace9-7a2107a3347c" />
 <img width="1868" height="877" alt="image7" src="https://github.com/user-attachments/assets/596b917b-608a-407f-8864-a3bcf80351eb" />
 <img width="1551" height="887" alt="image6" src="https://github.com/user-attachments/assets/85826907-6496-40fd-9d0a-b6a34bf0c795" />
 <img width="1517" height="870" alt="image5" src="https://github.com/user-attachments/assets/c8ca8244-1e4b-49e1-b992-a282798b7ebe" />
