@@ -60,7 +60,6 @@ Tài liệu này được tổ chức để:
 <img width="1857" height="893" alt="image1" src="https://github.com/user-attachments/assets/7e41dd6c-a573-41b2-b3e2-c91462e672f8" />
 <img width="1836" height="891" alt="image15" src="https://github.com/user-attachments/assets/70ae7183-dd8d-4cb4-9ad3-fa5b39e23651" />
 <img width="1873" height="892" alt="image14" src="https://github.com/user-attachments/assets/6d417485-daa8-4f3b-bb7a-7c92c3e1897b" />
-<img width="1861" height="897" alt="image13" src="https://github.com/user-attachments/assets/a857feb2-c55d-4c68-837d-c72195165287" />
 <img width="1861" height="882" alt="image12" src="https://github.com/user-attachments/assets/276144df-e3d8-4ead-8ef0-0c37ecf9e350" />
 <img width="1853" height="873" alt="image11" src="https://github.com/user-attachments/assets/d65caac0-7fe7-48ce-bd16-d2443c743a96" />
 <img width="1773" height="886" alt="image10" src="https://github.com/user-attachments/assets/2b62714f-1b14-4644-a1e4-fb84c9df70c9" />
