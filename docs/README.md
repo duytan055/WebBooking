@@ -55,8 +55,8 @@ Tài liệu này được tổ chức để:
 <img width="1907" height="885" alt="image3" src="https://github.com/user-attachments/assets/d63114bd-bc27-4af3-ab5d-fa724042575e" />
 <img width="1862" height="892" alt="image4" src="https://github.com/user-attachments/assets/5ff8c174-6f3c-4b73-874b-151886859890" />
 <img width="1551" height="887" alt="image6" src="https://github.com/user-attachments/assets/85826907-6496-40fd-9d0a-b6a34bf0c795" />
-<img width="1861" height="882" alt="image12" src="https://github.com/user-attachments/assets/276144df-e3d8-4ead-8ef0-0c37ecf9e350" />
 <img width="1517" height="870" alt="image5" src="https://github.com/user-attachments/assets/c8ca8244-1e4b-49e1-b992-a282798b7ebe" />
+<img width="1861" height="882" alt="image12" src="https://github.com/user-attachments/assets/276144df-e3d8-4ead-8ef0-0c37ecf9e350" />
 <img width="1853" height="873" alt="image11" src="https://github.com/user-attachments/assets/d65caac0-7fe7-48ce-bd16-d2443c743a96" />
 <img width="1858" height="902" alt="image9" src="https://github.com/user-attachments/assets/a78bb62c-9ed3-49da-8eca-4f275aec8ee2" />
 <img width="1856" height="892" alt="image8" src="https://github.com/user-attachments/assets/36160dec-2ea0-40cf-874c-3217f334ef2c" />
