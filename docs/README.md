@@ -52,10 +52,10 @@ Tài liệu này được tổ chức để:
 - Hướng dẫn bước tiếp theo để hoàn thiện dự án.
 <img width="1891" height="910" alt="Ảnh chụp màn hình 2026-08-31 231833" src="https://github.com/user-attachments/assets/1443cf9f-eee5-4d97-ace9-7a2107a3347c" />
 <img width="1868" height="877" alt="image7" src="https://github.com/user-attachments/assets/596b917b-608a-407f-8864-a3bcf80351eb" />
+<img width="1907" height="885" alt="image3" src="https://github.com/user-attachments/assets/d63114bd-bc27-4af3-ab5d-fa724042575e" />
+<img width="1862" height="892" alt="image4" src="https://github.com/user-attachments/assets/5ff8c174-6f3c-4b73-874b-151886859890" />
 <img width="1551" height="887" alt="image6" src="https://github.com/user-attachments/assets/85826907-6496-40fd-9d0a-b6a34bf0c795" />
 <img width="1517" height="870" alt="image5" src="https://github.com/user-attachments/assets/c8ca8244-1e4b-49e1-b992-a282798b7ebe" />
-<img width="1862" height="892" alt="image4" src="https://github.com/user-attachments/assets/5ff8c174-6f3c-4b73-874b-151886859890" />
-<img width="1907" height="885" alt="image3" src="https://github.com/user-attachments/assets/d63114bd-bc27-4af3-ab5d-fa724042575e" />
 <img width="1861" height="881" alt="image2" src="https://github.com/user-attachments/assets/eb968dd9-93fb-4879-bf07-1cbcf54a4243" />
 <img width="1857" height="893" alt="image1" src="https://github.com/user-attachments/assets/7e41dd6c-a573-41b2-b3e2-c91462e672f8" />
 <img width="1873" height="892" alt="image14" src="https://github.com/user-attachments/assets/6d417485-daa8-4f3b-bb7a-7c92c3e1897b" />
